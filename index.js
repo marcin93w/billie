@@ -85,6 +85,24 @@ app.get('/webhook', (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
   let response;
+
+  request({
+    url: "https://graph.facebook.com/v2.6/" + sender,
+    qs: {
+      access_token: PAGE_ACCESS_TOKEN,
+      fields: "first_name,last_name"
+    },
+    method: "GET"
+  }, function(error, response, body) {
+    var greeting = "";
+    if (error) {
+      console.log("Error getting user's name: " +  error);
+    } else {
+      var bodyObj = JSON.parse(body);
+      name = bodyObj.first_name;
+      last_name = bodyObj.last_name;
+    }
+  });
   
   let entities = received_message.nlp.entities;
   if (entites) {
@@ -102,7 +120,7 @@ function handleMessage(sender_psid, received_message) {
 
     // Create the payload for a basic text message
     response = {
-      "text": `You sent the message: "${received_message.text}".`
+      "text": `Hello ${name}, You sent the message: "${received_message.text}".`
     }
   }
   
@@ -139,3 +157,5 @@ function callSendAPI(sender_psid, response) {
     }
   });
 }
+  // Getting the users name
+
