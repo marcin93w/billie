@@ -84,7 +84,7 @@ app.get('/webhook', (req, res) => {
 
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
-  let response;
+  let response, name, last_name;
 
   request({
     url: "https://graph.facebook.com/v2.6/" + sender_psid,
@@ -99,8 +99,8 @@ function handleMessage(sender_psid, received_message) {
       console.log("Error getting user's name: " +  error);
     } else {
       var bodyObj = JSON.parse(body);
-      let name = bodyObj.first_name;
-      let last_name = bodyObj.last_name;
+      name = bodyObj.first_name;
+      last_name = bodyObj.last_name;
     }
   });
   
