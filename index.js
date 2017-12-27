@@ -86,6 +86,17 @@ app.get('/webhook', (req, res) => {
 function handleMessage(sender_psid, received_message) {
   let response;
   
+  let entities = received_message.nlp.entities;
+  if (entites) {
+    let who = entites.contact[0].value;
+    let what = entites.owes ? 'owes' : 'unknown';
+    let howMuch = entites.amount_of_money[0].value;
+
+    response = {
+      "text": `I saved that ${who} now owns you ${howMuch} now.`
+    }
+  }
+
   // Check if the message contains text
   if (received_message.text) {    
 
