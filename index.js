@@ -99,8 +99,8 @@ function handleMessage(sender_psid, received_message) {
       console.log("Error getting user's name: " +  error);
     } else {
       var bodyObj = JSON.parse(body);
-      name = bodyObj.first_name;
-      last_name = bodyObj.last_name;
+      let name = bodyObj.first_name;
+      let last_name = bodyObj.last_name;
     }
   });
   
