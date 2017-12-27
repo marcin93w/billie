@@ -87,7 +87,7 @@ function handleMessage(sender_psid, received_message) {
   let response;
 
   request({
-    url: "https://graph.facebook.com/v2.6/" + sender,
+    url: "https://graph.facebook.com/v2.6/" + sender_psid,
     qs: {
       access_token: PAGE_ACCESS_TOKEN,
       fields: "first_name,last_name"
