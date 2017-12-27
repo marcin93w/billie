@@ -102,30 +102,30 @@ function handleMessage(sender_psid, received_message) {
       name = bodyObj.first_name;
       last_name = bodyObj.last_name;
     }
+  
+    let entities = received_message.nlp.entities;
+    if (entities) {
+      let who = entities.contact[0].value;
+      let what = entities.owes ? 'owes' : 'unknown';
+      let howMuch = entities.amount_of_money[0].value;
+
+      response = {
+        "text": `Hi ${name}, I saved that ${who} now owns you ${howMuch} now.`
+      }
+    }
+
+    // Check if the message contains text
+    else if (received_message.text) {    
+
+      // Create the payload for a basic text message
+      response = {
+        "text": `Hello ${name}, You sent the message: "${received_message.text}".`
+      }
+    }
+    
+    // Sends the response message
+    callSendAPI(sender_psid, response);
   });
-  
-  let entities = received_message.nlp.entities;
-  if (entities) {
-    let who = entities.contact[0].value;
-    let what = entities.owes ? 'owes' : 'unknown';
-    let howMuch = entities.amount_of_money[0].value;
-
-    response = {
-      "text": `Hi ${name}, I saved that ${who} now owns you ${howMuch} now.`
-    }
-  }
-
-  // Check if the message contains text
-  else if (received_message.text) {    
-
-    // Create the payload for a basic text message
-    response = {
-      "text": `Hello ${name}, You sent the message: "${received_message.text}".`
-    }
-  }
-  
-  // Sends the response message
-  callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
