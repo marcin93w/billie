@@ -32,7 +32,7 @@ app.post('/webhook', (req, res) => {
           console.log('Sender PSID: ' + sender_psid);
         
           // Print NLP response
-          let nlp = webhook_event.message.npl.entities;
+          let nlp = webhook_event.message.nlp.entities;
           console.log(JSON.stringify(nlp));
 
           // Check if the event is a message or postback and
