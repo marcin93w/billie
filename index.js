@@ -111,7 +111,7 @@ function handleMessage(sender_psid, received_message) {
     let howMuch = entites.amount_of_money[0].value;
 
     response = {
-      "text": `I saved that ${who} now owns you ${howMuch} now.`
+      "text": `Hi ${name}, I saved that ${who} now owns you ${howMuch} now.`
     }
   }
 
