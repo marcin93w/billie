@@ -105,10 +105,10 @@ function handleMessage(sender_psid, received_message) {
   });
   
   let entities = received_message.nlp.entities;
-  if (entites) {
-    let who = entites.contact[0].value;
-    let what = entites.owes ? 'owes' : 'unknown';
-    let howMuch = entites.amount_of_money[0].value;
+  if (entities) {
+    let who = entities.contact[0].value;
+    let what = entities.owes ? 'owes' : 'unknown';
+    let howMuch = entities.amount_of_money[0].value;
 
     response = {
       "text": `Hi ${name}, I saved that ${who} now owns you ${howMuch} now.`
