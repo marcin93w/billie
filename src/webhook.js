@@ -1,8 +1,12 @@
 const 
     express = require('express'),
     router = express.Router(),
-    debtAssistant = require('./debt-assistant.js'),
+    DebtAssistant = require('./debt-assistant.js'),
+    messenger = require('./graph-api/messenger.js'),
+    graphApiUser = require('./graph-api/user.js');
     facebookWebhookValidator = require('./facebook-webhook-validator.js');
+
+const debtAssistant = new DebtAssistant(messenger, graphApiUser);
 
 router.route('/').get((req, res) => {
     const challenge = facebookWebhookValidator.validateRequestAndGetChallenge(req);

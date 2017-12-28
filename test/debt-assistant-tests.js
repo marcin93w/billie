@@ -1,11 +1,26 @@
-const test = require('ava');
+const 
+    test = require('ava'),
+    DebtAssistant = require('../src/debt-assistant');
 
-test('foo', t => {
-	t.pass();
-});
+test('sampleTest', async t => {
+    let messengerCalled = false,
+        userApiCalled = false;
+    const messengerMock = { 
+        send: (senderPsid, message) => {
+            messengerCalled = true;
+            return Promise.resolve();
+        }
+    };
+    const graphUserMock = { 
+        fetchName: (senderPsid) => {
+            userApiCalled = true;
+            return Promise.resolve('test');
+        }
+    };
+    const debtAssistant = new DebtAssistant(messengerMock, graphUserMock);
 
-test('bar', async t => {
-	const bar = Promise.resolve('bar');
+    await debtAssistant.handleMessage('asd', {"nlp": {"entities":null}, "text": "asd"});
 
-	t.is(await bar, 'bar');
+	t.true(messengerCalled);
+	t.true(userApiCalled);
 });
