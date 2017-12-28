@@ -1,0 +1,11 @@
+{
+    "plugins": [
+        "nodejs"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:nodejs/recommended"
+    ],
+    "rules": {
+    }
+}
