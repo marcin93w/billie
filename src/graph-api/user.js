@@ -13,7 +13,8 @@ module.exports = {
             })
             .then(function(body) {
                 //TODO body.id could be also usefull
-                return body.first_name;
+                const bodyObj = JSON.parse(body);
+                return bodyObj.first_name;
             });
     }
 };
