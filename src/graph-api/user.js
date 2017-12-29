@@ -12,8 +12,7 @@ module.exports = {
                 method: "GET"
             })
             .then(function(response, body) {
-                var bodyObj = JSON.parse(body);
-                return bodyObj.first_name;
+                return body.first_name;
             });
     }
 };
