@@ -24,8 +24,8 @@ class DebtAssistant {
             return sendFallbackMessage();
         }
 
-        const person = entities.contact && entities.contact[0];
-        const amount = entities.amount_of_money && entities.amount_of_money[0];
+        const person = entities.contact && entities.contact[0].value;
+        const amount = entities.amount_of_money && entities.amount_of_money[0].value;
         if (!person || !amount) {
             return sendFallbackMessage();
         }

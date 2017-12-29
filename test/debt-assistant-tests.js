@@ -38,8 +38,8 @@ test.beforeEach(t => {
         nlp: {
             entities: {
                 owes: 'owes',
-                contact: [testContactName],
-                amount_of_money: [testAmount]
+                contact: [{value: testContactName}],
+                amount_of_money: [{value:testAmount}]
             }
         }, 
         text: "asd"
