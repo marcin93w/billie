@@ -12,6 +12,7 @@ module.exports = {
                 method: "GET"
             })
             .then(function(response, body) {
+                console.log(JSON.stringify(response));
                 return body.first_name;
             });
     }
