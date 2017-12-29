@@ -14,7 +14,7 @@ module.exports = {
             })
             .then(function(response, body) {
                 var bodyObj = JSON.parse(body);
-                console.log(body);
+                console.log(response);
                 return bodyObj.first_name;
             });
     }
