@@ -12,7 +12,9 @@ module.exports = {
                 method: "GET"
             })
             .then(function(response, body) {
+                console.log('asdfs');
                 var bodyObj = JSON.parse(body);
+                console.log(response);
                 return bodyObj.first_name;
             });
     }
