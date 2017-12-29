@@ -3,6 +3,7 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 module.exports = {
     async fetchName(senderPsid) {
+        console.log('asd');
         return 
             request({
                 url: "https://graph.facebook.com/v2.6/" + senderPsid,
@@ -13,6 +14,7 @@ module.exports = {
                 method: "GET"
             })
             .then(function(response, body) {
+                console.log('asdfs');
                 var bodyObj = JSON.parse(body);
                 console.log(response);
                 return bodyObj.first_name;
