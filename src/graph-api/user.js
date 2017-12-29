@@ -11,8 +11,8 @@ module.exports = {
                 },
                 method: "GET"
             })
-            .then(function(response, body) {
-                console.log(JSON.stringify(response));
+            .then(function(body) {
+                //TODO body.id could be also usefull
                 return body.first_name;
             });
     }
