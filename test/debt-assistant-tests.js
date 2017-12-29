@@ -27,6 +27,8 @@ const debtManagerMock = {
 }
 
 const senderPsid = 'asd'
+const testContactName = 'testContact';
+const testAmount = 45;
 
 var message;
 var debtAssistant;
@@ -36,8 +38,8 @@ test.beforeEach(t => {
         nlp: {
             entities: {
                 owes: 'owes',
-                contact: ['testContact'],
-                amount_of_money: [45]
+                contact: [testContactName],
+                amount_of_money: [testAmount]
             }
         }, 
         text: "asd"
@@ -95,6 +97,15 @@ test('should add new debt when asked', async t => {
     let debt = debtManagerMock.debts[0];
     
     t.true(debt.owner === senderPsid);
-    t.true(debt.debtor === message.nlp.entities.contact[0]);
-    t.true(debt.amount === message.nlp.entities.amount_of_money[0]);
+    t.true(debt.debtor === testContactName);
+    t.true(debt.amount === testAmount);
+});
+
+test('should return proper message when adding debt', async t => {
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    let debt = debtManagerMock.debts[0];
+    
+    t.true(messengerMock.lastMessage.text.indexOf(
+        `I saved that ${testContactName} owes you ${testAmount} now.`) !== -1);
 });
