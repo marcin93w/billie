@@ -1,10 +1,9 @@
-const request = require('request-promise-native');
+const request = require('request-promise');
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 module.exports = {
-    async fetchName(senderPsid) {
-        return 
-            request({
+    fetchName: (senderPsid) => {
+        return request({
                 url: "https://graph.facebook.com/v2.6/" + senderPsid,
                 qs: {
                     access_token: PAGE_ACCESS_TOKEN,

@@ -1,8 +1,8 @@
-const request = require('request-promise-native');
+const request = require('request-promise');
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 module.exports = {
-    async send(receiverPsid, message) {
+    send(receiverPsid, message) {
         
         const requestBody = {
             "recipient": {
