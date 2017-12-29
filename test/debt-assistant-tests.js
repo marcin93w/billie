@@ -86,3 +86,15 @@ test('should return fallback message when there is no amount', async t => {
     t.true(messengerMock.lastMessage.text.indexOf(
         "I can't understand what you're saying, please try again.") !== -1);
 });
+
+test('should add new debt when asked', async t => {
+    debtManagerMock.debts = [];
+
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    let debt = debtManagerMock.debts[0];
+    
+    t.true(debt.owner === senderPsid);
+    t.true(debt.debtor === message.nlp.entities.contact[0]);
+    t.true(debt.amount === message.nlp.entities.amount_of_money[0]);
+});
