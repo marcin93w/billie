@@ -2,25 +2,43 @@ const
     test = require('ava'),
     DebtAssistant = require('../src/debt-assistant');
 
-test('sampleTest', async t => {
-    let messengerCalled = false,
-        userApiCalled = false;
-    const messengerMock = { 
-        send: (senderPsid, message) => {
-            messengerCalled = true;
-            return Promise.resolve();
-        }
-    };
-    const graphUserMock = { 
-        fetchName: (senderPsid) => {
-            userApiCalled = true;
-            return Promise.resolve('test');
-        }
-    };
-    const debtAssistant = new DebtAssistant(messengerMock, graphUserMock);
+const messengerMock = { 
+    lastMessage: '',
+    lastReceiver: '',
+    send: (receiverPsid, message) => {
+        messengerMock.lastReceiver = receiverPsid;
+        messengerMock.lastMessage = message;
+        return Promise.resolve();
+    }
+};
 
-    await debtAssistant.handleMessage('asd', {"nlp": {"entities":null}, "text": "asd"});
+const graphUserApiMock = { 
+    nameToReturn: 'testName',
+    fetchName: (senderPsid) => {
+        return Promise.resolve(graphUserApiMock.nameToReturn);
+    }
+};
 
-	t.true(messengerCalled);
-	t.true(userApiCalled);
+const debtManagerMock = {
+    debts: [],
+    addDebt: (owner, debtor, amount) => {
+        debts.push({owner, debtor, amount});
+    }
+}
+
+const senderPsid = 'asd'
+
+let message = {
+    'nlp': {
+        'entities':null
+    }, 
+    'text': "asd"
+}
+
+test('should return message with correct name', async t => {
+    const debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
+
+    await debtAssistant.handleMessage(senderPsid, message);
+
+	t.true(messengerMock.lastMessage.text.indexOf(graphUserApiMock.nameToReturn) !== -1);
 });

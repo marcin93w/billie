@@ -1,37 +1,48 @@
 class DebtAssistant {
     
-    constructor(messenger, graphApiUser) {
+    constructor(messenger, graphApiUser, debtManager) {
         this.messenger = messenger;
         this.graphApiUser = graphApiUser;
+        this.debtManager = debtManager;
     }
 
     handleMessage(senderPsid, receivedMessage) {
         this.graphApiUser.fetchName(senderPsid)
             .then(name => {
-                let response = null;
-                const entities = receivedMessage.nlp.entities;
-                if (entities && 
-                        entities.contact && entities.owes && entities.amount_of_money &&
-                        entities.contact[0] && entities.amount_of_money[0]) {
-                    
-                    const who = entities.contact[0].value,
-                        what = entities.owes ? 'owes' : 'unknown',
-                        howMuch = entities.amount_of_money[0].value;
-        
-                    response = {
-                        "text": `Hi ${name}, I saved that ${who} now owns you ${howMuch} now.`
-                    }
-                } else if (receivedMessage.text) {
-                    response = {
-                        "text": `Hello ${name}, You sent the message: "${receivedMessage.text}".`
-                    }
-                }
-                
-                return this.messenger.send(senderPsid, response);
+                this.processMessage(senderPsid, name, receivedMessage);
             })
             .catch(error => {
                 console.log(error);
             });
+    }
+
+    processMessage(senderPsid, snederName, receivedMessage) {
+        const messenger = this.messenger;
+        
+        const entities = receivedMessage.nlp.entities;
+        if (!entities) {
+            return sendFallbackMessage();
+        }
+
+        const person = entities.contact && entities.contact[0];
+        const amount = entities.amount_of_money && entities.amount_of_money[0];
+        if (!person || !amount) {
+            return sendFallbackMessage();
+        }
+        
+        if(entities.owes) {
+            debtManager.addDebt(senderPsid, person, amount);
+            return this.messenger.send(senderPsid,{
+                "text": `Hi ${name}, I saved that ${who} owes you ${howMuch} now.`
+            });
+        }
+        
+        return sendFallbackMessage();
+
+        function sendFallbackMessage() {
+            return messenger.send(senderPsid, { 
+                'text': `Hello ${snederName}, I can't understand what you're saying, please try again.`});
+        }
     }
 }
 
