@@ -22,23 +22,67 @@ const graphUserApiMock = {
 const debtManagerMock = {
     debts: [],
     addDebt: (owner, debtor, amount) => {
-        debts.push({owner, debtor, amount});
+        debtManagerMock.debts.push({owner, debtor, amount});
     }
 }
 
 const senderPsid = 'asd'
 
-let message = {
-    'nlp': {
-        'entities':null
-    }, 
-    'text': "asd"
-}
+var message;
+var debtAssistant;
+
+test.beforeEach(t => {
+	message = {
+        nlp: {
+            entities: {
+                owes: 'owes',
+                contact: ['testContact'],
+                amount_of_money: [45]
+            }
+        }, 
+        text: "asd"
+    }
+    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
+});
 
 test('should return message with correct name', async t => {
-    const debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
-
     await debtAssistant.handleMessage(senderPsid, message);
 
 	t.true(messengerMock.lastMessage.text.indexOf(graphUserApiMock.nameToReturn) !== -1);
+});
+
+test('should return fallback message when entities are null', async t => {
+    message.nlp.entities = null;
+
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    t.true(messengerMock.lastMessage.text.indexOf(
+        "I can't understand what you're saying, please try again.") !== -1);
+});
+
+test('should return fallback message when there is no intent', async t => {
+    message.nlp.entities.owes = false;
+    
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    t.true(messengerMock.lastMessage.text.indexOf(
+        "I can't understand what you're saying, please try again.") !== -1);
+});
+
+test('should return fallback message when there is no contact', async t => {
+    message.nlp.entities.contact = false;
+    
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    t.true(messengerMock.lastMessage.text.indexOf(
+        "I can't understand what you're saying, please try again.") !== -1);
+});
+
+test('should return fallback message when there is no amount', async t => {
+    message.nlp.entities.amount_of_money = false;
+    
+    await debtAssistant.handleMessage(senderPsid, message);
+
+    t.true(messengerMock.lastMessage.text.indexOf(
+        "I can't understand what you're saying, please try again.") !== -1);
 });

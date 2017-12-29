@@ -16,7 +16,7 @@ class DebtAssistant {
             });
     }
 
-    processMessage(senderPsid, snederName, receivedMessage) {
+    processMessage(senderPsid, senderName, receivedMessage) {
         const messenger = this.messenger;
         
         const entities = receivedMessage.nlp.entities;
@@ -31,9 +31,9 @@ class DebtAssistant {
         }
         
         if(entities.owes) {
-            debtManager.addDebt(senderPsid, person, amount);
+            this.debtManager.addDebt(senderPsid, person, amount);
             return this.messenger.send(senderPsid,{
-                "text": `Hi ${name}, I saved that ${who} owes you ${howMuch} now.`
+                "text": `Hi ${senderName}, I saved that ${person} owes you ${amount} now.`
             });
         }
         
@@ -41,7 +41,7 @@ class DebtAssistant {
 
         function sendFallbackMessage() {
             return messenger.send(senderPsid, { 
-                'text': `Hello ${snederName}, I can't understand what you're saying, please try again.`});
+                'text': `Hello ${senderName}, I can't understand what you're saying, please try again.`});
         }
     }
 }
