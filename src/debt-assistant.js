@@ -9,7 +9,6 @@ class DebtAssistant {
     handleMessage(senderPsid, receivedMessage) {
         this.graphApiUser.fetchName(senderPsid)
             .then(name => {
-                console.log(name);
                 this.processMessage(senderPsid, name, receivedMessage);
             })
             .catch(error => {
