@@ -25,11 +25,27 @@ class DebtAssistant {
         }
 
         const person = entities.contact && entities.contact[0].value;
-        const amount = entities.amount_of_money && entities.amount_of_money[0].value;
-        if (!person || !amount) {
+        if (!person) {
             return sendFallbackMessage();
         }
-        
+
+        if (entities.show) {
+            const balance = this.debtManager.getBalance(senderPsid, person);
+            var text = `You don't have any debts with ${person}.`;
+            if (balance > 0) {
+                text = `${person} owes you ${balance}.`;
+            } else if (balance < 0) {
+                text = `You owe ${(-balance)} to ${person}.`
+            }
+
+            return this.messenger.send(senderPsid, { text });
+        }
+
+        const amount = entities.amount_of_money && entities.amount_of_money[0].value;
+        if(!amount) {
+            return sendFallbackMessage();
+        }
+
         if (entities.owes) {
             this.debtManager.addDebt(senderPsid, person, amount);
             return this.messenger.send(senderPsid, {

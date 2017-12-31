@@ -2,12 +2,10 @@ const
     test = require('ava'),
     DebtAssistant = require('../src/debt-assistant');
 
-const messengerMock = { 
-    lastMessage: '',
-    lastReceiver: '',
-    send: (receiverPsid, message) => {
-        messengerMock.lastReceiver = receiverPsid;
-        messengerMock.lastMessage = message;
+class MessengerMock {
+    send(receiverPsid, message) {
+        this.lastReceiver = receiverPsid;
+        this.lastMessage = message;
         return Promise.resolve();
     }
 };
@@ -19,10 +17,16 @@ const graphUserApiMock = {
     }
 };
 
-var debtManagerMock = {
-    debts: [],
-    addDebt: (owner, debtor, amount) => {
-        debtManagerMock.debts.push({owner, debtor, amount});
+class DebtManagerMock {
+    constructor(balanceToReturn) {
+        this.debts = [];
+        this.balanceToReturn = balanceToReturn;
+    }
+    addDebt (owner, debtor, amount) {
+        this.debts.push({owner, debtor, amount});
+    };
+    getBalance (personId, contact) {
+        return this.balanceToReturn;
     }
 }
 
@@ -32,9 +36,10 @@ const testAmount = 45;
 
 var message;
 var debtAssistant;
+var debtManagerMock = new DebtManagerMock(5);
+var messengerMock = new MessengerMock();;
 
 test.beforeEach(t => {
-    debtManagerMock.debts = [];
 	message = {
         nlp: {
             entities: {
@@ -130,4 +135,34 @@ test('should return proper message when adding "I owe" debt', async t => {
     
     t.true(messengerMock.lastMessage.text.indexOf(
         `I saved that you owe ${testAmount} to ${testContactName}.`) !== -1);
+});
+
+test('should show positive debt status', async t => {
+    message.nlp.entities.show = 'show';
+    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, new DebtManagerMock(5));
+
+    await debtAssistant.handleMessage(senderPsid, message);
+    
+    t.true(messengerMock.lastMessage.text.indexOf(
+        `${testContactName} owes you 5.`) !== -1);
+});
+
+test('should show negative debt status', async t => {
+    message.nlp.entities.show = 'show';
+    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, new DebtManagerMock(-3));
+
+    await debtAssistant.handleMessage(senderPsid, message);
+    
+    t.true(messengerMock.lastMessage.text.indexOf(
+        `You owe 3 to ${testContactName}.`) !== -1);
+});
+
+test('should show empty debt status', async t => {
+    message.nlp.entities.show = 'show';
+    debtManagerMock.balanceToReturn = 0;
+
+    await debtAssistant.handleMessage(senderPsid, message);
+    
+    t.true(messengerMock.lastMessage.text.indexOf(
+        `You don't have any debts with ${testContactName}.`) !== -1);
 });
