@@ -19,7 +19,7 @@ const graphUserApiMock = {
     }
 };
 
-const debtManagerMock = {
+var debtManagerMock = {
     debts: [],
     addDebt: (owner, debtor, amount) => {
         debtManagerMock.debts.push({owner, debtor, amount});
@@ -34,6 +34,7 @@ var message;
 var debtAssistant;
 
 test.beforeEach(t => {
+    debtManagerMock.debts = [];
 	message = {
         nlp: {
             entities: {
@@ -43,7 +44,7 @@ test.beforeEach(t => {
             }
         }, 
         text: "asd"
-    }
+    };
     debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
 });
 
@@ -89,23 +90,44 @@ test('should return fallback message when there is no amount', async t => {
         "I can't understand what you're saying, please try again.") !== -1);
 });
 
-test('should add new debt when asked', async t => {
-    debtManagerMock.debts = [];
-
+test('should add new "owes" debt when asked', async t => {
     await debtAssistant.handleMessage(senderPsid, message);
 
-    let debt = debtManagerMock.debts[0];
+    let debt = debtManagerMock.debts.pop();
     
+    t.true(debtManagerMock.debts.length === 1);
     t.true(debt.owner === senderPsid);
     t.true(debt.debtor === testContactName);
     t.true(debt.amount === testAmount);
 });
 
-test('should return proper message when adding debt', async t => {
+test('should add new "i owe" debt when asked', async t => {
+    message.nlp.entities.owes = false;
+    message.nlp.entities.owe = 'owe';
+
     await debtAssistant.handleMessage(senderPsid, message);
 
-    let debt = debtManagerMock.debts[0];
+    let debt = debtManagerMock.debts.pop();
+    
+    t.true(debtManagerMock.debts.length === 1);
+    t.true(debt.owner === testContactName);
+    t.true(debt.debtor === senderPsid);
+    t.true(debt.amount === testAmount);
+});
+
+test('should return proper message when adding "owes" debt', async t => {
+    await debtAssistant.handleMessage(senderPsid, message);
     
     t.true(messengerMock.lastMessage.text.indexOf(
         `I saved that ${testContactName} owes you ${testAmount} now.`) !== -1);
+});
+
+test('should return proper message when adding "I owe" debt', async t => {
+    message.nlp.entities.owes = false;
+    message.nlp.entities.owe = 'owe';
+
+    await debtAssistant.handleMessage(senderPsid, message);
+    
+    t.true(messengerMock.lastMessage.text.indexOf(
+        `I saved that you owe ${testAmount} to ${testContactName}.`) !== -1);
 });

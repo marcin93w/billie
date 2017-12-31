@@ -30,10 +30,15 @@ class DebtAssistant {
             return sendFallbackMessage();
         }
         
-        if(entities.owes) {
+        if (entities.owes) {
             this.debtManager.addDebt(senderPsid, person, amount);
-            return this.messenger.send(senderPsid,{
+            return this.messenger.send(senderPsid, {
                 "text": `Hi ${senderName}, I saved that ${person} owes you ${amount} now.`
+            });
+        } else if (entities.owe) {
+            this.debtManager.addDebt(person, senderPsid, amount);
+            return this.messenger.send(senderPsid, {
+                "text": `Hi ${senderName}, I saved that you owe ${amount} to ${person}.`
             });
         }
         
