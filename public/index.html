@@ -31,9 +31,13 @@
                                     "url": "https://bot.peters-hats.com/view_quiz_results.php?user=24601"
                                 },
                                 "buttons":[{
-                                    "type": "web_url",
-                                    "url": "<URL_TO_OPEN_IN_WEBVIEW>",
-                                    "title": "Akceptuj"
+                                    "type": "postback",
+                                    "title": "Zapisz dług",
+                                    "payload": "accept"
+                                }, {
+                                    "type": "postback",
+                                    "title": "Anuluj",
+                                    "payload": "cancel"
                                 }]
                             }]
                         }
