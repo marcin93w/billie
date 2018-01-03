@@ -16,6 +16,7 @@
 
             };
             function share() {
+                try {
                 let message = {
                     "attachment":{
                         "type":"template",
@@ -48,10 +49,13 @@
                     }, 
                     function(errorCode, errorMessage) {      
                     // An error occurred in the process
-
+                    alert(JSON.stringify(errorMessage));
                     },
                     message,
                     "current_thread");
+                } catch(err) {
+                    alert(JSON.stringify(err));
+                }
             }
         </script>
         <input type="text" id="amount" />
