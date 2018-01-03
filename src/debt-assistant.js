@@ -24,12 +24,13 @@ class DebtAssistant {
             return sendFallbackMessage();
         }
 
+        const intent = entities.Intent && entities.Intent[0].value;
         const person = entities.contact && entities.contact[0].value;
-        if (!person) {
+        if (!intent || !person) {
             return sendFallbackMessage();
         }
 
-        if (entities.show) {
+        if (intent === 'show') {
             const balance = this.debtManager.getBalance(senderPsid, person);
             var text = `You don't have any debts with ${person}.`;
             if (balance > 0) {
@@ -41,17 +42,17 @@ class DebtAssistant {
             return this.messenger.send(senderPsid, { text });
         }
 
-        const amount = entities.amount_of_money && entities.amount_of_money[0].value;
-        if(!amount) {
+        const amount = entities.number && entities.number[0].value;
+        if (!amount) {
             return sendFallbackMessage();
         }
 
-        if (entities.owes) {
+        if (intent === 'lent') {
             this.debtManager.addDebt(senderPsid, person, amount);
             return this.messenger.send(senderPsid, {
                 "text": `Hi ${senderName}, I saved that ${person} owes you ${amount} now.`
             });
-        } else if (entities.owe) {
+        } else if (intent === 'borrowed') {
             this.debtManager.addDebt(person, senderPsid, amount);
             return this.messenger.send(senderPsid, {
                 "text": `Hi ${senderName}, I saved that you owe ${amount} to ${person}.`
