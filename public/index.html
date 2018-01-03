@@ -20,24 +20,21 @@
                     "attachment":{
                         "type":"template",
                         "payload":{
-                        "template_type":"generic",
-                        "elements": [{
-                            "title":"Wisisz Marcinowi " + document.getElementById('amount').value + " zł",
-                            "subtitle": "za piwo",
-                            "default_action":{
-                                "type":"web_url",
-                                "url": "https://bot.peters-hats.com/view_quiz_results.php?user=24601"
-                            },
-                            "buttons":[{
-                                "type":"web_url",
-                                "url":"https://bot.peters-hats.com/hatquiz.php?referer=24601",
-                                "title":"Zapisz dług"
-                            }, {
-                                "type":"web_url",
-                                "url":"https://bot.peters-hats.com/hatquiz.php?referer=24601",
-                                "title":"Anuluj"
+                            "template_type":"generic",
+                            "elements": [{
+                                "title":"Wisisz Marcinowi " + document.getElementById('amount').value + " zł",
+                                "subtitle": "za piwo",
+                                "image_url": "https://bot.peters-hats.com/img/hats/fez.jpg",
+                                "default_action":{
+                                    "type":"web_url",
+                                    "url": "https://bot.peters-hats.com/view_quiz_results.php?user=24601"
+                                },
+                                "buttons":[{
+                                    "type":"web_url",
+                                    "url":"https://bot.peters-hats.com/hatquiz.php?referer=24601",
+                                    "title":"Zapisz dług"
+                                }]
                             }]
-                        }]
                         }
                     }
                     };
