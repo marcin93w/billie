@@ -20,21 +20,26 @@
                     "attachment":{
                         "type":"template",
                         "payload":{
-                            "template_type":"button",
-                            "text":`Pożyczyłeś od Marcina ${document.getElementById('amount').value} zł`,
-                            "buttons":[
-                              {
-                                "type":"web_url",
-                                "url":"https://www.messenger.com",
-                                "title":"Save debt"
-                              },
-                              {
-                                "type":"web_url",
-                                "url":"https://www.messenger.com",
-                                "title":"Cancel"
-                              }
-                            ]
-                          }
+                            "template_type":"generic",
+                            "elements": [{
+                                "title":"Wisisz Marcinowi " + document.getElementById('amount').value + " zł",
+                                "subtitle": "za piwo",
+                                "image_url": "https://bot.peters-hats.com/img/hats/fez.jpg",
+                                "default_action":{
+                                    "type":"web_url",
+                                    "url": "https://bot.peters-hats.com/view_quiz_results.php?user=24601"
+                                },
+                                "buttons":[{
+                                    "type": "postback",
+                                    "title": "Zapisz dług",
+                                    "payload": "accept"
+                                }, {
+                                    "type": "postback",
+                                    "title": "Anuluj",
+                                    "payload": "cancel"
+                                }]
+                            }]
+                        }
                     }
                     };
 
