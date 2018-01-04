@@ -16,26 +16,34 @@
 
             };
             function share() {
-                try {
                 let message = {
                     "attachment":{
                         "type":"template",
                         "payload":{
-                            "template_type":"button",
-                            "text":`Pożyczyłeś od Marcina ${document.getElementById('amount').value} zł`,
-                            "buttons":[
-                              {
-                                "type":"web_url",
-                                "url":"https://www.messenger.com",
-                                "title":"Save debt"
-                              },
-                              {
-                                "type":"web_url",
-                                "url":"https://www.messenger.com",
-                                "title":"Cancel"
-                              }
-                            ]
-                          }
+                            "template_type":"generic",
+                            "elements": [{
+                                "title":"Wisisz Marcinowi " + document.getElementById('amount').value + " zł",
+                                "subtitle": "za piwo",
+                                "image_url": "https://bot.peters-hats.com/img/hats/fez.jpg",
+                                "default_action":{
+                                    "type":"web_url",
+                                    "url": "https://bot.peters-hats.com/view_quiz_results.php?user=24601"
+                                },
+                                "buttons":[{
+                                    "type": "web_url",
+                                    "url": "https://bot.peters-hats.com/view_quiz_results.php",
+                                    "title": "Akceptuj",
+                                    "messenger_extensions": true,
+                                    "webview_height_ratio": 'compact',
+                                }, {
+                                    "type": "web_url",
+                                    "url": "https://bot.peters-hats.com/view_quiz_results.php",
+                                    "title": "Odrzuć",
+                                    "messenger_extensions": true,
+                                    "webview_height_ratio": 'compact',
+                                }]
+                            }]
+                        }
                     }
                     };
 
@@ -48,13 +56,10 @@
                     }, 
                     function(errorCode, errorMessage) {      
                     // An error occurred in the process
-                    alert(JSON.stringify(errorMessage));
+
                     },
                     message,
                     "current_thread");
-                } catch(err) {
-                    alert(JSON.stringify(err));
-                }
             }
         </script>
         <input type="text" id="amount" />
