@@ -19,7 +19,7 @@ export default {
                 getConversationInfo()
                     .then(info => addDebt(info.psid, info.tid, 0, this.amount))
                     .then(debt => sendDebtInvite(debt.userName, debt.debtId, this.amount))
-                    .then(_ => returnToConversation())
+                    .then(isSent => isSent ? returnToConversation() : null)
                     .catch(alert)
             }
         }

@@ -26,12 +26,11 @@ export function sendDebtInvite (userName, debtId, amount) {
         }
     }
 
-    window.MessengerExtensions.beginShareFlow(function (shareResponse) {
-        if (shareResponse.is_sent) {
-            // The user actually did share.
-            // Perhaps close the window w/ requestCloseBrowser().
-        }
-    }, function (errorCode, errorMessage) {
-        alert(errorMessage)
-    }, message, 'current_thread')
+    return new Promise((resolve, reject) => {
+        window.MessengerExtensions.beginShareFlow(function (shareResponse) {
+            resolve(shareResponse.is_sent)
+        }, function (errorCode, errorMessage) {
+            reject(errorMessage)
+        }, message, 'current_thread')
+    })
 }
