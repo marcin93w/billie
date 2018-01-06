@@ -1,9 +1,20 @@
+const debtTypes = require('./debt-types.js');
+
 var debts = [];
 
 module.exports = {
-    addDebt: (owner, debtor, amount) => {
-        console.log(`Debt from ${owner} to ${debtor} of amount ${amount} added`);
-        debts.push({owner, debtor, amount});
+    addDebt: (userId, threadId, debtType, amount) => {
+        const id = debts.length;
+        debts.push({id, user1: userId, threadId, debtType, amount});
+        return id;
+    },
+    acceptDebt: (id, userId) => {
+        const debt = debts.find(d => d.id === id);
+        if(!debt) {
+            throw new Error(`Debt with id ${id} does not exist`);
+        }
+
+        debt.user2 = userId;
     },
     getBalance(personId, contact) {
         const lentMoney = debts

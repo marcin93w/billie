@@ -14,7 +14,7 @@ module.exports = {
             .then(function(body) {
                 //TODO body.id could be also usefull
                 const bodyObj = JSON.parse(body);
-                return bodyObj.first_name;
+                return { id: bodyObj.id, name: bodyObj.first_name };
             });
     }
 };
