@@ -6,7 +6,7 @@
   "scripts": {
     "test": "ava",
     "start": "node src/app.js",
-    "postinstall": "(cd frontend && npm install --production)"
+    "postinstall": "(cd frontend && npm install)"
   },
   "author": "",
   "license": "ISC",
