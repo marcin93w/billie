@@ -10,3 +10,7 @@ export function getConversationInfo () {
         })
     })
 }
+
+export function returnToConversation () {
+    window.MessengerExtensions.requestCloseBrowser()
+}
