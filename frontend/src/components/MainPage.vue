@@ -6,13 +6,13 @@
 import AddDebt from './AddDebt.vue'
 
 export default {
-  name: 'MainPage',
-  components: {
-    'add-debt': AddDebt
-  },
-  data () {
-    return {
+    name: 'MainPage',
+    components: {
+        'add-debt': AddDebt
+    },
+    data () {
+        return {
+        }
     }
-  }
 }
 </script>

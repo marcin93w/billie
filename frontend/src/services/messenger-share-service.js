@@ -1,22 +1,22 @@
 import config from '../config.js'
 
-export function sendDebtInvite (amount) {
+export function sendDebtInvite (userName, debtId, amount) {
     let message = {
         'attachment': {
             'type': 'template',
             'payload': {
                 'template_type': 'generic',
                 'elements': [{
-                    'title': `Wisisz Marcinowi ${amount} zł`,
+                    'title': `Wisisz ${userName} ${amount} zł`,
                     'subtitle': 'za piwo',
                     'image_url': `${config.homeUrl}assets/logo.png`,
                     'default_action': {
                         'type': 'web_url',
-                        'url': config.homeUrl
+                        'url': `${config.homeUrl}acceptDebt/${debtId}`
                     },
                     'buttons': [{
                         'type': 'web_url',
-                        'url': config.homeUrl,
+                        'url': `${config.homeUrl}acceptDebt/${debtId}`,
                         'title': 'Akceptuj',
                         'messenger_extensions': true,
                         'webview_height_ratio': 'compact'

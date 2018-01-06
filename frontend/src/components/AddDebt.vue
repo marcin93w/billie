@@ -7,6 +7,8 @@
 
 <script>
 import { sendDebtInvite } from '../services/messenger-share-service'
+import { addDebt } from '../services/debts-api-service'
+import { getConversationInfo } from '../services/conversation-info-service'
 
 export default {
     name: 'AddDebt',
@@ -14,7 +16,10 @@ export default {
         return {
             amount: 10,
             add: () => {
-                sendDebtInvite(this.amount)
+                getConversationInfo()
+                    .then(info => addDebt(info.psid, info.tid, 0, this.amount))
+                    .then(debt => sendDebtInvite(debt.userName, debt.id, this.amount))
+                    .catch(alert)
             }
         }
     }
