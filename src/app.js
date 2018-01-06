@@ -7,7 +7,7 @@ const
   webhook = require('./webhook.js');
 
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
-app.use(express.static('public'));
+app.use(express.static('frontend/dist'));
 app.use('/webhook', webhook);
 
 module.exports = app;
