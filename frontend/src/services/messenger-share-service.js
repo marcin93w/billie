@@ -12,11 +12,11 @@ export function sendDebtInvite (userName, debtId, amount) {
                     'image_url': `${config.homeUrl}assets/logo.png`,
                     'default_action': {
                         'type': 'web_url',
-                        'url': `${config.homeUrl}acceptDebt/${debtId}`
+                        'url': `${config.homeUrl}#/acceptDebt/${debtId}`
                     },
                     'buttons': [{
                         'type': 'web_url',
-                        'url': `${config.homeUrl}acceptDebt/${debtId}`,
+                        'url': `${config.homeUrl}#/acceptDebt/${debtId}`,
                         'title': 'Akceptuj',
                         'messenger_extensions': true,
                         'webview_height_ratio': 'compact'
