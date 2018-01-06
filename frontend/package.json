@@ -11,7 +11,6 @@
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit/specs",
     "build": "node build/build.js",
-    "postinstall": "npm run build"
   },
   "dependencies": {
     "vue": "^2.5.2",
