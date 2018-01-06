@@ -1,5 +1,5 @@
 {
-  "name": "messenger-debt-bot",
+  "name": "messenger-debt-bot-frontend",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "marcin93w <marcin93w@gmail.com>",
@@ -10,7 +10,8 @@
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "vue": "^2.5.2",

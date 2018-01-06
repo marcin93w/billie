@@ -6,8 +6,7 @@
   "scripts": {
     "test": "ava",
     "start": "node src/app.js",
-    "build": "node frontend/build/build.js",
-    "postinstall": "npm run build"
+    "postinstall": "(cd frontend && npm install --production)"
   },
   "author": "",
   "license": "ISC",
