@@ -28,6 +28,9 @@ router.route('/accept/:id').post((req, res) => {
     usersManager.getUserData(body.psid)
         .then(user => {
             const debt = debtManager.acceptDebt(req.params.id, user.id);
+            if  (!debt) {
+                throw new Error('Debt not accepted')
+            }
             res.status(200).send({
                 debt,
                 userName: user.name
