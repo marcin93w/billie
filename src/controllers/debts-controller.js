@@ -27,8 +27,9 @@ router.route('/accept/:id').post((req, res) => {
 
     usersManager.getUserData(body.psid)
         .then(user => {
-            debtManager.acceptDebt(req.params.id, user.id);
+            const debt = debtManager.acceptDebt(req.params.id, user.id);
             res.status(200).send({
+                debt,
                 userName: user.name
             });
         })

@@ -16,13 +16,13 @@ class DebtManager {
             throw new Error(`Debt with id ${id} does not exist`);
         }
 
-        if (debt.user1 === userId) {
-            return;
+        if (debt.user1 !== userId) {
+            if(!this.debtRepository.update(id, { user2: userId })) {
+                throw new Error(`Debt with id ${id} not accepted`);
+            }
         }
 
-        if(!this.debtRepository.update(id, { user2: userId })) {
-            throw new Error(`Debt with id ${id} not accepted`);
-        }
+        return debt;
     }
 
     // getBalance(personId, contact) {
