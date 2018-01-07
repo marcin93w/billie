@@ -7,14 +7,18 @@ module.exports = {
                 url: "https://graph.facebook.com/v2.6/" + senderPsid,
                 qs: {
                     access_token: PAGE_ACCESS_TOKEN,
-                    fields: "first_name,last_name"
+                    fields: "first_name,last_name,gender"
                 },
                 method: "GET"
             })
             .then(function(body) {
-                //TODO body.id could be also usefull
                 const bodyObj = JSON.parse(body);
-                return { id: bodyObj.id, name: bodyObj.first_name };
+                return { 
+                    id: bodyObj.id, 
+                    name: bodyObj.first_name,
+                    fullName: `${bodyObj.first_name} ${bodyObj.last_name}`,
+                    gender: bodyObj.gender 
+                };
             });
     }
 };

@@ -13,6 +13,7 @@ router.route('/add').post((req, res) => {
             res.status(200).send({
                 debtId: debtId,
                 userName: user.name,
+                userGender: user.gender
             });
         })
         .catch(error => res.status(500).send(error));
