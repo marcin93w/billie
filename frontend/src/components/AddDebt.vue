@@ -28,7 +28,7 @@ import { getConversationInfo, returnToConversation } from '../services/conversat
 import debtTypes from '../utils/debt-types'
 
 function getDebtType (isPayoff, isBorrowed) {
-    if (isPayoff) { 
+    if (isPayoff) {
         if (isBorrowed) {
             return debtTypes.BORROWED_PAYOFF
         } else {

@@ -13,7 +13,7 @@ export default {
     name: 'AddDebt',
     data () {
         return {
-            message: 'Accepting debt...',
+            message: 'Ładowanie...',
             close: () => {
                 returnToConversation()
             }
@@ -22,7 +22,13 @@ export default {
     created () {
         getConversationInfo()
             .then(info => acceptDebt(info.psid, this.$route.params.id))
-            .then(_ => { this.message = 'Debt has been accepted' })
+            .then(data => {
+                if (data.debt.user2) {
+                    this.message = 'Dług został zapisany'
+                } else {
+                    this.message = 'Dług nie został jeszcze zaakceptoawny'
+                }
+            })
             .catch(alert)
     }
 }
