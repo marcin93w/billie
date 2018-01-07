@@ -1,8 +1,11 @@
 const 
     express = require('express'),
     router = express.Router(),
-    debtManager = require('../debt-manager/debt-manager.js'),
+    DebtManager = require('../debt-manager/debt-manager.js'),
+    debtsRepository = require('../repository/debts-repository.js'),
     usersManager = require('../debt-manager/users-manager.js');
+
+const debtManager = new DebtManager(debtsRepository);
 
 router.route('/add').post((req, res) => {  
     const body = req.body;

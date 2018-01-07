@@ -1,6 +1,6 @@
 const 
     test = require('ava'),
-    DebtAssistant = require('../src/debt-assistant');
+    DebtAssistant = require('../src/debt-manager/debt-assistant');
 
 class MessengerMock {
     send(receiverPsid, message) {
