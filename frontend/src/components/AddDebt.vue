@@ -7,10 +7,10 @@
         <div>
             <input type="radio" value="0" name="isBorrowed" v-model="isBorrowedRadioValue" />
             <span v-if="isPayoff()"> Ktoś mi oddaje</span> 
-            <span v-else> Pożyczam od kogoś</span> 
+            <span v-else> Pożyczam komuś</span> 
             <input type="radio" value="1" name="isBorrowed" v-model="isBorrowedRadioValue" />
             <span v-if="isPayoff()"> Oddaję komuś</span> 
-            <span v-else> Pożyczam komuś</span>
+            <span v-else> Pożyczam od kogoś</span>
         </div>
         <div>
             <input type="number" id="amount" v-model="amount" />
