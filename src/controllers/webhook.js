@@ -1,11 +1,11 @@
 const 
     express = require('express'),
     router = express.Router(),
-    DebtAssistant = require('./debt-assistant.js'),
-    messenger = require('./graph-api/messenger.js'),
-    graphApiUser = require('./graph-api/user.js');
-    debtManager = require('./debt-manager.js');
-    facebookWebhookValidator = require('./facebook-webhook-validator.js');
+    DebtAssistant = require('../debt-manager/debt-assistant.js'),
+    messenger = require('../graph-api/messenger.js'),
+    graphApiUser = require('../graph-api/user.js');
+    debtManager = require('../debt-manager/debt-manager.js');
+    facebookWebhookValidator = require('../utils/facebook-webhook-validator.js');
 
 const debtAssistant = new DebtAssistant(messenger, graphApiUser, debtManager);
 

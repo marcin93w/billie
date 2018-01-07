@@ -1,4 +1,4 @@
-const userGraphApi = require('./graph-api/user.js');
+const userGraphApi = require('../graph-api/user.js');
 
 var users = [];
 
