@@ -54,7 +54,7 @@ export default {
             isPayoff: () => this.isPayoffRadioValue !== '0',
             isBorrowed: () => this.isBorrowedRadioValue !== '0',
             add: () => {
-                const debtType = getDebtType(this.isPayoff, this.isBorrowed)
+                const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
                 getConversationInfo()
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
                     .then(debt => sendDebtInvite(debt.userName, debt.debtId, debtType, this.amount))
