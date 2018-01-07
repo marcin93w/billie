@@ -57,7 +57,7 @@ export default {
                 const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
                 getConversationInfo()
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
-                    .then(debt => sendDebtInvite(debt.userName, debt.debtId, debtType, this.amount))
+                    .then(debt => sendDebtInvite(debt.userName, debt.userGender, debt.debtId, debtType, this.amount))
                     .then(isSent => isSent ? returnToConversation() : null)
                     .catch(alert)
             }
