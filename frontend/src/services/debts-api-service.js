@@ -9,7 +9,7 @@ export function addDebt (psid, threadId, debtType, amount) {
         },
         body: JSON.stringify({ psid, threadId, debtType, amount })
     })
-    .then(res => res.json())
+    .then(handleResponse)
 }
 
 export function acceptDebt (psid, debtId) {
@@ -21,5 +21,12 @@ export function acceptDebt (psid, debtId) {
         },
         body: JSON.stringify({ psid })
     })
-    .then(res => res.json())
+    .then(handleResponse)
+}
+
+function handleResponse (res) {
+    if (res.status !== 200) {
+        return Promise.reject(new Error('HTTP error'))
+    }
+    return res.json()
 }
