@@ -11,7 +11,7 @@ router.route('/add').post((req, res) => {
     const body = req.body;
 
     if(!validateAddRequest(body)) {
-        res.status(400).send();
+        res.status(400).send({error: "validation error"});
         return;
     }
 
@@ -24,7 +24,7 @@ router.route('/add').post((req, res) => {
                 userGender: user.gender
             });
         })
-        .catch(error => res.status(500).send(error));
+        .catch(err => sendErrorMessage(res, err));
 });
 
 function validateAddRequest(body) {
@@ -35,7 +35,7 @@ router.route('/accept/:id').post((req, res) => {
     const body = req.body;
 
     if(!validateAcceptRequest(body)) {
-        res.status(400).send();
+        res.status(400).send({error: "validation error"});
         return;
     }
 
@@ -50,11 +50,17 @@ router.route('/accept/:id').post((req, res) => {
                 userName: user.name
             });
         })
-        .catch(error => res.status(500).send(error));
+        .catch(err => sendErrorMessage(res, err));
 });
 
 function validateAcceptRequest(body) {
     return body.psid;
 } 
+
+function sendErrorMessage(res, error) {
+    res.status(500).send({
+        error: error.message || error
+    })
+}
 
 module.exports = router;
