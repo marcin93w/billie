@@ -7,7 +7,8 @@
 
 <script>
 import { acceptDebt } from '../services/debts-api-service'
-import { getConversationInfo, returnToConversation } from '../services/conversation-api-service'
+import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
+import config from '../config'
 
 export default {
     name: 'AddDebt',
@@ -15,12 +16,12 @@ export default {
         return {
             message: 'Ładowanie...',
             close: () => {
-                returnToConversation()
+                requestCloseBrowser()
             }
         }
     },
     created () {
-        getConversationInfo()
+        getContext(config.fbAppId)
             .then(info => acceptDebt(info.psid, this.$route.params.id))
             .then(data => {
                 if (data.debt.user2) {

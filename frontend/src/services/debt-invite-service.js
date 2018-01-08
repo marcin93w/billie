@@ -1,5 +1,6 @@
 import config from '../config.js'
 import debtTypes from '../utils/debt-types'
+import { beginShareFlow } from '../messenger-extensions/messenger-extensions.js'
 
 function isPayoff (debtType) {
     return debtType === debtTypes.BORROWED_PAYOFF || debtType === debtTypes.LENT_PAYOFF
@@ -50,11 +51,6 @@ export function sendDebtInvite (userName, userGender, debtId, debtType, amount) 
         }
     }
 
-    return new Promise((resolve, reject) => {
-        window.MessengerExtensions.beginShareFlow(function (shareResponse) {
-            resolve(shareResponse.is_sent)
-        }, function (errorCode, errorMessage) {
-            reject(errorMessage)
-        }, message, 'current_thread')
-    })
+    return beginShareFlow(message, 'current_thread')
+        .then(resp => resp.is_sent)
 }

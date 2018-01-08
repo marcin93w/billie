@@ -22,10 +22,11 @@
 </template>
 
 <script>
-import { sendDebtInvite } from '../services/messenger-share-service'
+import { sendDebtInvite } from '../services/debt-invite-service'
 import { addDebt } from '../services/debts-api-service'
-import { getConversationInfo, returnToConversation } from '../services/conversation-api-service'
+import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
+import config from '../config'
 
 function getDebtType (isPayoff, isBorrowed) {
     if (isPayoff) {
@@ -55,10 +56,10 @@ export default {
             isBorrowed: () => this.isBorrowedRadioValue !== '0',
             add: () => {
                 const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
-                getConversationInfo()
+                getContext(config.fbAppId)
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
                     .then(debt => sendDebtInvite(debt.userName, debt.userGender, debt.debtId, debtType, this.amount))
-                    .then(isSent => isSent ? returnToConversation() : null)
+                    .then(isSent => isSent ? requestCloseBrowser() : null)
                     .catch(alert)
             }
         }
