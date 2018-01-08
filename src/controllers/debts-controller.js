@@ -57,6 +57,21 @@ function validateAcceptRequest(body) {
     return body.psid;
 } 
 
+router.route('/status/:psid').get((req, res) => {
+    usersManager.getUserData(req.params.psid)
+        .then(user => {
+            const balance = debtManager.getDebtStatus(user.id);
+            res.status(200).send({
+                balance
+            });
+        })
+        .catch(err => sendErrorMessage(res, err));
+});
+
+function validateAcceptRequest(body) {
+    return body.psid;
+} 
+
 function sendErrorMessage(res, error) {
     res.status(500).send({
         error: error.message || error
