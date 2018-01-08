@@ -17,7 +17,7 @@ router.route('/add').post((req, res) => {
 
     usersManager.getUserData(body.psid)
         .then(user => {
-            const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, body.amount);
+            const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount));
             res.status(200).send({
                 debtId: debtId,
                 userName: user.name,
@@ -28,7 +28,7 @@ router.route('/add').post((req, res) => {
 });
 
 function validateAddRequest(body) {
-    return body.psid && body.threadId && body.amount;
+    return body.psid && body.threadId && body.amount && parseFloat(body.amount) !== NaN;
 } 
 
 router.route('/accept/:id').post((req, res) => {  
