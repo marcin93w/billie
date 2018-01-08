@@ -16,5 +16,8 @@ module.exports = {
         } else {
             return false;
         }
-    }
+    },
+     getAll () {
+         return debts
+     }
 };

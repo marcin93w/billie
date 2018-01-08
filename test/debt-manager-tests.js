@@ -1,19 +1,10 @@
 const 
     test = require('ava'),
+    debtTypes = require('../src/debt-manager/debt-types'),
     DebtManager = require('../src/debt-manager/debt-manager');
 
 const senderPsid = 'asd'
 const testContactName = 'testContact';
-
-// test('should calculate debt balance correctly', async t => {
-//     await debtManager.addDebt(senderPsid, testContactName, 4);
-//     await debtManager.addDebt(senderPsid, testContactName, 6);
-//     await debtManager.addDebt(senderPsid, 'asd', 6);
-//     await debtManager.addDebt(testContactName, senderPsid, 7);
-//     await debtManager.addDebt('gfdgvd', senderPsid, 5);
-
-// 	t.true(debtManager.getBalance(senderPsid, testContactName) === 3);
-// });
 
 class RepositoryMock {
     constructor() {
@@ -22,14 +13,18 @@ class RepositoryMock {
     }
     add(debt) {
         this.debts.push(debt)
-        return 0
+        return this.debts.length - 1
     }
     update(id, params) {
         this.updates[id] = params
+        Object.assign(this.debts[id], params)
         return true
     }
     get (id) {
         return this.debts[id]
+    }
+    getAll() {
+        return this.debts
     }
 }
 
@@ -50,3 +45,21 @@ test('should not accept debt when sending same userid', t => {
 
     t.true(repositoryMock.updates.length === 0)
 });
+
+test('should calculate debt status correctly', t => {
+    const repositoryMock = new RepositoryMock()
+    const debtManager = new DebtManager(repositoryMock)
+
+    let id = debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
+    debtManager.acceptDebt(id, senderPsid)
+    id = debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED_PAYOFF, 3)
+    debtManager.acceptDebt(id, '5')
+
+    const status = debtManager.getDebtStatus(senderPsid)
+
+    t.true(status['2'] === 3)
+})

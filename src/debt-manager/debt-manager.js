@@ -1,5 +1,5 @@
 const debtTypes = require('./debt-types.js'),
-    debtRepository = require('../repository/debts-repository.js');
+    _ = require('underscore');
 
 class DebtManager {
     constructor(debtRepository) {
@@ -25,18 +25,34 @@ class DebtManager {
         return debt;
     }
 
-    // getBalance(personId, contact) {
-    //     const lentMoney = debts
-    //         .filter(d => d.owner === personId && d.debtor === contact)
-    //         .map(debt => debt.amount)
-    //         .reduce((sum, cur) => sum += cur);
-    //     const borrowedMoney = debts
-    //         .filter(d => d.owner === contact && d.debtor === personId)
-    //         .map(debt => debt.amount)
-    //         .reduce((sum, cur) => sum += cur);
+    getDebtStatus (user) {
+        function toRelativeAmount(debtType, amount) {
+            if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
+                return amount
+            } else {
+                return -amount
+            }
+        }
 
-    //     return lentMoney - borrowedMoney;
-    // }
+        const debts = this.debtRepository.getAll()
+        const debtsCreatedByUser = debts
+            .filter(d => d.user1 === user)
+            .map(d => ({
+                user: d.user2,
+                amount: toRelativeAmount(d.debtType, d.amount)
+            }))
+        const debtsCreatedForUser = debts
+            .filter(d => d.user2 === user)
+            .map(d => ({
+                user: d.user1,
+                amount: -toRelativeAmount(d.debtType, d.amount)
+            }))
+
+        const userDebts = debtsCreatedByUser.concat(debtsCreatedForUser)
+
+        return _.mapObject(_.groupBy(userDebts, 'user'),
+            debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
+    }
 };
 
 module.exports = DebtManager;
