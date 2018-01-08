@@ -7,7 +7,20 @@ const
   webhook = require('./controllers/webhook.js'),
   debtsController = require('./controllers/debts-controller.js');
 
+function allowCrossDomain(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+
+if(process.env.NODE_ENV === 'development') {
+    app.use(allowCrossDomain);
+}
+
 app.use(express.static('frontend/dist'));
 app.use('/webhook', webhook);
 app.use('/debts', debtsController);
