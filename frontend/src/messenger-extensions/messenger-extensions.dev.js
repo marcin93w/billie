@@ -28,3 +28,15 @@ export function getContext (fbAppId) {
 export function requestCloseBrowser () {
     alert('Close webview requested')
 }
+
+export function askPermission (permissionName) {
+    return Promise.resolve()
+}
+
+export function getGrantedPermissions () {
+    return Promise.resolve({
+        permissions: [
+            'user_profile',
+            'user_messaging']
+    })
+}

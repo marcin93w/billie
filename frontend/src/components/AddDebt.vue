@@ -24,6 +24,7 @@
 <script>
 import { sendDebtInvite } from '../services/debt-invite-service'
 import { addDebt } from '../services/debts-api-service'
+import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
 import config from '../config'
@@ -56,7 +57,8 @@ export default {
             isBorrowed: () => this.isBorrowedRadioValue !== '0',
             add: () => {
                 const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
-                getContext(config.fbAppId)
+                ensurePermissions()
+                    .then(_ => getContext(config.fbAppId))
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
                     .then(debt => sendDebtInvite(debt.userName, debt.userGender, debt.debtId, debtType, this.amount))
                     .then(isSent => isSent ? requestCloseBrowser() : null)

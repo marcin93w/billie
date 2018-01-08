@@ -8,6 +8,7 @@
 <script>
 import { acceptDebt } from '../services/debts-api-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
+import { ensurePermissions } from '../services/fb-permission-service'
 import config from '../config'
 
 export default {
@@ -21,7 +22,8 @@ export default {
         }
     },
     created () {
-        getContext(config.fbAppId)
+        ensurePermissions()
+            .then(_ => getContext(config.fbAppId))
             .then(info => acceptDebt(info.psid, this.$route.params.id))
             .then(data => {
                 if (data.debt.user2) {
