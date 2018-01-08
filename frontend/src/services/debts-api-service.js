@@ -26,7 +26,7 @@ export function acceptDebt (psid, debtId) {
 
 function handleResponse (res) {
     if (res.status !== 200) {
-        return Promise.reject(new Error('HTTP error'))
+        return Promise.reject(new Error(`HTTP error ${res.status}`))
     }
     return res.json()
 }
