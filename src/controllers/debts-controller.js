@@ -62,7 +62,8 @@ router.route('/status/:psid').get((req, res) => {
         .then(user => {
             const balance = debtManager.getDebtStatus(user.id);
             res.status(200).send({
-                balance
+                balance,
+                userName: user.name
             });
         })
         .catch(err => sendErrorMessage(res, err));
