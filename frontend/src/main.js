@@ -4,7 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
+let isStarted = true;
 
 (function (d, s, id) {
     var js
@@ -15,12 +16,23 @@ Vue.config.productionTip = false;
     fjs.parentNode.insertBefore(js, fjs)
 }(document, 'script', 'Messenger'))
 
+if (process.env.NODE_ENV === 'development') {
+    isStarted = true
+    bootStrapApp()
+}
+
 window.extAsyncInit = function () {
     /* eslint-disable no-new */
+    if (!isStarted) {
+        bootStrapApp()
+    }
+}
+
+function bootStrapApp () {
     new Vue({
         el: '#app',
         router,
         template: '<App/>',
         components: { App }
     })
-}
+};
