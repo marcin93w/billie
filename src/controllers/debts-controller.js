@@ -10,6 +10,11 @@ const debtManager = new DebtManager(debtsRepository);
 router.route('/add').post((req, res) => {  
     const body = req.body;
 
+    if(!validateAddRequest(body)) {
+        res.status(400).send();
+        return;
+    }
+
     usersManager.getUserData(body.psid)
         .then(user => {
             const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, body.amount);
@@ -22,8 +27,17 @@ router.route('/add').post((req, res) => {
         .catch(error => res.status(500).send(error));
 });
 
+function validateAddRequest(body) {
+    return body.psid && body.threadId && body.amount;
+} 
+
 router.route('/accept/:id').post((req, res) => {  
     const body = req.body;
+
+    if(!validateAcceptRequest(body)) {
+        res.status(400).send();
+        return;
+    }
 
     usersManager.getUserData(body.psid)
         .then(user => {
@@ -38,5 +52,9 @@ router.route('/accept/:id').post((req, res) => {
         })
         .catch(error => res.status(500).send(error));
 });
+
+function validateAcceptRequest(body) {
+    return body.psid;
+} 
 
 module.exports = router;
