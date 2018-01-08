@@ -1,5 +1,7 @@
+import config from '../config'
+
 export function addDebt (psid, threadId, debtType, amount) {
-    return fetch('/debts/add', {
+    return fetch(config.apiUrl + '/debts/add', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -11,7 +13,7 @@ export function addDebt (psid, threadId, debtType, amount) {
 }
 
 export function acceptDebt (psid, debtId) {
-    return fetch(`/debts/accept/${debtId}`, {
+    return fetch(`${config.apiUrl}/debts/accept/${debtId}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
