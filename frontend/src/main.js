@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false
-let isStarted = true;
+let isStarted = false;
 
 (function (d, s, id) {
     var js
