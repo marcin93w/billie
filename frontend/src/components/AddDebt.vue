@@ -1,16 +1,18 @@
 <template>
   <div class="adding-panel">
         <div>
-            <input type="radio" value="0" name="isPayoff" v-model="isPayoffRadioValue" /> Pożyczka
-            <input type="radio" value="1" name="isPayoff" v-model="isPayoffRadioValue" /> Spłata
+            <button class="button" v-bind:class="[isPayoffButtonValue ? buttonOutline: '' ]" v-on:click="isPayoffButtonValue = false" value=false name="isPayoff" > Pożyczka </button>
+            <button class="button" v-bind:class="[!isPayoffButtonValue ? buttonOutline: '' ]" v-on:click="isPayoffButtonValue = true" value=true name="isPayoff" > Spłata </button>
         </div>
         <div>
-            <input type="radio" value="0" name="isBorrowed" v-model="isBorrowedRadioValue" />
-            <span v-if="isPayoff()"> Ktoś mi oddaje</span> 
-            <span v-else> Pożyczam komuś</span> 
-            <input type="radio" value="1" name="isBorrowed" v-model="isBorrowedRadioValue" />
-            <span v-if="isPayoff()"> Oddaję komuś</span> 
-            <span v-else> Pożyczam od kogoś</span>
+            <button class="button"  v-bind:class="[isBorrowedButtonValue ? buttonOutline: '' ]" v-on:click="isBorrowedButtonValue = false"  value=false name="isBorrowed">
+                <span v-if="isPayoffButtonValue">Ktoś mi oddaje</span>
+                <span v-else>Pożyczam Komuś</span>
+            </button>
+            <button class="button"  v-bind:class="[!isBorrowedButtonValue ? buttonOutline: '' ]" v-on:click="isBorrowedButtonValue = true" value=true name="isBorrowed">
+                <span v-if="isPayoffButtonValue">Oddaję komuś</span>
+                <span v-else>Pożyczam od kogoś</span>
+            </button>
         </div>
         <div>
             <input type="number" id="amount" v-model="amount" />
@@ -51,10 +53,11 @@ export default {
         return {
             amount: 10,
             debtTypes,
-            isPayoffRadioValue: '0',
-            isBorrowedRadioValue: '0',
-            isPayoff: () => this.isPayoffRadioValue !== '0',
-            isBorrowed: () => this.isBorrowedRadioValue !== '0',
+            isPayoffButtonValue: false,
+            isBorrowedButtonValue: false,
+            buttonOutline: 'button-outline',
+            isPayoff: () => this.isPayoffButtonValue !== false,
+            isBorrowed: () => this.isBorrowedButtonValue !== false,
             add: () => {
                 const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
                 ensurePermissions()
@@ -73,4 +76,5 @@ export default {
 .adding-panel div {
     margin: 20px 10px;
 }
+
 </style>
