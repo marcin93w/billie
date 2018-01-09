@@ -1,16 +1,16 @@
 <template>
   <div class="adding-panel">
         <div>
-            <button class="button" v-bind:class="[isPayoffButtonValue ? buttonOutline: '' ]" v-on:click="isPayoffButtonValue = false" value=false name="isPayoff" > Pożyczka </button>
-            <button class="button" v-bind:class="[!isPayoffButtonValue ? buttonOutline: '' ]" v-on:click="isPayoffButtonValue = true" value=true name="isPayoff" > Spłata </button>
+            <button class="button" v-bind:class="[isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
+            <button class="button" v-bind:class="[!isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
         </div>
         <div>
-            <button class="button"  v-bind:class="[isBorrowedButtonValue ? buttonOutline: '' ]" v-on:click="isBorrowedButtonValue = false"  value=false name="isBorrowed">
-                <span v-if="isPayoffButtonValue">Ktoś mi oddaje</span>
+            <button class="button"  v-bind:class="[isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = false"  value=false name="isBorrowed">
+                <span v-if="isPayoff">Ktoś mi oddaje</span>
                 <span v-else>Pożyczam Komuś</span>
             </button>
-            <button class="button"  v-bind:class="[!isBorrowedButtonValue ? buttonOutline: '' ]" v-on:click="isBorrowedButtonValue = true" value=true name="isBorrowed">
-                <span v-if="isPayoffButtonValue">Oddaję komuś</span>
+            <button class="button"  v-bind:class="[!isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = true" value=true name="isBorrowed">
+                <span v-if="isPayoff">Oddaję komuś</span>
                 <span v-else>Pożyczam od kogoś</span>
             </button>
         </div>
@@ -53,13 +53,11 @@ export default {
         return {
             amount: 10,
             debtTypes,
-            isPayoffButtonValue: false,
-            isBorrowedButtonValue: false,
+            isPayoff: false,
+            isBorrowed: false,
             buttonOutline: 'button-outline',
-            isPayoff: () => this.isPayoffButtonValue !== false,
-            isBorrowed: () => this.isBorrowedButtonValue !== false,
             add: () => {
-                const debtType = getDebtType(this.isPayoff(), this.isBorrowed())
+                const debtType = getDebtType(this.isPayoff, this.isBorrowed)
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
