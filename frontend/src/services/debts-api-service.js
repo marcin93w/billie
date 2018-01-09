@@ -24,6 +24,16 @@ export function acceptDebt (psid, debtId) {
     .then(handleResponse)
 }
 
+export function getBalance (psid) {
+    return fetch(`${config.apiUrl}/debts/status/${psid}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json, text/plain, */*'
+        }
+    })
+    .then(handleResponse)
+}
+
 function handleResponse (res) {
     return new Promise((resolve, reject) => {
         if (res.status !== 200) {
