@@ -64,9 +64,9 @@ function validateAcceptRequest(body) {
 router.route('/status/:psid').get((req, res) => {
     usersManager.getRequestingUser(req.params.psid)
         .then(user => {
-            const balance = debtManager.getDebtStatus(user.id);
+            const status = usersManager.setNamesInDebtStatus(debtManager.getDebtStatus(user.id));
             res.status(200).send({
-                balance,
+                status,
                 userName: user.name
             });
         })

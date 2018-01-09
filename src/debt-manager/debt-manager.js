@@ -1,5 +1,5 @@
 const debtTypes = require('./debt-types.js'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 class DebtManager {
     constructor(debtRepository) {
@@ -50,7 +50,7 @@ class DebtManager {
 
         const userDebts = debtsCreatedByUser.concat(debtsCreatedForUser)
 
-        return _.mapObject(_.groupBy(userDebts, 'user'),
+        return _.mapValues(_.groupBy(userDebts, 'user'),
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
     }
 };

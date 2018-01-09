@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 class UsersManager {
     constructor(userGraphApi, usersRepository, threadRepository) {
         this.userGraphApi = userGraphApi;
@@ -23,6 +25,17 @@ class UsersManager {
                 })
                 return userData
             });
+    }
+
+    setNamesInDebtStatus(status) {
+        return _.mapKeys(status, (value, userId) => {
+            const user = this.usersRepository.getById(userId)
+            if (user) {
+                return user.name
+            } else {
+                return 'unaccepted'
+            }
+        })
     }
 };
 
