@@ -3,9 +3,13 @@ const
     router = express.Router(),
     DebtManager = require('../debt-manager/debt-manager.js'),
     debtsRepository = require('../repository/debts-repository.js'),
-    usersManager = require('../debt-manager/users-manager.js');
+    UsersManager = require('../debt-manager/users-manager.js'),
+    usersRepository = require('../repository/users-repository.js'),
+    threadsRepository = require('../repository/threads-repository.js'),
+    usersGraphApi = require('../graph-api/user.js');
 
 const debtManager = new DebtManager(debtsRepository);
+const usersManager = new UsersManager(usersGraphApi, usersRepository, threadsRepository);
 
 router.route('/add').post((req, res) => {  
     const body = req.body;
@@ -15,7 +19,7 @@ router.route('/add').post((req, res) => {
         return;
     }
 
-    usersManager.getUserData(body.psid)
+    usersManager.getRequestingUser(body.psid)
         .then(user => {
             const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount));
             res.status(200).send({
@@ -39,7 +43,7 @@ router.route('/accept/:id').post((req, res) => {
         return;
     }
 
-    usersManager.getUserData(body.psid)
+    usersManager.getRequestingUser(body.psid)
         .then(user => {
             const debt = debtManager.acceptDebt(req.params.id, user.id);
             if  (!debt) {
@@ -58,7 +62,7 @@ function validateAcceptRequest(body) {
 } 
 
 router.route('/status/:psid').get((req, res) => {
-    usersManager.getUserData(req.params.psid)
+    usersManager.getRequestingUser(req.params.psid)
         .then(user => {
             const balance = debtManager.getDebtStatus(user.id);
             res.status(200).send({
@@ -74,6 +78,7 @@ function validateAcceptRequest(body) {
 } 
 
 function sendErrorMessage(res, error) {
+    console.error(error)
     res.status(500).send({
         error: error.message || error
     })

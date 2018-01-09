@@ -1,5 +1,5 @@
 module.exports = {
-    fetchName: (senderPsid) => {
+    fetchUserData: (senderPsid) => {
         return Promise.resolve({
             id: senderPsid, 
             name: 'test user',
