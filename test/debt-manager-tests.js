@@ -81,3 +81,21 @@ test('should calculate debt total balance correctly', t => {
 
     t.true(totalBalance === 6)
 })
+
+test('should calculate thread debt balance correctly', t => {
+    const repositoryMock = new RepositoryMock()
+    const debtManager = new DebtManager(repositoryMock)
+
+    let id = debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
+    debtManager.acceptDebt(id, senderPsid)
+    id = debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt (senderPsid, 2, debtTypes.BORROWED, 3)
+    debtManager.acceptDebt(id, '5')
+
+    const threadBalance = debtManager.getThreadBalance(senderPsid, 1)
+
+    t.true(threadBalance === 3)
+})

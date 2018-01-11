@@ -40,7 +40,7 @@ const threadsRepositoryMock = {
         userThreads.push(userThread)
     },
     getUserThreadsByThreadId(id) {
-        return userThreads.where(ut => ut.threadId === id)
+        return userThreads.filter(ut => ut.threadId === id)
     }
 }
 
@@ -120,3 +120,16 @@ test('should set user names in status correctly', async t => {
         'unaccepted': 1
     })
 });
+
+test('should get existing user by thread id', async t => {
+    let usersRepositoryMock = new UsersRepositoryMock()
+    let graphUsersApiMock = new GraphUsersApiMock()
+    let usersManager = new UsersManager(graphUsersApiMock, usersRepositoryMock, threadsRepositoryMock)
+
+    const requester = await usersManager.getRequestingUser('1', '2')
+    await usersManager.getRequestingUser('2', '2')
+
+    const threadUser = usersManager.getUserForThreadId(requester.id, '2')
+
+    t.is('2', threadUser.psid)
+})

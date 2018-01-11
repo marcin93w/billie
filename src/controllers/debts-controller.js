@@ -73,10 +73,6 @@ router.route('/status/:psid').get((req, res) => {
         .catch(err => sendErrorMessage(res, err));
 });
 
-function validateAcceptRequest(body) {
-    return body.psid;
-} 
-
 function sendErrorMessage(res, error) {
     console.error(error)
     res.status(500).send({
