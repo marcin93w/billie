@@ -23,9 +23,7 @@ router.route('/add').post((req, res) => {
         .then(user => {
             const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount));
             res.status(200).send({
-                debtId: debtId,
-                userName: user.name,
-                userGender: user.gender
+                debtId
             });
         })
         .catch(err => sendErrorMessage(res, err));
@@ -50,8 +48,7 @@ router.route('/accept/:id').post((req, res) => {
                 throw new Error('Debt not accepted')
             }
             res.status(200).send({
-                debt,
-                userName: user.name
+                debt
             });
         })
         .catch(err => sendErrorMessage(res, err));
@@ -61,15 +58,17 @@ function validateAcceptRequest(body) {
     return body.psid;
 } 
 
-router.route('/threadStatus/:psid/:threadId').get((req, res) => {
-    usersManager.getRequestingUser(req.params.psid)
+router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
+    usersManager.getRequestingUser(req.params.psid, req.params.threadId, req.params.threadType)
         .then(user => {
             const contact = usersManager.getUserForThreadId(user.id, req.params.threadId);
             const balance = debtManager.getThreadBalance(user.id, req.params.threadId);
             res.status(200).send({
                 userName: user.name,
+                userGender: user.gender,
                 isContactAccepted: !!contact,
                 contactName: contact ? contact.name : '',
+                contactGender: contact ? contact.gender : '',
                 balance
             });
         })
@@ -81,8 +80,7 @@ router.route('/status/:psid').get((req, res) => {
         .then(user => {
             const status = usersManager.setNamesInDebtStatus(debtManager.getDebtStatus(user.id));
             res.status(200).send({
-                status,
-                userName: user.name
+                status
             });
         })
         .catch(err => sendErrorMessage(res, err));
