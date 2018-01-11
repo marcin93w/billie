@@ -24,7 +24,7 @@ export function acceptDebt (psid, debtId) {
     .then(handleResponse)
 }
 
-export function getBalance (psid) {
+export function getStatus (psid) {
     return fetch(`${config.apiUrl}/debts/status/${psid}`, {
         method: 'GET',
         headers: {

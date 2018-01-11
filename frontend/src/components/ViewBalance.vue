@@ -11,7 +11,7 @@
 
 <script>
 
-import { getBalance } from '../services/debts-api-service'
+import { getStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -27,7 +27,7 @@ export default {
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getBalance(info.psid))
+            .then(info => getStatus(info.psid))
             .then(data => {
                 this.debtUserName = data.userName
                 this.balance = data.balance['undefined']
