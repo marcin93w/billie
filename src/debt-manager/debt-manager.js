@@ -25,30 +25,28 @@ class DebtManager {
         return debt;
     }
 
-    getDebtStatus (userId) {
-        function toRelativeAmount(debtType, amount) {
-            if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
-                return amount
-            } else {
-                return -amount
-            }
-        }
-
+    getUserDebts (userId) {
         const debts = this.debtRepository.getAll()
         const debtsCreatedByUser = debts
             .filter(d => d.user1 === userId)
             .map(d => ({
                 user: d.user2,
+                threadId: d.threadId,
                 amount: toRelativeAmount(d.debtType, d.amount)
             }))
         const debtsCreatedForUser = debts
             .filter(d => d.user2 === userId)
             .map(d => ({
                 user: d.user1,
+                threadId: d.threadId,
                 amount: -toRelativeAmount(d.debtType, d.amount)
             }))
 
-        const userDebts = debtsCreatedByUser.concat(debtsCreatedForUser)
+        return debtsCreatedByUser.concat(debtsCreatedForUser)
+    }
+
+    getDebtStatus (userId) {
+        const userDebts = this.getUserDebts(userId)
 
         return _.mapValues(_.groupBy(userDebts, 'user'),
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
@@ -58,6 +56,23 @@ class DebtManager {
         return Object.values(this.getDebtStatus(userId))
             .reduce((sum, cur) => sum += cur, 0)
     }
-};
+
+    getThreadBalance(userId, threadId) {
+        const userDebts = this.getUserDebts(userId)
+        const threadDebts = userDebts.filter(d => d.threadId === threadId)
+
+        return threadDebts
+            .map(d => d.amount)
+            .reduce((sum, cur) => sum += cur, 0)
+    }
+}; 
+
+function toRelativeAmount(debtType, amount) {
+    if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
+        return amount
+    } else {
+        return -amount
+    }
+}
 
 module.exports = DebtManager;

@@ -44,6 +44,17 @@ class UsersManager {
             }
         })
     }
+
+    getUserForThreadId(requesterId, threadId) {
+        const threadUser = this.threadsRepository.getUserThreadsByThreadId(threadId)
+            .find(t => t.userId !== requesterId && t.isGroup === false)
+
+        if(!threadUser) {
+            return null
+        }
+
+        return this.usersRepository.getById(threadUser.userId)
+    }
 };
 
 module.exports = UsersManager

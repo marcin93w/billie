@@ -9,6 +9,6 @@ module.exports = {
         }
     },
     getUserThreadsByThreadId(id) {
-        return userThreads.where(ut => ut.threadId === id)
+        return userThreads.filter(ut => ut.threadId === id)
     }
 }
