@@ -61,7 +61,7 @@ test('should calculate debt status correctly', t => {
 
     const status = debtManager.getDebtStatus(senderPsid)
 
-    t.true(status['2'] === 3)
+    t.is(status.find(s => s.name === '2').amount, 3)
 })
 
 test('should calculate debt total balance correctly', t => {

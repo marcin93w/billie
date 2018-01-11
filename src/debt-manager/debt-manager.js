@@ -48,12 +48,23 @@ class DebtManager {
     getDebtStatus (userId) {
         const userDebts = this.getUserDebts(userId)
 
-        return _.mapValues(_.groupBy(userDebts, 'user'),
+        _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
+            return key + value;
+          });
+        _.groupBy(userDebts, 'user')
+
+        const status = _.mapValues(_.groupBy(userDebts, 'user'),
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
+
+        return Object.keys(status).map(key => ({
+            name: key,
+            amount: status[key]
+        }))
     }
 
     getDebtTotalBalance(userId) {
-        return Object.values(this.getDebtStatus(userId))
+        return this.getDebtStatus(userId)
+            .map(s => s.amount)
             .reduce((sum, cur) => sum += cur, 0)
     }
 
