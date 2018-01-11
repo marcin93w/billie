@@ -63,3 +63,21 @@ test('should calculate debt status correctly', t => {
 
     t.true(status['2'] === 3)
 })
+
+test('should calculate debt total balance correctly', t => {
+    const repositoryMock = new RepositoryMock()
+    const debtManager = new DebtManager(repositoryMock)
+
+    let id = debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
+    debtManager.acceptDebt(id, senderPsid)
+    id = debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
+    debtManager.acceptDebt(id, '2')
+    id = debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 3)
+    debtManager.acceptDebt(id, '5')
+
+    const totalBalance = debtManager.getDebtTotalBalance(senderPsid)
+
+    t.true(totalBalance === 6)
+})

@@ -53,6 +53,11 @@ class DebtManager {
         return _.mapValues(_.groupBy(userDebts, 'user'),
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
     }
+
+    getDebtTotalBalance(user) {
+        return Object.values(this.getDebtStatus(user))
+            .reduce((sum, cur) => sum += cur)
+    }
 };
 
 module.exports = DebtManager;

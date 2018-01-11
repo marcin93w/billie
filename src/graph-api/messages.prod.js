@@ -2,15 +2,7 @@ const request = require('request-promise');
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 module.exports = {
-    send(receiverPsid, message) {
-        
-        const requestBody = {
-            "recipient": {
-                "id": receiverPsid
-            },
-            "message": message
-        };
-        
+    sendPost(requestBody) {
         return request({
             "uri": "https://graph.facebook.com/v2.6/me/messages",
             "qs": { "access_token": PAGE_ACCESS_TOKEN },

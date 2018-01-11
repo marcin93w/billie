@@ -2,7 +2,7 @@ const
     express = require('express'),
     router = express.Router(),
     DebtAssistant = require('../debt-manager/debt-assistant.js'),
-    messenger = require('../graph-api/messenger.js'),
+    messenger = require('../debt-manager/messenger.js'),
     graphApiUser = require('../graph-api/user.js');
     debtManager = require('../debt-manager/debt-manager.js');
     facebookWebhookValidator = require('../utils/facebook-webhook-validator.js');

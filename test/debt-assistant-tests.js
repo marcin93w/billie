@@ -3,9 +3,9 @@ const
     DebtAssistant = require('../src/debt-manager/debt-assistant');
 
 class MessengerMock {
-    send(receiverPsid, message) {
+    sendActionButtons(receiverPsid) {
         this.lastReceiver = receiverPsid;
-        this.lastMessage = message;
+        this.sendActionButtonsRequested = true;
         return Promise.resolve();
     }
 };
@@ -37,7 +37,7 @@ const testAmount = 45;
 var message;
 var debtAssistant;
 var debtManagerMock = new DebtManagerMock(5);
-var messengerMock = new MessengerMock();;
+var messengerMock = new MessengerMock();
 
 test.beforeEach(t => {
 	message = {
@@ -59,19 +59,12 @@ test.beforeEach(t => {
     debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
 });
 
-test('should return message with correct name', async t => {
-    await debtAssistant.handleMessage(senderPsid, message);
-
-	t.true(messengerMock.lastMessage.text.indexOf(graphUserApiMock.nameToReturn) !== -1);
-});
-
 test('should return fallback message when entities are null', async t => {
     message.nlp.entities = null;
 
     await debtAssistant.handleMessage(senderPsid, message);
 
-    t.true(messengerMock.lastMessage.text.indexOf(
-        "I can't understand what you're saying, please try again.") !== -1);
+    t.true(messengerMock.sendActionButtonsRequested);
 });
 
 test('should return fallback message when there is no intent', async t => {
@@ -79,8 +72,7 @@ test('should return fallback message when there is no intent', async t => {
     
     await debtAssistant.handleMessage(senderPsid, message);
 
-    t.true(messengerMock.lastMessage.text.indexOf(
-        "I can't understand what you're saying, please try again.") !== -1);
+    t.true(messengerMock.sendActionButtonsRequested);
 });
 
 test('should return fallback message when there is no contact', async t => {
@@ -88,8 +80,7 @@ test('should return fallback message when there is no contact', async t => {
     
     await debtAssistant.handleMessage(senderPsid, message);
 
-    t.true(messengerMock.lastMessage.text.indexOf(
-        "I can't understand what you're saying, please try again.") !== -1);
+    t.true(messengerMock.sendActionButtonsRequested);
 });
 
 test('should return fallback message when there is no amount', async t => {
@@ -97,76 +88,5 @@ test('should return fallback message when there is no amount', async t => {
     
     await debtAssistant.handleMessage(senderPsid, message);
 
-    t.true(messengerMock.lastMessage.text.indexOf(
-        "I can't understand what you're saying, please try again.") !== -1);
-});
-
-test('should add new lent debt when asked', async t => {
-    await debtAssistant.handleMessage(senderPsid, message);
-
-    let debt = debtManagerMock.debts.pop();
-    
-    t.true(debtManagerMock.debts.length === 1);
-    t.true(debt.owner === senderPsid);
-    t.true(debt.debtor === testContactName);
-    t.true(debt.amount === testAmount);
-});
-
-test('should add new borrowed debt when asked', async t => {
-    message.nlp.entities.Intent = [{value: "borrowed"}];
-
-    await debtAssistant.handleMessage(senderPsid, message);
-
-    let debt = debtManagerMock.debts.pop();
-    
-    t.true(debtManagerMock.debts.length === 1);
-    t.true(debt.owner === testContactName);
-    t.true(debt.debtor === senderPsid);
-    t.true(debt.amount === testAmount);
-});
-
-test('should return proper message when adding lent debt', async t => {
-    await debtAssistant.handleMessage(senderPsid, message);
-    
-    t.true(messengerMock.lastMessage.text.indexOf(
-        `I saved that ${testContactName} owes you ${testAmount} now.`) !== -1);
-});
-
-test('should return proper message when adding borrowed debt', async t => {
-    message.nlp.entities.Intent = [{value: "borrowed"}];
-
-    await debtAssistant.handleMessage(senderPsid, message);
-    
-    t.true(messengerMock.lastMessage.text.indexOf(
-        `I saved that you owe ${testAmount} to ${testContactName}.`) !== -1);
-});
-
-test('should show positive debt status', async t => {
-    message.nlp.entities.Intent = [{value: "show"}];
-    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, new DebtManagerMock(5));
-
-    await debtAssistant.handleMessage(senderPsid, message);
-    
-    t.true(messengerMock.lastMessage.text.indexOf(
-        `${testContactName} owes you 5.`) !== -1);
-});
-
-test('should show negative debt status', async t => {
-    message.nlp.entities.Intent = [{value: "show"}];
-    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, new DebtManagerMock(-3));
-
-    await debtAssistant.handleMessage(senderPsid, message);
-    
-    t.true(messengerMock.lastMessage.text.indexOf(
-        `You owe 3 to ${testContactName}.`) !== -1);
-});
-
-test('should show empty debt status', async t => {
-    message.nlp.entities.Intent = [{value: "show"}];
-    debtManagerMock.balanceToReturn = 0;
-
-    await debtAssistant.handleMessage(senderPsid, message);
-    
-    t.true(messengerMock.lastMessage.text.indexOf(
-        `You don't have any debts with ${testContactName}.`) !== -1);
+    t.true(messengerMock.sendActionButtonsRequested);
 });
