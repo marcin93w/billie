@@ -7,7 +7,7 @@ class DebtAssistant {
     }
 
     handleMessage(senderPsid, receivedMessage) {
-        this.processMessage(senderPsid, name, receivedMessage);
+        this.processMessage(senderPsid, receivedMessage);
     }
 
     processMessage(senderPsid, receivedMessage) {
