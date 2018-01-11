@@ -24,6 +24,16 @@ export function acceptDebt (psid, debtId) {
     .then(handleResponse)
 }
 
+export function getThreadStatus (psid, threadId, threadType) {
+    return fetch(`${config.apiUrl}/debts/threadStatus/${psid}/${threadId}/${threadType}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json, text/plain, */*'
+        }
+    })
+    .then(handleResponse)
+}
+
 export function getStatus (psid) {
     return fetch(`${config.apiUrl}/debts/status/${psid}`, {
         method: 'GET',

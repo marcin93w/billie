@@ -25,7 +25,7 @@
 
 <script>
 import { sendDebtInvite } from '../services/debt-invite-service'
-import { addDebt } from '../services/debts-api-service'
+import { addDebt, getThreadStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
@@ -56,6 +56,12 @@ export default {
             isPayoff: false,
             isBorrowed: false,
             buttonOutline: 'button-outline',
+            userName: '',
+            userGender: '',
+            contactName: '',
+            contactGender: '',
+            threadBalance: 0,
+            isContactAccepted: false,
             add: () => {
                 const debtType = getDebtType(this.isPayoff, this.isBorrowed)
                 ensurePermissions()
@@ -66,6 +72,15 @@ export default {
                     .catch(alert)
             }
         }
+    },
+    created () {
+        ensurePermissions()
+            .then(_ => getContext(config.fbAppId))
+            .then(info => getThreadStatus(info.psid, info.tid, info.thread_type))
+            .then(threadStatus => {
+                Object.assign(this, threadStatus)
+            })
+            .catch(alert)
     }
 }
 </script>
