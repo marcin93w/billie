@@ -25,7 +25,8 @@ module.exports = {
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
                             title: 'Pokaż moje długi',
-                            webview_height_ratio: 'tall'
+                            webview_height_ratio: 'tall',
+                            messenger_extensions: true
                         }]
                     }
                 }
@@ -47,7 +48,8 @@ module.exports = {
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
                             title: 'Pokaż moje długi',
-                            webview_height_ratio: 'tall'
+                            webview_height_ratio: 'tall',
+                            messenger_extensions: true
                         }]
                     }
                 }
