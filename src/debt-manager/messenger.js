@@ -7,7 +7,7 @@ module.exports = {
             recipient: {
                 id: receiverPsid
             },
-            message: `Hi ${name}, I am a bot`
+            message: `Cześć ${name}, jestem botem`
         })
     },
     sendActionButtons (receiverPsid) {
@@ -20,11 +20,12 @@ module.exports = {
                     type: 'template',
                     payload: {
                         template_type: 'button',
-                        text: 'What do you want to do?',
+                        text: 'Co chcesz zrobić?',
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
-                            title: 'Show debts status'
+                            title: 'Pokaż moje długi',
+                            webview_height_ratio: 'tall'
                         }]
                     }
                 }
@@ -41,11 +42,12 @@ module.exports = {
                     type: 'template',
                     payload: {
                         template_type: 'button',
-                        text: `Your total balance is ${totalBalance}`,
+                        text: `Twój całkowity status długów to: ${totalBalance}`,
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
-                            title: 'Show debts status'
+                            title: 'Pokaż moje długi',
+                            webview_height_ratio: 'tall'
                         }]
                     }
                 }

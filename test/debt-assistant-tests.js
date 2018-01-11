@@ -8,12 +8,18 @@ class MessengerMock {
         this.sendActionButtonsRequested = true;
         return Promise.resolve();
     }
+    sendStatusMessage(receiverPsid, balance) {
+
+    }
 };
 
-const graphUserApiMock = { 
+const userManagerMock = { 
     nameToReturn: 'testName',
-    fetchName: (senderPsid) => {
-        return Promise.resolve(graphUserApiMock.nameToReturn);
+    getRequestingUser: (psid, threadId, threadType) => {
+        return Promise.resolve({ 
+            id: 1,
+            name: userManagerMock.nameToReturn
+        });
     }
 };
 
@@ -56,7 +62,7 @@ test.beforeEach(t => {
           }, 
         text: "asd"
     };
-    debtAssistant = new DebtAssistant(messengerMock, graphUserApiMock, debtManagerMock);
+    debtAssistant = new DebtAssistant(messengerMock, userManagerMock, debtManagerMock);
 });
 
 test('should return fallback message when entities are null', async t => {

@@ -25,7 +25,7 @@ class DebtManager {
         return debt;
     }
 
-    getDebtStatus (user) {
+    getDebtStatus (userId) {
         function toRelativeAmount(debtType, amount) {
             if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
                 return amount
@@ -36,13 +36,13 @@ class DebtManager {
 
         const debts = this.debtRepository.getAll()
         const debtsCreatedByUser = debts
-            .filter(d => d.user1 === user)
+            .filter(d => d.user1 === userId)
             .map(d => ({
                 user: d.user2,
                 amount: toRelativeAmount(d.debtType, d.amount)
             }))
         const debtsCreatedForUser = debts
-            .filter(d => d.user2 === user)
+            .filter(d => d.user2 === userId)
             .map(d => ({
                 user: d.user1,
                 amount: -toRelativeAmount(d.debtType, d.amount)
@@ -54,9 +54,9 @@ class DebtManager {
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
     }
 
-    getDebtTotalBalance(user) {
-        return Object.values(this.getDebtStatus(user))
-            .reduce((sum, cur) => sum += cur)
+    getDebtTotalBalance(userId) {
+        return Object.values(this.getDebtStatus(userId))
+            .reduce((sum, cur) => sum += cur, 0)
     }
 };
 

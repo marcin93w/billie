@@ -8,8 +8,19 @@ class UsersManager {
     }
 
     getRequestingUser(psid, threadId, threadType) {
+        const saveThread = (userId, threadId, threadType) => {
+            if (threadId) {
+                this.threadsRepository.addUserThread({
+                    userId,
+                    threadId,
+                    isGroup: threadType === 'GROUP'
+                })
+            }
+        }
+
         var user = this.usersRepository.getByPsid(psid);
         if (user) {
+            saveThread(user.id, threadId, threadType)
             return Promise.resolve(user);
         }
 
@@ -18,11 +29,7 @@ class UsersManager {
                 userData.psid = psid
                 userData.fbId = userData.id
                 const id = this.usersRepository.add(userData)
-                this.threadsRepository.addUserThread({
-                    userId: id,
-                    threadId,
-                    isGroup: threadType === 'GROUP'
-                })
+                saveThread(id, threadId, threadType)
                 return userData
             });
     }

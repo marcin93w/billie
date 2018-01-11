@@ -2,12 +2,18 @@ const
     express = require('express'),
     router = express.Router(),
     DebtAssistant = require('../debt-manager/debt-assistant.js'),
+    DebtManager = require('../debt-manager/debt-manager.js'),
+    debtsRepository = require('../repository/debts-repository.js'),
+    UsersManager = require('../debt-manager/users-manager.js'),
+    usersRepository = require('../repository/users-repository.js'),
+    threadsRepository = require('../repository/threads-repository.js'),
+    usersGraphApi = require('../graph-api/user.js'),
     messenger = require('../debt-manager/messenger.js'),
-    graphApiUser = require('../graph-api/user.js');
-    debtManager = require('../debt-manager/debt-manager.js');
     facebookWebhookValidator = require('../utils/facebook-webhook-validator.js');
 
-const debtAssistant = new DebtAssistant(messenger, graphApiUser, debtManager);
+const debtManager = new DebtManager(debtsRepository);
+const usersManager = new UsersManager(usersGraphApi, usersRepository, threadsRepository);
+const debtAssistant = new DebtAssistant(messenger, usersManager, debtManager);
 
 router.route('/').get((req, res) => {
     const challenge = facebookWebhookValidator.validateRequestAndGetChallenge(req);
