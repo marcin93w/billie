@@ -49,10 +49,7 @@ export default {
             myDebtDetected: true,
             someonesDebtDetected: true,
             tableHeader: ['Name', 'Balance'],
-            status: [
-                    {name: 'Marcin', amount: -34},
-                    {name: 'Leszek', amount: 34},
-                    {name: 'Trututu', amount: -412}],
+            status: [],
             back: () => {
                 this.$router.push('/')
             }
@@ -63,8 +60,7 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
             .then(data => {
-                this.debtUserName = data.userName
-                this.balance = data.status
+                this.status = data.status
             })
             .catch(alert)
     }
