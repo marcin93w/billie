@@ -61,6 +61,21 @@ function validateAcceptRequest(body) {
     return body.psid;
 } 
 
+router.route('/threadStatus/:psid/:threadId').get((req, res) => {
+    usersManager.getRequestingUser(req.params.psid)
+        .then(user => {
+            const contact = usersManager.getUserForThreadId(user.id, req.params.threadId);
+            const balance = debtManager.getThreadBalance(user.id, req.params.threadId);
+            res.status(200).send({
+                userName: user.name,
+                isContactAccepted: !!contact,
+                contactName: contact ? contact.name : '',
+                balance
+            });
+        })
+        .catch(err => sendErrorMessage(res, err));
+});
+
 router.route('/status/:psid').get((req, res) => {
     usersManager.getRequestingUser(req.params.psid)
         .then(user => {
