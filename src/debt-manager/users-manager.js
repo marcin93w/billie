@@ -18,31 +18,32 @@ class UsersManager {
             }
         }
 
-        var user = this.usersRepository.getByPsid(psid);
-        if (user) {
-            saveThread(user.id, threadId, threadType)
-            return Promise.resolve(user);
-        }
+        return this.usersRepository.getByPsid(psid)
+            .then(user => {
+                if (user) {
+                    saveThread(user.id, threadId, threadType)
+                    return Promise.resolve(user);
+                }
+        
+                return this.userGraphApi.fetchUserData(psid)
+                    .then(userData => {
+                        userData.psid = psid
+                        userData.fbId = userData.id
+                        const id = this.usersRepository.add(userData)
+                        saveThread(id, threadId, threadType)
+                        return userData
+                    });
 
-        return this.userGraphApi.fetchUserData(psid)
-            .then(userData => {
-                userData.psid = psid
-                userData.fbId = userData.id
-                const id = this.usersRepository.add(userData)
-                saveThread(id, threadId, threadType)
-                return userData
-            });
+            })
     }
 
     setNamesInDebtStatus(status) {
-        return _.mapKeys(status, (value, userId) => {
-            const user = this.usersRepository.getById(userId)
-            if (user) {
-                return user.name
-            } else {
-                return 'unaccepted'
-            }
-        })
+        return Promise.all(status.map(entry => 
+            this.usersRepository.getById(entry.name).then(user => {
+                entry.name = user ? user.name : 'unaccepted';
+                return entry;
+            })
+        ))
     }
 
     getUserForThreadId(requesterId, threadId) {
@@ -50,7 +51,7 @@ class UsersManager {
             .find(t => t.userId !== requesterId && t.isGroup === false)
 
         if(!threadUser) {
-            return null
+            return Promise.resolve(null)
         }
 
         return this.usersRepository.getById(threadUser.userId)

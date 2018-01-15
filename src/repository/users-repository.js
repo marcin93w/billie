@@ -1,27 +1,21 @@
-var users = [];
+var db = require('./database');
+var uuid = require('uuid/v1');
 
 module.exports = {
     add (user) {
-        user.id = users.length
-        users.push(user)
+        user.id = uuid()
+        db.none('INSERT INTO public.users( \
+            id, psid, fbid, name, full_name, gender) \
+            VALUES (${id}, ${psid}, ${fbId}, ${name}, ${fullName}, ${gender});', user)
         return user.id
     },
     getById (id) {
-        return users[id]
+        return db.one('SELECT id, psid, fbid, name, full_name, gender FROM public.users WHERE id = $1', id);
     },
     getByPsid (psid) {
-        return users.find(u => u.psid == psid)
+        return db.oneOrNone('SELECT id, psid, fbid, name, full_name, gender FROM public.users WHERE psid = $1', psid);
     },
     getByFbId (fbid) {
-        return users.find(u.fbid == fbid)
-    },
-    updateByPsid (psid, props) {
-        const user = this.getByPsid(psid)
-        if (user) {
-            Object.assign(user, props);
-            return true;
-        } else {
-            return false;
-        }
+        return db.oneOrNone('SELECT id, psid, fbid, name, full_name, gender FROM public.users WHERE fbid = $1', fbid);
     }
 }

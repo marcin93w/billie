@@ -48,11 +48,6 @@ class DebtManager {
     getDebtStatus (userId) {
         const userDebts = this.getUserDebts(userId)
 
-        _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
-            return key + value;
-          });
-        _.groupBy(userDebts, 'user')
-
         const status = _.mapValues(_.groupBy(userDebts, 'user'),
             debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
 

@@ -12,22 +12,13 @@ class UsersRepositoryMock {
         return user.id
     }
     getById (id) {
-        return this.users[id]
+        return Promise.resolve(this.users[id])
     }
     getByPsid (psid) {
-        return this.users.find(u => u.psid == psid)
+        return Promise.resolve(this.users.find(u => u.psid == psid))
     }
     getByFbId (fbid) {
-        return this.users.find(u.fbid == fbid)
-    }
-    updateByPsid (psid, props) {
-        const user = this.getByPsid(psid)
-        if (user) {
-            Object.assign(user, props);
-            return true;
-        } else {
-            return false;
-        }
+        return Promise.resolve(this.users.find(u.fbid == fbid))
     }
     getAll() {
         return this.users
@@ -109,16 +100,27 @@ test('should set user names in status correctly', async t => {
     usersRepositoryMock.getAll()[2] = { name: 'a' }
     usersRepositoryMock.getAll()[5] = { name: 'b' }
 
-    const status = usersManager.setNamesInDebtStatus({
-        2: 3,
-        5: -3,
-        1: 1
-    })
-    t.deepEqual(status, {
-        'a': 3,
-        'b': -3,
-        'unaccepted': 1
-    })
+    const status = await usersManager.setNamesInDebtStatus([{
+            name: 2,
+            amount : 3
+        }, {
+            name: 5, 
+            amount: -3
+        }, {
+            name: 1,
+            amount: 1
+        }
+    ]);
+    t.deepEqual(status, [{
+            name: 'a',
+            amount : 3
+        }, {
+            name: 'b', 
+            amount: -3
+        }, {
+            name: 'unaccepted',
+            amount: 1
+        }])
 });
 
 test('should get existing user by thread id', async t => {
@@ -129,7 +131,7 @@ test('should get existing user by thread id', async t => {
     const requester = await usersManager.getRequestingUser('1', '2')
     await usersManager.getRequestingUser('2', '2')
 
-    const threadUser = usersManager.getUserForThreadId(requester.id, '2')
+    const threadUser = await usersManager.getUserForThreadId(requester.id, '2')
 
     t.is('2', threadUser.psid)
 })

@@ -14,8 +14,10 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
+    "pg-promise": "^7.3.3",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "ava": "^0.24.0",

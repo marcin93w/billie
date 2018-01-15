@@ -60,25 +60,27 @@ function validateAcceptRequest(body) {
 
 router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
     usersManager.getRequestingUser(req.params.psid, req.params.threadId, req.params.threadType)
-        .then(user => {
-            const contact = usersManager.getUserForThreadId(user.id, req.params.threadId);
-            const balance = debtManager.getThreadBalance(user.id, req.params.threadId);
-            res.status(200).send({
-                userName: user.name,
-                userGender: user.gender,
-                isContactAccepted: !!contact,
-                contactName: contact ? contact.name : '',
-                contactGender: contact ? contact.gender : '',
-                balance
-            });
-        })
+        .then(user => 
+            usersManager.getUserForThreadId(user.id, req.params.threadId)
+                .then(contact => {
+                    const balance = debtManager.getThreadBalance(user.id, req.params.threadId);
+                    res.status(200).send({
+                        userName: user.name,
+                        userGender: user.gender,
+                        isContactAccepted: !!contact,
+                        contactName: contact ? contact.name : '',
+                        contactGender: contact ? contact.gender : '',
+                        balance
+                    });
+                })
+        )
         .catch(err => sendErrorMessage(res, err));
 });
 
 router.route('/status/:psid').get((req, res) => {
     usersManager.getRequestingUser(req.params.psid)
-        .then(user => {
-            const status = usersManager.setNamesInDebtStatus(debtManager.getDebtStatus(user.id));
+        .then(user => usersManager.setNamesInDebtStatus(debtManager.getDebtStatus(user.id)))
+        .then(status => {
             res.status(200).send({
                 status
             });
