@@ -32,15 +32,15 @@ class DebtManager {
                     .filter(d => d.user1 === userId)
                     .map(d => ({
                         user: d.user2,
-                        threadId: d.thread_id,
-                        amount: toRelativeAmount(d.debt_type, d.amount)
+                        threadId: d.threadId,
+                        amount: toRelativeAmount(d.debtType, d.amount)
                     }))
                 const debtsCreatedForUser = debts
                     .filter(d => d.user2 === userId)
                     .map(d => ({
                         user: d.user1,
                         threadId: d.threadId,
-                        amount: -toRelativeAmount(d.debt_type, d.amount)
+                        amount: -toRelativeAmount(d.debtType, d.amount)
                     }))
 
                 return debtsCreatedByUser.concat(debtsCreatedForUser)
