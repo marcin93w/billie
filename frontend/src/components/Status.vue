@@ -73,7 +73,10 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
             .then(entry => {
-// tutaj trzeba wpisac metode, ktora wpisuje dane z serwera
+                this.statusMyDebts = entry.status.filter(s => s.amount > 0)
+                this.statusOthersDebts = entry.status
+                    .filter(s => s.amount < 0)
+                    .map(s => Object.assign(s, { amount: -s.amount }));
             })
             .catch(alert)
     }
