@@ -1,7 +1,7 @@
 <template>
   <div class="adding-panel">
         <div>
-            <button v-on:click="showStatus">asd</button>
+            <button v-on:click="showStatus">pokaż saldo</button>
         </div>
   </div>
 </template>
