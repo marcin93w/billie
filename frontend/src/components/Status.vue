@@ -88,6 +88,10 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
             .then(entry => {
+                this.statusMyDebts = entry.status.filter(s => s.amount > 0)
+                this.statusOthersDebts = entry.status
+                    .filter(s => s.amount < 0)
+                    .map(s => Object.assign(s, { amount: -s.amount }))
             })
             .catch(alert)
     }

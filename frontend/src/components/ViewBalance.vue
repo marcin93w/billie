@@ -1,7 +1,7 @@
 <template>
   <div class="adding-panel">
         <div>
-            <span>Twój balans z {{debtUserName}}</span>
+            <span>Twój balans z {{contactName}}</span>
         </div>
         <div>
             <span>{{balance}}</span>
@@ -13,10 +13,9 @@
 
 export default {
     name: 'ViewBalance',
+    props: ['contactName', 'balance'],
     data () {
         return {
-            debtUserName: '',
-            balance: ''
         }
     },
     created () {

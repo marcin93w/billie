@@ -10,7 +10,7 @@ module.exports = {
             .then(_ => debt.id)
     },
     get (id) {
-        return db.one('SELECT user1, user2, thread_id, debt_type, amount, date FROM public.debts WHERE id = $1', id);
+        return db.one('SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date FROM public.debts WHERE id = $1', id);
     },
     updateSecondUser (id, user2) {
         return db.none('UPDATE public.debts \
@@ -18,6 +18,6 @@ module.exports = {
             WHERE id = $1;', [id, user2])
     },
     getAll () {
-        return db.any('SELECT user1, user2, thread_id, debt_type, amount, date FROM public.debts');
+        return db.any('SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date FROM public.debts');
     }
 };

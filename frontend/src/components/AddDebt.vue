@@ -1,15 +1,15 @@
 <template>
   <div class="adding-panel">
         <div>
-            <button class="button" v-bind:class="[isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
-            <button class="button" v-bind:class="[!isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
+            <button class="button" v-bind:class="[isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
+            <button class="button" v-bind:class="[!isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
         </div>
         <div>
-            <button class="button"  v-bind:class="[isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = false"  value=false name="isBorrowed">
+            <button class="button"  v-bind:class="[isBorrowed ? 'button-outline' : '' ]" v-on:click="isBorrowed = false"  value=false name="isBorrowed">
                 <span v-if="isPayoff">Ktoś mi oddaje</span>
                 <span v-else>Pożyczam Komuś</span>
             </button>
-            <button class="button"  v-bind:class="[!isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = true" value=true name="isBorrowed">
+            <button class="button"  v-bind:class="[!isBorrowed ? 'button-outline' : '' ]" v-on:click="isBorrowed = true" value=true name="isBorrowed">
                 <span v-if="isPayoff">Oddaję komuś</span>
                 <span v-else>Pożyczam od kogoś</span>
             </button>
@@ -25,7 +25,7 @@
 
 <script>
 import { sendDebtInvite } from '../services/debt-invite-service'
-import { addDebt, getThreadStatus } from '../services/debts-api-service'
+import { addDebt } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
@@ -55,13 +55,6 @@ export default {
             debtTypes,
             isPayoff: false,
             isBorrowed: false,
-            buttonOutline: 'button-outline',
-            userName: '',
-            userGender: '',
-            contactName: '',
-            contactGender: '',
-            threadBalance: 0,
-            isContactAccepted: false,
             add: () => {
                 const debtType = getDebtType(this.isPayoff, this.isBorrowed)
                 ensurePermissions()
@@ -72,15 +65,6 @@ export default {
                     .catch(alert)
             }
         }
-    },
-    created () {
-        ensurePermissions()
-            .then(_ => getContext(config.fbAppId))
-            .then(info => getThreadStatus(info.psid, info.tid, info.thread_type))
-            .then(threadStatus => {
-                Object.assign(this, threadStatus)
-            })
-            .catch(alert)
     }
 }
 </script>
@@ -88,6 +72,13 @@ export default {
 <style scoped>
 .adding-panel div {
     margin: 20px 10px;
+}
+
+#amount{
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
 }
 
 </style>

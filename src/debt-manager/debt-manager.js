@@ -54,7 +54,7 @@ class DebtManager {
                     debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
 
                 return Object.keys(status).map(key => ({
-                    name: key,
+                    name: key === 'null' ? null : key,
                     amount: status[key]
                 }))
             })

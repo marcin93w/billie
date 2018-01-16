@@ -51,12 +51,16 @@ class UsersManager {
     }
 
     setNamesInDebtStatus(status) {
-        return Promise.all(status.map(entry => 
-            this.usersRepository.getById(entry.name).then(user => {
-                entry.name = user ? user.name : 'unaccepted';
+        return Promise.all(status.map(entry => {
+            if (!entry.name) {
+                entry.name = 'unaccepted';
+                return entry;
+            }
+            return this.usersRepository.getById(entry.name).then(user => {
+                entry.name = user.name;
                 return entry;
             })
-        ))
+        }))
     }
 
     getUserForThreadId(requesterId, threadId) {
