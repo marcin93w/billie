@@ -19,12 +19,12 @@ router.route('/add').post((req, res) => {
         return;
     }
 
-    usersManager.getRequestingUser(body.psid)
+    usersManager.getUser(body.psid)
         .then(user => {
-            const debtId = debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount));
-            res.status(200).send({
-                debtId
-            });
+            debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount))
+                .then(debtId => res.status(200).send({
+                    debtId
+                }));
         })
         .catch(err => sendErrorMessage(res, err));
 });
@@ -41,7 +41,7 @@ router.route('/accept/:id').post((req, res) => {
         return;
     }
 
-    usersManager.getRequestingUser(body.psid)
+    usersManager.signIn(body.psid)
         .then(user => {
             const debt = debtManager.acceptDebt(req.params.id, user.id);
             if  (!debt) {
@@ -59,7 +59,7 @@ function validateAcceptRequest(body) {
 } 
 
 router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
-    usersManager.getRequestingUser(req.params.psid, req.params.threadId, req.params.threadType)
+    usersManager.signIn(req.params.psid, req.params.threadId, req.params.threadType)
         .then(user => 
             usersManager.getUserForThreadId(user.id, req.params.threadId)
                 .then(contact => {
@@ -78,7 +78,7 @@ router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
 });
 
 router.route('/status/:psid').get((req, res) => {
-    usersManager.getRequestingUser(req.params.psid)
+    usersManager.signIn(req.params.psid)
         .then(user => usersManager.setNamesInDebtStatus(debtManager.getDebtStatus(user.id)))
         .then(status => {
             res.status(200).send({

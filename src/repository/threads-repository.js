@@ -1,14 +1,15 @@
-var userThreads = [];
+var db = require('./database');
 
 module.exports = {
     addUserThread(userThread) {
-        const alreadyExists = userThreads.find(
-            ut => ut.userId == userThread.userId && ut.threadId == userThread.threadId)
-        if(!alreadyExists) {
-            userThreads.push(userThread)
-        }
+        return db.none('INSERT INTO public.user_threads( \
+            thread_id, user_id, is_group) \
+            VALUES (${threadId}, ${userId}, ${isGroup});', userThread)
     },
     getUserThreadsByThreadId(id) {
-        return userThreads.filter(ut => ut.threadId === id)
+        return db.any('SELECT user_id, is_group FROM public.user_threads WHERE thread_id = $1', id);
+    },
+    getByUserAndThreadId(userId, threadId) {
+        return db.oneOrNone('SELECT user_id, is_group FROM public.user_threads WHERE thread_id = $1 AND user_id = $2', [threadId, userId]);
     }
 }

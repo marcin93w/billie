@@ -6,11 +6,36 @@ CREATE TABLE public.users
     name text,
     full_name text,
     gender text,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT psuser UNIQUE (psid),
+    CONSTRAINT fbuser UNIQUE (fbid)
 )
 WITH (
     OIDS = FALSE
 );
 
-ALTER TABLE public.users
-    OWNER to postgres;
+CREATE TABLE public.user_threads
+(
+    thread_id character varying(50) NOT NULL,
+    user_id uuid NOT NULL,
+    is_group boolean,
+    CONSTRAINT user_thread UNIQUE (user_id, thread_id)
+)
+WITH (
+    OIDS = FALSE
+);
+
+CREATE TABLE public.debts
+(
+    id uuid NOT NULL,
+    user1 uuid NOT NULL,
+    user2 uuid,
+    thread_id character varying(50),
+    debt_type smallint NOT NULL,
+    amount money NOT NULL,
+    date timestamp with time zone NOT NULL,
+    PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+);

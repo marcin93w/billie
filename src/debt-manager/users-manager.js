@@ -7,34 +7,47 @@ class UsersManager {
         this.threadsRepository = threadRepository;
     }
 
-    getRequestingUser(psid, threadId, threadType) {
+    signIn(psid, threadId, threadType) {
         const saveThread = (userId, threadId, threadType) => {
-            if (threadId) {
-                this.threadsRepository.addUserThread({
+            if(threadId) {
+                return this.threadsRepository.addUserThread({
                     userId,
                     threadId,
                     isGroup: threadType === 'GROUP'
                 })
             }
+            return Promise.resolve()
         }
 
         return this.usersRepository.getByPsid(psid)
             .then(user => {
                 if (user) {
-                    saveThread(user.id, threadId, threadType)
-                    return Promise.resolve(user);
+                    if (!threadId) {
+                        return user;
+                    }
+                    return this.threadsRepository.getByUserAndThreadId(user.id, threadId)
+                        .then(thread => {
+                            if (thread) {
+                                return user;
+                            }
+                            return saveThread(user.id, threadId, threadType)
+                                .then(_ => user);
+                        })
                 }
         
                 return this.userGraphApi.fetchUserData(psid)
                     .then(userData => {
                         userData.psid = psid
                         userData.fbId = userData.id
-                        const id = this.usersRepository.add(userData)
-                        saveThread(id, threadId, threadType)
-                        return userData
+                        return this.usersRepository.add(userData)
+                            .then(id => saveThread(id, threadId, threadType))
+                            .then(_ => userData)
                     });
-
             })
+    }
+
+    getUser(psid) {
+        return this.usersRepository.getByPsid(psid)
     }
 
     setNamesInDebtStatus(status) {
@@ -47,14 +60,14 @@ class UsersManager {
     }
 
     getUserForThreadId(requesterId, threadId) {
-        const threadUser = this.threadsRepository.getUserThreadsByThreadId(threadId)
-            .find(t => t.userId !== requesterId && t.isGroup === false)
-
-        if(!threadUser) {
-            return Promise.resolve(null)
-        }
-
-        return this.usersRepository.getById(threadUser.userId)
+        return this.threadsRepository.getUserThreadsByThreadId(threadId)
+            .then(threadUsers => threadUsers.find(t => t.userId !== requesterId && t.isGroup === false))
+            .then(threadUser => {
+                if(!threadUser) {
+                    return Promise.resolve(null)
+                }
+                return this.usersRepository.getById(threadUser.userId)
+            })
     }
 };
 
