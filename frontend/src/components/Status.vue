@@ -4,7 +4,8 @@
             <caption>My debts</caption>
             <thead>
                 <tr>
-                    <th v-for="header in tableHeader">{{header}}</th>
+                    <th> Name</th>
+                    <th> Balance </th>
                 </tr>
             </thead>
             <tbody>
@@ -18,7 +19,8 @@
             <caption>Other people's debts</caption>
             <thead>
                 <tr>
-                    <th v-for="header in tableHeader">{{header}}</th>
+                    <th> Name</th>
+                    <th> Balance </th>
                 </tr>
             </thead>
             <tbody>
@@ -48,8 +50,11 @@ export default {
         return {
             myDebtDetected: true,
             someonesDebtDetected: true,
-            tableHeader: ['Name', 'Balance'],
-            status: [],
+            status: [
+                {name: 'Lechu', amount: 10},
+                {name: 'Marcin', amount: -10},
+                {name: 'Broda', amount: 10}
+            ],
             back: () => {
                 this.$router.push('/')
             }
