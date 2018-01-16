@@ -4,10 +4,10 @@ var uuid = require('uuid/v1');
 module.exports = {
     add (user) {
         user.id = uuid()
-        db.none('INSERT INTO public.users( \
+        return db.none('INSERT INTO public.users( \
             id, psid, fbid, name, full_name, gender) \
             VALUES (${id}, ${psid}, ${fbId}, ${name}, ${fullName}, ${gender});', user)
-        return user.id
+            .then(_ => user.id)
     },
     getById (id) {
         return db.one('SELECT id, psid, fbid, name, full_name, gender FROM public.users WHERE id = $1', id);

@@ -15,7 +15,7 @@ class MessengerMock {
 
 const userManagerMock = { 
     nameToReturn: 'testName',
-    getRequestingUser: (psid, threadId, threadType) => {
+    signIn: (psid, threadId, threadType) => {
         return Promise.resolve({ 
             id: 1,
             name: userManagerMock.nameToReturn

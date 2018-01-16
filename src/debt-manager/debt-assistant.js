@@ -7,7 +7,7 @@ class DebtAssistant {
     }
 
     handleMessage(senderPsid, receivedMessage) {
-        this.usersManager.getRequestingUser(senderPsid)
+        this.usersManager.signIn(senderPsid)
             .then(user => this.processMessage(senderPsid, user, receivedMessage))
     }
 
@@ -25,8 +25,8 @@ class DebtAssistant {
         }
 
         if (intent === 'show') {
-            const balance = this.debtManager.getDebtTotalBalance(user.id)
-            return this.messenger.sendStatusMessage(senderPsid, balance);
+            this.debtManager.getDebtTotalBalance(user.id)
+                .then(balance => this.messenger.sendStatusMessage(senderPsid, balance))
         }
 
         return sendFallbackMessage();
