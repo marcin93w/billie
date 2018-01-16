@@ -90,4 +90,11 @@ export default {
     margin: 20px 10px;
 }
 
+#amount{
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
 </style>
