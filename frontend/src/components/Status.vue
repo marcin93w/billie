@@ -28,6 +28,10 @@
                     <td>{{entry.name}}</td>
                     <td>{{entry.amount}}</td>
                 </tr>
+                <tr> 
+                    <th> Sum </th>
+                    <td> {{sumBalance}} </td>                    
+                </tr>
             </tbody>
         </table>
         <div>
@@ -50,6 +54,9 @@ export default {
         return {
             myDebtDetected: true,
             someonesDebtDetected: true,
+            sumOthersDebts: 0,
+            sumMyDebts: 0,
+            sumBalance: 0,
             statusMyDebts: [
                 {name: 'Lechu', amount: 5},
                 {name: 'Marcin', amount: 6},
@@ -69,11 +76,18 @@ export default {
         }
     },
     created () {
+        this.sumMyDebts = this.statusMyDebts
+            .map(entry => entry.amount)
+            .reduce((sum, current) => sum + current, 0)
+
+        this.sumOthersDebts = this.statusOthersDebts.map(entry => entry.amount).reduce((sum, current) => sum + current, 0)
+
+        this.sumBalance = this.sumOthersDebts - this.sumMyDebts
+
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
             .then(entry => {
-// tutaj trzeba wpisac metode, ktora wpisuje dane z serwera
             })
             .catch(alert)
     }
