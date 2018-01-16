@@ -1,15 +1,15 @@
 <template>
   <div class="adding-panel">
         <div>
-            <button class="button" v-bind:class="[isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
-            <button class="button" v-bind:class="[!isPayoff ? buttonOutline: '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
+            <button class="button" v-bind:class="[isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
+            <button class="button" v-bind:class="[!isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
         </div>
         <div>
-            <button class="button"  v-bind:class="[isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = false"  value=false name="isBorrowed">
+            <button class="button"  v-bind:class="[isBorrowed ? 'button-outline' : '' ]" v-on:click="isBorrowed = false"  value=false name="isBorrowed">
                 <span v-if="isPayoff">Ktoś mi oddaje</span>
                 <span v-else>Pożyczam Komuś</span>
             </button>
-            <button class="button"  v-bind:class="[!isBorrowed ? buttonOutline: '' ]" v-on:click="isBorrowed = true" value=true name="isBorrowed">
+            <button class="button"  v-bind:class="[!isBorrowed ? 'button-outline' : '' ]" v-on:click="isBorrowed = true" value=true name="isBorrowed">
                 <span v-if="isPayoff">Oddaję komuś</span>
                 <span v-else>Pożyczam od kogoś</span>
             </button>
@@ -55,7 +55,6 @@ export default {
             debtTypes,
             isPayoff: false,
             isBorrowed: false,
-            buttonOutline: 'button-outline',
             userName: '',
             userGender: '',
             contactName: '',
