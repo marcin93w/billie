@@ -9,9 +9,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="data in status">
-                    <td>{{data.name}}</td>
-                    <td>{{data.amount}}</td>
+                <tr v-for="entry in statusMyDebts">
+                    <td>{{entry.name}}</td>
+                    <td>{{entry.amount}}</td>
                 </tr>
             </tbody>
         </table>
@@ -24,9 +24,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="data in status">
-                    <td>{{data.name}}</td>
-                    <td>{{data.amount}}</td>
+                <tr v-for="entry in statusOthersDebts">
+                    <td>{{entry.name}}</td>
+                    <td>{{entry.amount}}</td>
                 </tr>
             </tbody>
         </table>
@@ -50,11 +50,19 @@ export default {
         return {
             myDebtDetected: true,
             someonesDebtDetected: true,
-            status: [
-                {name: 'Lechu', amount: 10},
-                {name: 'Marcin', amount: -10},
-                {name: 'Broda', amount: 10}
+            statusMyDebts: [
+                {name: 'Lechu', amount: 5},
+                {name: 'Marcin', amount: 6},
+                {name: 'Broda', amount: 7},
+                {name: 'Madzie', amount: 8}
             ],
+            statusOthersDebts: [
+                {name: 'Lechu', amount: 1},
+                {name: 'Marcin', amount: 2},
+                {name: 'Broda', amount: 3},
+                {name: 'Madzie', amount: 4}
+            ],
+
             back: () => {
                 this.$router.push('/')
             }
@@ -64,8 +72,11 @@ export default {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
-            .then(data => {
-                this.status = data.status
+            .then(entry => {
+                this.statusMyDebts = entry.status.filter(s => s.amount > 0)
+                this.statusOthersDebts = entry.status
+                    .filter(s => s.amount < 0)
+                    .map(s => Object.assign(s, { amount: -s.amount }));
             })
             .catch(alert)
     }
