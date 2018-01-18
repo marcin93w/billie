@@ -1,7 +1,7 @@
 <template>
     <div>
         <view-balance v-bind:contact-name="contactName" v-bind:contact-gender="contactGender" v-bind:balance="threadBalance" />
-        <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" />
+        <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" v-bind:balance="threadBalance" />
     </div>
 </template>
 
