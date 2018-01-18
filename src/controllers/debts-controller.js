@@ -60,19 +60,18 @@ function validateAcceptRequest(body) {
 
 router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
     usersManager.signIn(req.params.psid, req.params.threadId, req.params.threadType)
-        .then(user => 
-            usersManager.getUserForThreadId(user.id, req.params.threadId)
-                .then(contact => {
-                    const balance = debtManager.getThreadBalance(user.id, req.params.threadId);
+        .then(user => usersManager.getUserForThreadId(user.id, req.params.threadId)
+            .then(contact => debtManager.getThreadBalance(user.id, req.params.threadId)
+                .then(threadBalance =>
                     res.status(200).send({
                         userName: user.name,
                         userGender: user.gender,
                         isContactAccepted: !!contact,
                         contactName: contact ? contact.name : '',
                         contactGender: contact ? contact.gender : '',
-                        balance
-                    });
-                })
+                        threadBalance
+                    }))
+            )
         )
         .catch(err => sendErrorMessage(res, err));
 });
