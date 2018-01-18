@@ -22,6 +22,8 @@ class DebtManager {
                     return this.debtRepository.updateSecondUser(id, userId)
                         .then(_ => debt)
                 }
+
+                return debt
             })
     }
 

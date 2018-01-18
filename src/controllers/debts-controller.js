@@ -42,8 +42,8 @@ router.route('/accept/:id').post((req, res) => {
     }
 
     usersManager.signIn(body.psid)
-        .then(user => {
-            const debt = debtManager.acceptDebt(req.params.id, user.id);
+        .then(user => debtManager.acceptDebt(req.params.id, user.id))
+        .then(debt => {
             if  (!debt) {
                 throw new Error('Debt not accepted')
             }
