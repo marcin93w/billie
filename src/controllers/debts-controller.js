@@ -80,10 +80,7 @@ router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
 router.route('/status/:psid').get((req, res) => {
     usersManager.signIn(req.params.psid)
         .then(user => debtManager.getDebtStatus(user.id))
-        .then(status => {
-            usersManager.setNamesInDebtStatus(status)
-            return status
-        })
+        .then(status => usersManager.setNamesInDebtStatus(status))
         .then(status => {
             res.status(200).send({
                 status

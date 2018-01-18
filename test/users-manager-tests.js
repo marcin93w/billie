@@ -20,9 +20,6 @@ class UsersRepositoryMock {
     getByFbId (fbid) {
         return Promise.resolve(this.users.find(u.fbid == fbid))
     }
-    getAll() {
-        return this.users
-    }
 }
 
 class ThreadsRepositoryMock {
@@ -67,7 +64,7 @@ test('should add user to repository when fetching new user data', async t => {
     let usersManager = new UsersManager(new GraphUsersApiMock(), usersRepositoryMock, new ThreadsRepositoryMock())
 
     await usersManager.signIn('1', '2')
-    t.deepEqual(usersRepositoryMock.getAll()[0], {
+    t.deepEqual(usersRepositoryMock.users[0], {
         fbId: '4',
         fullName: 'test user name',
         gender: 'male',
@@ -102,8 +99,8 @@ test('should set user names in status correctly', async t => {
     let usersRepositoryMock = new UsersRepositoryMock()
     let usersManager = new UsersManager(new GraphUsersApiMock(), usersRepositoryMock, new ThreadsRepositoryMock())
 
-    usersRepositoryMock.getAll()[2] = { name: 'a' }
-    usersRepositoryMock.getAll()[5] = { name: 'b' }
+    usersRepositoryMock.users[2] = { name: 'a' }
+    usersRepositoryMock.users[5] = { name: 'b' }
 
     const status = await usersManager.setNamesInDebtStatus([{
             name: 2,
@@ -112,7 +109,7 @@ test('should set user names in status correctly', async t => {
             name: 5, 
             amount: -3
         }, {
-            name: 1,
+            name: null,
             amount: 1
         }
     ]);

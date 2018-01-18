@@ -54,36 +54,15 @@ export default {
         return {
             myDebtDetected: true,
             someonesDebtDetected: true,
-            sumOthersDebts: 0,
-            sumMyDebts: 0,
             sumBalance: 0,
-            statusMyDebts: [
-                {name: 'Lechu', amount: 5},
-                {name: 'Marcin', amount: 6},
-                {name: 'Broda', amount: 7},
-                {name: 'Madzie', amount: 8}
-            ],
-            statusOthersDebts: [
-                {name: 'Lechu', amount: 1},
-                {name: 'Marcin', amount: 2},
-                {name: 'Broda', amount: 3},
-                {name: 'Madzie', amount: 4}
-            ],
-
+            statusMyDebts: [],
+            statusOthersDebts: [],
             back: () => {
                 this.$router.push('/')
             }
         }
     },
     created () {
-        this.sumMyDebts = this.statusMyDebts
-            .map(entry => entry.amount)
-            .reduce((sum, current) => sum + current, 0)
-
-        this.sumOthersDebts = this.statusOthersDebts.map(entry => entry.amount).reduce((sum, current) => sum + current, 0)
-
-        this.sumBalance = this.sumOthersDebts - this.sumMyDebts
-
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info.psid))
@@ -92,6 +71,15 @@ export default {
                 this.statusOthersDebts = entry.status
                     .filter(s => s.amount < 0)
                     .map(s => Object.assign(s, { amount: -s.amount }))
+                this.sumMyDebts = this.statusMyDebts
+                    .map(entry => entry.amount)
+                    .reduce((sum, current) => sum + current, 0)
+
+                this.sumOthersDebts = this.statusOthersDebts
+                    .map(entry => entry.amount)
+                    .reduce((sum, current) => sum + current, 0)
+
+                this.sumBalance = this.sumOthersDebts - this.sumMyDebts
             })
             .catch(alert)
     }

@@ -51,7 +51,7 @@ class DebtManager {
         return this.getUserDebts(userId)
             .then(userDebts => {
                 const status = _.mapValues(_.groupBy(userDebts, 'user'),
-                    debts => debts.map(d => d.amount).reduce((sum, cur) => sum += cur))
+                    debts => debts.map(d => d.amount).reduce((sum, cur) => sum + cur))
 
                 return Object.keys(status).map(key => ({
                     name: key === 'null' ? null : key,
@@ -64,7 +64,7 @@ class DebtManager {
         return this.getDebtStatus(userId)
             .then(status => status
                 .map(s => s.amount)
-                .reduce((sum, cur) => sum += cur, 0))
+                .reduce((sum, cur) => sum + cur, 0))
     }
 
     getThreadBalance(userId, threadId) {
@@ -74,7 +74,7 @@ class DebtManager {
 
                 return threadDebts
                     .map(d => d.amount)
-                    .reduce((sum, cur) => sum += cur, 0)
+                    .reduce((sum, cur) => sum + cur, 0)
             })
     }
 }; 
