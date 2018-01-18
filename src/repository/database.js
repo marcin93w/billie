@@ -21,7 +21,9 @@ function camelizeColumns(data) {
 
 const pgp = require('pg-promise')(initOptions);
 
-const cn = 'postgres://postgres:dupa.8@localhost:5432/postgres';
+const cn =  process.env.DATABASE_URL ? 
+    process.env.DATABASE_URL + '?ssl=true' : 
+    'postgres://postgres:dupa.8@localhost:5432/postgres';
 const db = pgp(cn);
 
 module.exports = db;
