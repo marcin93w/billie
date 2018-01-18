@@ -87,11 +87,6 @@ export default {
 </script>
 
 <style scoped>
-
-.status{
-    margin-top: -4rem;
-}
-
 caption {
     line-height: 1.6rem;
     font-size: 2.6rem;

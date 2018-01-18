@@ -1,15 +1,13 @@
 <template>
     <div>
+        <view-balance v-bind:contact-name="contactName" v-bind:contact-gender="contactGender" v-bind:balance="threadBalance" />
         <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" />
-        <view-balance v-bind:contact-name="contactName" v-bind:balance="threadBalance" />
-        <show-status />
     </div>
 </template>
 
 <script>
 import AddDebt from './AddDebt.vue'
 import ViewBalance from './ViewBalance.vue'
-import ShowStatusButton from './ShowStatusButton.vue'
 import { getThreadStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
@@ -19,8 +17,7 @@ export default {
     name: 'MainPage',
     components: {
         'add-debt': AddDebt,
-        'view-balance': ViewBalance,
-        'show-status': ShowStatusButton
+        'view-balance': ViewBalance
     },
     data () {
         return {

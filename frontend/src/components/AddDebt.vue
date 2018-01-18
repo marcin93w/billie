@@ -18,7 +18,7 @@
             <input type="number" id="amount" v-model="amount" />
         </div>
         <div>
-            <button @click="add()">Send</button>
+            <button @click="add()">Dodaj dług</button>
         </div>
   </div>
 </template>
@@ -71,6 +71,10 @@ export default {
 </script>
 
 <style scoped>
+.adding-panel {
+    margin-top: 40px;
+}
+
 .adding-panel div {
     margin: 20px 10px;
 }
