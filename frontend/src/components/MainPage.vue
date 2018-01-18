@@ -1,7 +1,9 @@
 <template>
-    <div><add-debt />
-    <view-balance v-bind:contact-name="contactName" v-bind:balance="threadBalance" />
-    <show-status /></div>
+    <div>
+        <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" />
+        <view-balance v-bind:contact-name="contactName" v-bind:balance="threadBalance" />
+        <show-status />
+    </div>
 </template>
 
 <script>

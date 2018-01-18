@@ -17,9 +17,9 @@ export function getContext (fbAppId) {
             reject(new Error('getContext error'))
         } else {
             resolve({
-                thread_type: 'GROUP',
-                tid: '1411911565550430',
-                psid: '1291641364275530'
+                thread_type: 'SINGLE',
+                tid: '1411911565550431',
+                psid: '1291641364275532'
             })
         }
     })

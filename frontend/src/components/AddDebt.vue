@@ -49,6 +49,7 @@ function getDebtType (isPayoff, isBorrowed) {
 
 export default {
     name: 'AddDebt',
+    props: ['userName', 'userGender'],
     data () {
         return {
             amount: 10,
@@ -60,7 +61,7 @@ export default {
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
                     .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
-                    .then(debt => sendDebtInvite(debt.userName, debt.userGender, debt.debtId, debtType, this.amount))
+                    .then(debt => sendDebtInvite(this.userName, this.userGender, debt.debtId, debtType, this.amount))
                     .then(isSent => isSent ? requestCloseBrowser() : null)
                     .catch(alert)
             }
