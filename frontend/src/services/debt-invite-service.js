@@ -23,6 +23,10 @@ function createInviteText (userName, userGender, debtType, amount) {
     }
 }
 
+function getSvgUrl (userName, userGender, debtType, amount) {
+    return `${config.homeUrl}svg/image/${userName}/${userGender}/${debtType}/${amount}`
+}
+
 export function sendDebtInvite (isContactAccepted, userName, userGender, debtId, debtType, amount) {
     let element
 
@@ -30,7 +34,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
             subtitle: 'Kliknij any zobaczyć aktualny status długów.',
-            image_url: `${config.homeUrl}assets/logo.png`,
+            image_url: getSvgUrl(userName, userGender, debtType, amount),
             default_action: {
                 type: 'web_url',
                 url: `${config.homeUrl}#/Status`,
@@ -49,7 +53,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
             subtitle: isPayoff(debtType) ? 'Akceptuj aby zapisać spłatę' : 'Akceptuj dług aby otrzymać przypomnienie.',
-            image_url: `${config.homeUrl}assets/logo.png`,
+            image_url: getSvgUrl(userName, userGender, debtType, amount),
             default_action: {
                 type: 'web_url',
                 url: `${config.homeUrl}#/acceptDebt/${debtId}`,
