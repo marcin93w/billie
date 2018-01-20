@@ -58,7 +58,7 @@ export default {
             statusMyDebts: [],
             statusOthersDebts: [],
             back: () => {
-                this.$router.push('/')
+                window.history.back()
             }
         }
     },
