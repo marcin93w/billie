@@ -61,11 +61,9 @@ router.route('/cancel/:id').get((req, res) =>
 );
 
 router.route('/accept/:id').get((req, res) => {
-    debtManager.acceptDebt(req.params.id, req.user.id)
+    debtManager.acceptDebt(req.threadId, req.user.id)
+        .then(_ => debtManager.getDebt(req.params.id))
         .then(debt => {
-            if  (!debt) {
-                throw new Error('Debt not accepted')
-            }
             res.status(200).send({
                 debt
             })

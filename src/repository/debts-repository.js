@@ -12,10 +12,10 @@ module.exports = {
     get (id) {
         return db.one('SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date FROM public.debts WHERE id = $1', id);
     },
-    updateSecondUser (id, user2) {
+    updateSecondUserByThreadId (threadId, user2) {
         return db.none('UPDATE public.debts \
             SET user2=$2 \
-            WHERE id = $1;', [id, user2])
+            WHERE thread_id = $1 AND user1 != $2;', [threadId, user2])
     },
     remove (id, userId) {
         return db.none('DELETE FROM public.debts WHERE id = $1 AND user1 = $2;', [id, userId])

@@ -14,21 +14,12 @@ class DebtManager {
         return this.debtRepository.remove(id, userId)
     }
 
-    acceptDebt (id, userId) {
+    acceptDebt (threadId, userId) {
+        return this.debtRepository.updateSecondUserByThreadId(threadId, userId)
+    }
+
+    getDebt(id) {
         return this.debtRepository.get(id)
-            .then(debt => {
-                if (!debt) {
-                    throw new Error(`Debt with id ${id} does not exist`);
-                }
-
-                if (debt.user1 !== userId) {
-                    debt.user2 = userId
-                    return this.debtRepository.updateSecondUser(id, userId)
-                        .then(_ => debt)
-                }
-
-                return debt
-            })
     }
 
     getUserDebts (userId) {
