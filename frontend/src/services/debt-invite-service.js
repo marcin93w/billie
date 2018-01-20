@@ -23,30 +23,55 @@ function createInviteText (userName, userGender, debtType, amount) {
     }
 }
 
-export function sendDebtInvite (userName, userGender, debtId, debtType, amount) {
+export function sendDebtInvite (isContactAccepted, userName, userGender, debtId, debtType, amount) {
+    let element
+
+    if (isContactAccepted) {
+        element = {
+            title: createInviteText(userName, userGender, debtType, amount),
+            subtitle: 'Kliknij any zobaczyć aktualny status długów.',
+            image_url: `${config.homeUrl}assets/logo.png`,
+            default_action: {
+                type: 'web_url',
+                url: `${config.homeUrl}#/Status`,
+                messenger_extensions: true,
+                webview_height_ratio: 'tall'
+            },
+            buttons: [{
+                type: 'web_url',
+                url: `${config.homeUrl}#/Status`,
+                title: 'Zobacz status',
+                messenger_extensions: true,
+                webview_height_ratio: 'tall'
+            }]
+        }
+    } else {
+        element = {
+            title: createInviteText(userName, userGender, debtType, amount),
+            subtitle: isPayoff(debtType) ? 'Akceptuj aby zapisać spłatę' : 'Akceptuj dług aby otrzymać przypomnienie.',
+            image_url: `${config.homeUrl}assets/logo.png`,
+            default_action: {
+                type: 'web_url',
+                url: `${config.homeUrl}#/acceptDebt/${debtId}`,
+                messenger_extensions: true,
+                webview_height_ratio: 'compact'
+            },
+            buttons: [{
+                type: 'web_url',
+                url: `${config.homeUrl}#/acceptDebt/${debtId}`,
+                title: 'Akceptuj',
+                messenger_extensions: true,
+                webview_height_ratio: 'compact'
+            }]
+        }
+    }
+
     let message = {
         attachment: {
             type: 'template',
             payload: {
                 template_type: 'generic',
-                elements: [{
-                    title: createInviteText(userName, userGender, debtType, amount),
-                    subtitle: isPayoff(debtType) ? 'Akceptuj aby zapisać spłatę' : 'Akceptuj dług aby otrzymać przypomnienie.',
-                    image_url: `${config.homeUrl}assets/logo.png`,
-                    default_action: {
-                        type: 'web_url',
-                        url: `${config.homeUrl}#/acceptDebt/${debtId}`,
-                        messenger_extensions: true,
-                        webview_height_ratio: 'compact'
-                    },
-                    buttons: [{
-                        type: 'web_url',
-                        url: `${config.homeUrl}#/acceptDebt/${debtId}`,
-                        title: 'Akceptuj',
-                        messenger_extensions: true,
-                        webview_height_ratio: 'compact'
-                    }]
-                }]
+                elements: [element]
             }
         }
     }
