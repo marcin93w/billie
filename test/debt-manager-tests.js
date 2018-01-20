@@ -20,6 +20,9 @@ class RepositoryMock {
         Object.assign(this.debts[id], {user2: userId})
         return Promise.resolve()
     }
+    remove(id) {
+        this.debts[id] = null
+    }
     get (id) {
         return Promise.resolve(this.debts[id])
     }

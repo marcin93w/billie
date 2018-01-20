@@ -32,6 +32,13 @@ export function acceptDebt (context, debtId) {
     .then(handleResponse)
 }
 
+export function cancelDebt (context, debtId) {
+    return fetch(`${config.apiUrl}/debts/cancel/${debtId}`, {
+        headers: createHeaders(context)
+    })
+    .then(handleResponse)
+}
+
 export function getThreadStatus (context) {
     return fetch(`${config.apiUrl}/debts/threadStatus`, {
         headers: createHeaders(context)

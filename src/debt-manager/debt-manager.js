@@ -10,6 +10,10 @@ class DebtManager {
         return this.debtRepository.add({ user1: userId, threadId, debtType, amount, date: new Date()});
     }
 
+    cancelDebt (id, userId) {
+        return this.debtRepository.remove(id, userId)
+    }
+
     acceptDebt (id, userId) {
         return this.debtRepository.get(id)
             .then(debt => {

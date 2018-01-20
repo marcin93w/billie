@@ -25,7 +25,7 @@ router.route('/*').all(function (req, res, next) {
         })
         .catch(err => {
             console.error(err)
-            res.status(403).send()
+            res.status(403).send({})
         })
 })
 
@@ -52,6 +52,12 @@ router.route('/add').post((req, res) => {
         }))
     .catch(err => sendErrorMessage(res, err));
 });
+
+router.route('/cancel/:id').get((req, res) =>
+    debtManager.cancelDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
 
 router.route('/accept/:id').get((req, res) => {
     debtManager.acceptDebt(req.params.id, req.user.id)

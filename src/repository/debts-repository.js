@@ -17,6 +17,9 @@ module.exports = {
             SET user2=$2 \
             WHERE id = $1;', [id, user2])
     },
+    remove (id, userId) {
+        return db.none('DELETE FROM public.debts WHERE id = $1 AND user1 = $2;', [id, userId])
+    },
     getAll () {
         return db.any('SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date FROM public.debts');
     }

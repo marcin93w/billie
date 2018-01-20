@@ -25,7 +25,7 @@
 
 <script>
 import { sendDebtInvite } from '../services/debt-invite-service'
-import { addDebt } from '../services/debts-api-service'
+import { addDebt, cancelDebt } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
@@ -65,9 +65,9 @@ export default {
                 const debtType = getDebtType(this.isPayoff, this.isBorrowed)
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
-                    .then(info => addDebt(info, debtType, this.amount))
-                    .then(debt => sendDebtInvite(this.userName, this.userGender, debt.debtId, debtType, this.amount))
-                    .then(isSent => isSent ? requestCloseBrowser() : null)
+                    .then(context => addDebt(context, debtType, this.amount)
+                        .then(debt => sendDebtInvite(this.userName, this.userGender, debt.debtId, debtType, this.amount)
+                            .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId))))
                     .catch(alert)
             }
         }
