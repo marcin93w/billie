@@ -45,11 +45,12 @@ router.route('/threadStatus').get((req, res) => {
         .catch(err => sendErrorMessage(res, err));
 });
 
-router.route('/add').post((req, res) => {  
-    debtManager.addDebt(req.user.id, req.threadId, req.body.debtType, parseFloat(req.body.amount))
+router.route('/add').post((req, res) => { 
+    usersManager.getUserForThreadId(req.user.id, req.threadId)
+        .then(contact => debtManager.addDebt(req.user.id, req.threadId, contact, req.body.debtType, parseFloat(req.body.amount))
         .then(debtId => res.status(200).send({
             debtId
-        }))
+        })))
     .catch(err => sendErrorMessage(res, err));
 });
 

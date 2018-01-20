@@ -5,8 +5,8 @@ module.exports = {
     add (debt) {
         debt.id = uuid()
         return db.none('INSERT INTO public.debts( \
-            id, user1, thread_id, debt_type, amount, date) \
-            VALUES (${id}, ${user1}, ${threadId}, ${debtType}, ${amount}, ${date});', debt)
+            id, user1, user2, thread_id, debt_type, amount, date) \
+            VALUES (${id}, ${user1}, ${user2}, ${threadId}, ${debtType}, ${amount}, ${date});', debt)
             .then(_ => debt.id)
     },
     get (id) {

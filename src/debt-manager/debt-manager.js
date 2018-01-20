@@ -6,8 +6,8 @@ class DebtManager {
         this.debtRepository = debtRepository
     }
     
-    addDebt (userId, threadId, debtType, amount) {
-        return this.debtRepository.add({ user1: userId, threadId, debtType, amount, date: new Date()});
+    addDebt (userId, threadId, contact, debtType, amount) {
+        return this.debtRepository.add({ user1: userId, user2: contact && contact.id, threadId, debtType, amount, date: new Date()})
     }
 
     cancelDebt (id, userId) {
