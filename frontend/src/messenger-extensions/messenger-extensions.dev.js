@@ -19,7 +19,8 @@ export function getContext (fbAppId) {
             resolve({
                 thread_type: 'SINGLE',
                 tid: '1411911565550431',
-                psid: '1291641364275532'
+                psid: '1291641364275532',
+                signed_request: '5f8i9XXH2hEaykXHKFvu-E5Nr6QRqN002JO7yl-w_9o.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTUwNDA0NjM4MCwicGFnZV9pZCI6NjgyNDk4MTcxOTQzMTY1LCJwc2lkIjoiMTI1NDQ1OTE1NDY4MjkxOSIsInRocmVhZF90eXBlIjoiVVNFUl9UT19QQUdFIiwidGlkIjoiMTI1NDQ1OTE1NDY4MjkxOSJ9'
             })
         }
     })

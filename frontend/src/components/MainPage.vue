@@ -32,7 +32,7 @@ export default {
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getThreadStatus(info.psid, info.tid, info.thread_type))
+            .then(info => getThreadStatus(info))
             .then(threadStatus => {
                 Object.assign(this, threadStatus)
             })

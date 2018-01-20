@@ -7,7 +7,7 @@ class UsersManager {
         this.threadsRepository = threadRepository;
     }
 
-    signIn(psid, threadId, threadType) {
+    signIn(psid, threadId, threadType, signedRequest) {
         const saveThread = (userId, threadId, threadType) => {
             if(threadId) {
                 return this.threadsRepository.addUserThread({

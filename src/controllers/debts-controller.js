@@ -11,74 +11,63 @@ const
 const debtManager = new DebtManager(debtsRepository);
 const usersManager = new UsersManager(usersGraphApi, usersRepository, threadsRepository);
 
-router.route('/add').post((req, res) => {  
-    const body = req.body;
-
-    if(!validateAddRequest(body)) {
-        res.status(400).send({error: "validation error"});
-        return;
+router.route('/*').all(function (req, res, next) {
+    if(req.method === 'OPTIONS') {
+        next()
+        return
     }
 
-    usersManager.getUser(body.psid)
+    usersManager.signIn(req.headers['x-psid'], req.headers['x-thread-id'], req.headers['x-thread-type'], req.headers['x-signed-request'])
         .then(user => {
-            debtManager.addDebt(user.id, body.threadId, body.debtType, parseFloat(body.amount))
-                .then(debtId => res.status(200).send({
-                    debtId
-                }));
+            req.user = user
+            req.threadId = req.headers['x-thread-id']
+            next()
         })
+        .catch(err => {
+            console.error(err)
+            res.status(403).send()
+        })
+})
+
+router.route('/threadStatus').get((req, res) => {
+    usersManager.getUserForThreadId(req.user.id, req.threadId)
+        .then(contact => debtManager.getThreadBalance(req.user.id, req.threadId)
+            .then(threadBalance =>
+                res.status(200).send({
+                    userName: req.user.name,
+                    userGender: req.user.gender,
+                    isContactAccepted: !!contact,
+                    contactName: contact ? contact.name : '',
+                    contactGender: contact ? contact.gender : '',
+                    threadBalance
+                }))
+        )
         .catch(err => sendErrorMessage(res, err));
 });
 
-function validateAddRequest(body) {
-    return body.psid && body.threadId && body.amount && parseFloat(body.amount) !== NaN;
-} 
+router.route('/add').post((req, res) => {  
+    debtManager.addDebt(req.user.id, req.threadId, req.body.debtType, parseFloat(req.body.amount))
+        .then(debtId => res.status(200).send({
+            debtId
+        }))
+    .catch(err => sendErrorMessage(res, err));
+});
 
-router.route('/accept/:id').post((req, res) => {  
-    const body = req.body;
-
-    if(!validateAcceptRequest(body)) {
-        res.status(400).send({error: "validation error"});
-        return;
-    }
-
-    usersManager.signIn(body.psid)
-        .then(user => debtManager.acceptDebt(req.params.id, user.id))
+router.route('/accept/:id').get((req, res) => {
+    debtManager.acceptDebt(req.params.id, req.user.id)
         .then(debt => {
             if  (!debt) {
                 throw new Error('Debt not accepted')
             }
             res.status(200).send({
                 debt
-            });
+            })
         })
         .catch(err => sendErrorMessage(res, err));
 });
 
-function validateAcceptRequest(body) {
-    return body.psid;
-} 
-
-router.route('/threadStatus/:psid/:threadId/:threadType').get((req, res) => {
-    usersManager.signIn(req.params.psid, req.params.threadId, req.params.threadType)
-        .then(user => usersManager.getUserForThreadId(user.id, req.params.threadId)
-            .then(contact => debtManager.getThreadBalance(user.id, req.params.threadId)
-                .then(threadBalance =>
-                    res.status(200).send({
-                        userName: user.name,
-                        userGender: user.gender,
-                        isContactAccepted: !!contact,
-                        contactName: contact ? contact.name : '',
-                        contactGender: contact ? contact.gender : '',
-                        threadBalance
-                    }))
-            )
-        )
-        .catch(err => sendErrorMessage(res, err));
-});
-
-router.route('/status/:psid').get((req, res) => {
-    usersManager.signIn(req.params.psid)
-        .then(user => debtManager.getDebtStatus(user.id))
+router.route('/status').get((req, res) => {
+    debtManager.getDebtStatus(req.user.id)
         .then(status => usersManager.setNamesInDebtStatus(status))
         .then(status => {
             res.status(200).send({
@@ -90,9 +79,7 @@ router.route('/status/:psid').get((req, res) => {
 
 function sendErrorMessage(res, error) {
     console.error(error)
-    res.status(500).send({
-        error: error.message || error
-    })
+    res.status(500).send()
 }
 
 module.exports = router;

@@ -1,45 +1,47 @@
 import config from '../config'
 
-export function addDebt (psid, threadId, debtType, amount) {
+function createHeaders (context, isPost) {
+    let headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'X-Psid': context.psid,
+        'X-Thread-Id': context.tid,
+        'X-Thread-Type': context.thread_type,
+        'X-Signed-Request': context.signed_request
+    }
+
+    if (isPost) {
+        headers['Content-Type'] = 'application/json'
+    }
+
+    return headers
+}
+
+export function addDebt (context, debtType, amount) {
     return fetch(config.apiUrl + '/debts/add', {
         method: 'POST',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ psid, threadId, debtType, amount })
+        headers: createHeaders(context, true),
+        body: JSON.stringify({ debtType, amount })
     })
     .then(handleResponse)
 }
 
-export function acceptDebt (psid, debtId) {
+export function acceptDebt (context, debtId) {
     return fetch(`${config.apiUrl}/debts/accept/${debtId}`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ psid })
+        headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function getThreadStatus (psid, threadId, threadType) {
-    return fetch(`${config.apiUrl}/debts/threadStatus/${psid}/${threadId}/${threadType}`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json, text/plain, */*'
-        }
+export function getThreadStatus (context) {
+    return fetch(`${config.apiUrl}/debts/threadStatus`, {
+        headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function getStatus (psid) {
-    return fetch(`${config.apiUrl}/debts/status/${psid}`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json, text/plain, */*'
-        }
+export function getStatus (context) {
+    return fetch(`${config.apiUrl}/debts/status`, {
+        headers: createHeaders(context)
     })
     .then(handleResponse)
 }

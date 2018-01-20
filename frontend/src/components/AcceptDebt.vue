@@ -24,7 +24,7 @@ export default {
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => acceptDebt(info.psid, this.$route.params.id))
+            .then(info => acceptDebt(info, this.$route.params.id))
             .then(data => {
                 if (data.debt.user2) {
                     this.message = 'Dług został zapisany'

@@ -65,7 +65,7 @@ export default {
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getStatus(info.psid))
+            .then(info => getStatus(info))
             .then(entry => {
                 this.statusMyDebts = entry.status.filter(s => s.amount > 0)
                 this.statusOthersDebts = entry.status

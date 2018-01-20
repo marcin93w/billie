@@ -65,7 +65,7 @@ export default {
                 const debtType = getDebtType(this.isPayoff, this.isBorrowed)
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
-                    .then(info => addDebt(info.psid, info.tid, debtType, this.amount))
+                    .then(info => addDebt(info, debtType, this.amount))
                     .then(debt => sendDebtInvite(this.userName, this.userGender, debt.debtId, debtType, this.amount))
                     .then(isSent => isSent ? requestCloseBrowser() : null)
                     .catch(alert)
