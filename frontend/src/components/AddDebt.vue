@@ -1,6 +1,6 @@
 <template>
   <div class="adding-panel">
-        <div v-if="showPayoffButtons">
+        <div v-if="showPayoff">
             <button class="button" v-bind:class="[isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = false" value=false name="isPayoff" > Pożyczka </button>
             <button class="button" v-bind:class="[!isPayoff ? 'button-outline' : '' ]" v-on:click="isPayoff = true" value=true name="isPayoff" > Spłata </button>
         </div>
@@ -49,12 +49,7 @@ function getDebtType (isPayoff, isBorrowed) {
 
 export default {
     name: 'AddDebt',
-    props: ['userName', 'userGender', 'balance'],
-    computed: {
-        showPayoffButtons: function () {
-            return this.balance !== 0
-        }
-    },
+    props: ['userName', 'userGender', 'showPayoff'],
     data () {
         return {
             amount: 10,

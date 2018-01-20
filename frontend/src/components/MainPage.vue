@@ -1,7 +1,12 @@
 <template>
     <div>
-        <view-balance v-bind:contact-name="contactName" v-bind:contact-gender="contactGender" v-bind:balance="threadBalance" />
-        <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" v-bind:balance="threadBalance" />
+        <view-balance 
+            v-bind:has-debt-already="hasDebtAlready" 
+            v-bind:has-unaccepted-debt="hasUnacceptedDebt" 
+            v-bind:contact-name="contactName" 
+            v-bind:contact-gender="contactGender" 
+            v-bind:balance="threadBalance" />
+        <add-debt v-bind:user-name="userName" v-bind:user-gender="userGender" v-bind:show-payoff="hasDebtAlready" />
     </div>
 </template>
 
@@ -26,7 +31,8 @@ export default {
             contactName: '',
             contactGender: '',
             threadBalance: 0,
-            isContactAccepted: false
+            hasDebtAlready: false,
+            hasUnacceptedDebt: false
         }
     },
     created () {
@@ -35,6 +41,8 @@ export default {
             .then(info => getThreadStatus(info))
             .then(threadStatus => {
                 Object.assign(this, threadStatus)
+                this.hasDebtAlready = threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
+                this.hasUnacceptedDebt = !threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
             })
             .catch(alert)
     }

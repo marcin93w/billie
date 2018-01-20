@@ -1,6 +1,11 @@
 <template>
-    <div v-if="this.showBalanceBar" class="balance-bar">
-        <a @click="showStatus()">{{balanceText}}</a>
+    <div>
+        <div v-if="hasDebtAlready" class="balance-bar">
+            <a @click="showStatus()">{{balanceText}}</a>
+        </div>
+        <div v-if="hasUnacceptedDebt" class="balance-bar">
+            <a @click="showStatus()">Dotychczasowy dług z tą osobą na kwotę {{Math.abs(balance)}} zł nie został jeszcze zaakceptowany!</a>
+        </div>
     </div>
 </template>
 
@@ -12,7 +17,7 @@ function getGenderSuffix (userGender) {
 
 export default {
     name: 'ViewBalance',
-    props: ['contactName', 'contactGender', 'balance'],
+    props: ['contactName', 'contactGender', 'balance', 'hasDebtAlready', 'hasUnacceptedDebt'],
     computed: {
         balanceText: function () {
             if (this.balance < 0) {
@@ -20,9 +25,6 @@ export default {
             } else {
                 return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} ci już ${this.balance} zł`
             }
-        },
-        showBalanceBar: function () {
-            return this.balance !== 0
         }
     },
     data () {
