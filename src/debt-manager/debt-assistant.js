@@ -25,7 +25,7 @@ class DebtAssistant {
         }
 
         if (intent === 'show') {
-            this.debtManager.getDebtTotalBalance(user.id)
+            return this.debtManager.getDebtTotalBalance(user.id)
                 .then(balance => this.messenger.sendStatusMessage(senderPsid, balance))
         }
 
