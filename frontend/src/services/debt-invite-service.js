@@ -30,7 +30,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
             subtitle: 'Kliknij any zobaczyć aktualny status długów.',
-            image_url: `${config.homeUrl}assets/debt_invite.png`,
+            image_url: `${config.homeUrl}assets/debt-invite.png`,
             default_action: {
                 type: 'web_url',
                 url: `${config.homeUrl}#/Status`,
@@ -49,7 +49,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
             subtitle: isPayoff(debtType) ? 'Akceptuj aby zapisać spłatę' : 'Akceptuj dług aby otrzymać przypomnienie.',
-            image_url: `${config.homeUrl}assets/debt_invite.png`,
+            image_url: `${config.homeUrl}assets/debt-invite.png`,
             default_action: {
                 type: 'web_url',
                 url: `${config.homeUrl}#/acceptDebt/${debtId}`,
