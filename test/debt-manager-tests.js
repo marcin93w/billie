@@ -15,9 +15,12 @@ class RepositoryMock {
         this.debts.push(debt)
         return Promise.resolve(this.debts.length - 1)
     }
-    updateSecondUser(id, userId) {
-        this.updates[id] = userId
-        Object.assign(this.debts[id], {user2: userId})
+    updateSecondUserByThreadId(threadId, userId) {
+        this.updates[threadId] = userId
+        let debt = this.debts.find(d => d.threadId === threadId)
+        if(debt) {
+            Object.assign(debt, {user2: userId})
+        }
         return Promise.resolve()
     }
     remove(id) {
@@ -26,8 +29,26 @@ class RepositoryMock {
     get (id) {
         return Promise.resolve(this.debts[id])
     }
-    getAll() {
-        return Promise.resolve(this.debts)
+    getUserDebts (userId) {
+        const debtsCreatedByUser = this.debts
+            .filter(d => d.user1 === userId)
+            .map(d => ({
+                user: d.user2,
+                threadId: d.threadId,
+                amount: d.amount,
+                debtType: d.debtType,
+                date: d.date
+            }))
+        const debtsCreatedForUser = this.debts
+            .filter(d => d.user2 === userId)
+            .map(d => ({
+                user: d.user1,
+                threadId: d.threadId,
+                amount: d.amount,
+                debtType: 1-d.debtType,
+                date: d.date
+            }))
+        return Promise.resolve(debtsCreatedByUser.concat(debtsCreatedForUser))
     }
 }
 
@@ -40,27 +61,14 @@ test('should accept debt when sending different userid', async t => {
     t.true(repositoryMock.updates[0] === '2')
 });
 
-test('should not accept debt when sending same userid', async t => {
-    const repositoryMock = new RepositoryMock()
-    const debtManager = new DebtManager(repositoryMock)
-    const id = await debtManager.addDebt('1', '1', 0, 10)
-    await debtManager.acceptDebt(id, '1')
-
-    t.true(repositoryMock.updates.length === 0)
-});
-
 test('should calculate debt status correctly', async t => {
     const repositoryMock = new RepositoryMock()
     const debtManager = new DebtManager(repositoryMock)
 
-    let id = await debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
-    await debtManager.acceptDebt(id, senderPsid)
-    id = await debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED_PAYOFF, 3)
-    await debtManager.acceptDebt(id, '5')
+    let id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.BORROWED, 4)
+    id = await debtManager.addDebt ('2', 1, {id: senderPsid}, debtTypes.LENT, 6)
+    id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.LENT, 7)
+    id = await debtManager.addDebt (senderPsid, 1, {id: '5'}, debtTypes.LENT, 3)
 
     const status = await debtManager.getDebtStatus(senderPsid)
 
@@ -71,14 +79,10 @@ test('should calculate debt total balance correctly', async t => {
     const repositoryMock = new RepositoryMock()
     const debtManager = new DebtManager(repositoryMock)
 
-    let id = await debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
-    await debtManager.acceptDebt(id, senderPsid)
-    id = await debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 3)
-    await debtManager.acceptDebt(id, '5')
+    let id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.BORROWED, 4)
+    id = await debtManager.addDebt (2, 1, {id: senderPsid}, debtTypes.LENT, 6)
+    id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.LENT, 7)
+    id = await debtManager.addDebt (senderPsid, 1, {id: '5'}, debtTypes.BORROWED, 3)
 
     const totalBalance = await debtManager.getDebtTotalBalance(senderPsid)
 
@@ -89,14 +93,10 @@ test('should calculate thread debt balance correctly', async t => {
     const repositoryMock = new RepositoryMock()
     const debtManager = new DebtManager(repositoryMock)
 
-    let id = await debtManager.addDebt (senderPsid, 1, debtTypes.BORROWED, 4)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt ('2', 1, debtTypes.LENT, 6)
-    await debtManager.acceptDebt(id, senderPsid)
-    id = await debtManager.addDebt (senderPsid, 1, debtTypes.LENT, 7)
-    await debtManager.acceptDebt(id, '2')
-    id = await debtManager.addDebt (senderPsid, 2, debtTypes.BORROWED, 3)
-    await debtManager.acceptDebt(id, '5')
+    let id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.BORROWED, 4)
+    id = await debtManager.addDebt (2, 1, {id: senderPsid}, debtTypes.LENT, 6)
+    id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.LENT, 7)
+    id = await debtManager.addDebt (senderPsid, 2, {id: '5'}, debtTypes.BORROWED, 3)
 
     const threadBalance = await debtManager.getThreadBalance(senderPsid, 1)
 

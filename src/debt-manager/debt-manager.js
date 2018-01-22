@@ -23,25 +23,12 @@ class DebtManager {
     }
 
     getUserDebts (userId) {
-        return this.debtRepository.getAll()
-            .then(debts => {
-                const debtsCreatedByUser = debts
-                    .filter(d => d.user1 === userId)
-                    .map(d => ({
-                        user: d.user2,
-                        threadId: d.threadId,
-                        amount: toRelativeAmount(d.debtType, d.amount)
-                    }))
-                const debtsCreatedForUser = debts
-                    .filter(d => d.user2 === userId)
-                    .map(d => ({
-                        user: d.user1,
-                        threadId: d.threadId,
-                        amount: -toRelativeAmount(d.debtType, d.amount)
-                    }))
-
-                return debtsCreatedByUser.concat(debtsCreatedForUser)
-            })
+        return this.debtRepository.getUserDebts(userId)
+            .then(debts => debts.map(debt => ({
+                user: debt.user,
+                threadId: debt.threadId,
+                amount: debt.debtType === debtTypes.BORROWED ? debt.amount : -debt.amount
+            })))
     }
 
     getDebtStatus (userId) {
