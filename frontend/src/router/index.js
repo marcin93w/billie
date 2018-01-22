@@ -10,7 +10,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'HelloWorld',
+            name: 'MainPage',
             component: MainPage
         },
         {
@@ -19,7 +19,7 @@ export default new Router({
             component: AcceptDebt
         },
         {
-            path: '/Status/',
+            path: '/Status/:allowReturn?',
             name: 'Status',
             component: Status
         }

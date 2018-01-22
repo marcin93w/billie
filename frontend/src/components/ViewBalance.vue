@@ -30,7 +30,7 @@ export default {
     data () {
         return {
             showStatus: () => {
-                this.$router.push('Status')
+                this.$router.push('Status/allowReturn')
             }
         }
     },

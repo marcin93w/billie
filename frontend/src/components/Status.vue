@@ -35,7 +35,7 @@
             </tbody>
         </table>
         <div>
-        <button v-on:click="back">Powrót</button>
+        <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
         </div>
     </div>
     
@@ -58,7 +58,7 @@ export default {
             statusMyDebts: [],
             statusOthersDebts: [],
             back: () => {
-                window.history.back()
+                this.$router.push('/')
             }
         }
     },
