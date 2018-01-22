@@ -22,6 +22,7 @@ if(process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.static('frontend/dist'));
+app.use('/assets', express.static('assets'));
 app.use('/webhook', webhook);
 app.use('/debts', debtsController);
 
