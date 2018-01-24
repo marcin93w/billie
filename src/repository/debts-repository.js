@@ -21,11 +21,11 @@ module.exports = {
         return db.none('DELETE FROM public.debts WHERE id = $1 AND user1 = $2;', [id, userId])
     },
     getUserDebts (userId) {
-        return db.any('SELECT id, user2 as user, thread_id, debt_type, amount::money::numeric::float8, date \
+        return db.any('SELECT id, user2 as user, thread_id, debt_type, amount::money::numeric::float8, date, TRUE as is_user1 \
                 FROM public.debts \
                 WHERE user1 = $1 \
             UNION \
-            SELECT id, user1 as user, thread_id, 1-debt_type, amount::money::numeric::float8, date \
+            SELECT id, user1 as user, thread_id, debt_type, amount::money::numeric::float8, date, FALSE as is_user1 \
                 FROM public.debts \
                 WHERE user2 = $1;', userId)
     }

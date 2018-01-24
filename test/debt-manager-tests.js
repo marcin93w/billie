@@ -37,7 +37,8 @@ class RepositoryMock {
                 threadId: d.threadId,
                 amount: d.amount,
                 debtType: d.debtType,
-                date: d.date
+                date: d.date,
+                isUser1: true
             }))
         const debtsCreatedForUser = this.debts
             .filter(d => d.user2 === userId)
@@ -45,8 +46,9 @@ class RepositoryMock {
                 user: d.user1,
                 threadId: d.threadId,
                 amount: d.amount,
-                debtType: 1-d.debtType,
-                date: d.date
+                debtType: d.debtType,
+                date: d.date,
+                isUser1: false
             }))
         return Promise.resolve(debtsCreatedByUser.concat(debtsCreatedForUser))
     }

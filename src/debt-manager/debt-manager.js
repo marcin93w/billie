@@ -27,7 +27,7 @@ class DebtManager {
             .then(debts => debts.map(debt => ({
                 user: debt.user,
                 threadId: debt.threadId,
-                amount: debt.debtType === debtTypes.BORROWED ? debt.amount : -debt.amount
+                amount: toRelativeAmount(debt.debtType, debt.amount, debt.isUser1)
             })))
     }
 
@@ -63,11 +63,11 @@ class DebtManager {
     }
 }; 
 
-function toRelativeAmount(debtType, amount) {
+function toRelativeAmount(debtType, amount, isUser1) {
     if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
-        return amount
+        return isUser1 ? amount : -amount
     } else {
-        return -amount
+        return isUser1 ? -amount : amount
     }
 }
 
