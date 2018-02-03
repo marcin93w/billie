@@ -64,7 +64,7 @@ class DebtManager {
 }; 
 
 function toRelativeAmount(debtType, amount, isUser1) {
-    if (debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF) {
+    if (debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF) {
         return isUser1 ? amount : -amount
     } else {
         return isUser1 ? -amount : amount

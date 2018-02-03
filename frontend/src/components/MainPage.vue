@@ -10,7 +10,10 @@
             v-bind:user-name="userName" 
             v-bind:user-gender="userGender" 
             v-bind:show-payoff="hasDebtAlready"
-            v-bind:is-contact-accepted="isContactAccepted" />
+            v-bind:is-contact-accepted="isContactAccepted"
+            v-bind:contact-name="contactName" 
+            v-bind:contact-gender="contactGender" 
+            v-bind:balance="threadBalance" />
     </div>
 </template>
 

@@ -21,9 +21,9 @@ export default {
     computed: {
         balanceText: function () {
             if (this.balance < 0) {
-                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} już od ciebie ${-this.balance} zł`
+                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} ci już ${-this.balance} zł`
             } else {
-                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} ci już ${this.balance} zł`
+                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} już od ciebie ${this.balance} zł`
             }
         }
     },
