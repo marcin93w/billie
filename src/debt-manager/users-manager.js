@@ -50,19 +50,6 @@ class UsersManager {
         return this.usersRepository.getByPsid(psid)
     }
 
-    setNamesInDebtStatus(status) {
-        return Promise.all(status.map(entry => {
-            if (!entry.name) {
-                entry.name = 'unaccepted';
-                return entry;
-            }
-            return this.usersRepository.getById(entry.name).then(user => {
-                entry.name = user.name;
-                return entry;
-            })
-        }))
-    }
-
     getUserForThreadId(requesterId, threadId) {
         return this.threadsRepository.getUserThreadsByThreadId(threadId)
             .then(threadUsers => threadUsers.find(t => t.userId !== requesterId && t.isGroup === false))

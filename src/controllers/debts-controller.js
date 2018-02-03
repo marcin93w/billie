@@ -73,7 +73,6 @@ router.route('/accept/:id').get((req, res) => {
 
 router.route('/status').get((req, res) => {
     debtManager.getDebtStatus(req.user.id)
-        .then(status => usersManager.setNamesInDebtStatus(status))
         .then(status => {
             res.status(200).send({
                 status

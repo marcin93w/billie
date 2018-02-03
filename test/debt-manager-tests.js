@@ -38,7 +38,8 @@ class RepositoryMock {
                 amount: d.amount,
                 debtType: d.debtType,
                 date: d.date,
-                isUser1: true
+                isUser1: true,
+                userName: 'fake'
             }))
         const debtsCreatedForUser = this.debts
             .filter(d => d.user2 === userId)
@@ -48,7 +49,8 @@ class RepositoryMock {
                 amount: d.amount,
                 debtType: d.debtType,
                 date: d.date,
-                isUser1: false
+                isUser1: false,
+                userName: 'fake'
             }))
         return Promise.resolve(debtsCreatedByUser.concat(debtsCreatedForUser))
     }
@@ -67,14 +69,17 @@ test('should calculate debt status correctly', async t => {
     const repositoryMock = new RepositoryMock()
     const debtManager = new DebtManager(repositoryMock)
 
-    let id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.BORROWED, 4)
-    id = await debtManager.addDebt ('2', 1, {id: senderPsid}, debtTypes.LENT, 6)
-    id = await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.LENT, 7)
-    id = await debtManager.addDebt (senderPsid, 1, {id: '5'}, debtTypes.LENT, 3)
+    await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.BORROWED, 4)
+    await debtManager.addDebt ('2', 1, {id: senderPsid}, debtTypes.LENT, 6)
+    await debtManager.addDebt (senderPsid, 1, {id: '2'}, debtTypes.LENT, 7)
+    await debtManager.addDebt (senderPsid, 1, {id: '5'}, debtTypes.LENT, 3)
+    await debtManager.addDebt (senderPsid, 5, null, debtTypes.LENT, 2)
+    await debtManager.addDebt (senderPsid, 6, null, debtTypes.LENT, 2)
 
     const status = await debtManager.getDebtStatus(senderPsid)
 
-    t.is(status.find(s => s.name === '2').amount, 3)
+    t.is(status.find(s => s.userId === '2').amount, -3)
+    t.is(status.find(s => s.threadId === 5).amount, 2)
 })
 
 test('should calculate debt total balance correctly', async t => {
@@ -88,7 +93,7 @@ test('should calculate debt total balance correctly', async t => {
 
     const totalBalance = await debtManager.getDebtTotalBalance(senderPsid)
 
-    t.true(totalBalance === 6)
+    t.true(totalBalance === -6)
 })
 
 test('should calculate thread debt balance correctly', async t => {
@@ -102,5 +107,5 @@ test('should calculate thread debt balance correctly', async t => {
 
     const threadBalance = await debtManager.getThreadBalance(senderPsid, 1)
 
-    t.true(threadBalance === 3)
+    t.true(threadBalance === -3)
 })

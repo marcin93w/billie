@@ -27,20 +27,36 @@ class DebtManager {
             .then(debts => debts.map(debt => ({
                 user: debt.user,
                 threadId: debt.threadId,
-                amount: toRelativeAmount(debt.debtType, debt.amount, debt.isUser1)
+                amount: toRelativeAmount(debt.debtType, debt.amount, debt.isUser1),
+                date: debt.date,
+                userName: debt.fullName
             })))
     }
 
     getDebtStatus (userId) {
         return this.getUserDebts(userId)
             .then(userDebts => {
-                const status = _.mapValues(_.groupBy(userDebts, 'user'),
-                    debts => debts.map(d => d.amount).reduce((sum, cur) => sum + cur))
+                const status = _.groupBy(userDebts, 'user')
 
-                return Object.keys(status).map(key => ({
-                    name: key === 'null' ? null : key,
-                    amount: status[key]
-                }))
+                return _.flatMap(Object.keys(status), key => {
+                    if (key !== 'null') {
+                        return {
+                            userId: key,
+                            amount: status[key].map(d => d.amount).reduce((sum, cur) => sum + cur),
+                            date: null,
+                            threadId: null,
+                            userName: status[key][0].userName
+                        }
+                    } else {
+                        return status[key].map(d => ({
+                            userId: null,
+                            amount: d.amount,
+                            date: d.date,
+                            threadId: d.threadId,
+                            userName: null
+                        }))
+                    }
+                })
             })
     }
 

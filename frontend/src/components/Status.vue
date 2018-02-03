@@ -10,7 +10,7 @@
             </thead>
             <tbody>
                 <tr v-for="entry in statusMyDebts">
-                    <td>{{entry.name}}</td>
+                    <td>{{entry.userName}}</td>
                     <td>{{entry.amount}}</td>
                 </tr>
             </tbody>
@@ -25,7 +25,7 @@
             </thead>
             <tbody>
                 <tr v-for="entry in statusOthersDebts">
-                    <td>{{entry.name}}</td>
+                    <td>{{entry.userName}}</td>
                     <td>{{entry.amount}}</td>
                 </tr>
                 <tr> 
