@@ -40,3 +40,15 @@ CREATE TABLE public.debts
 WITH (
     OIDS = FALSE
 );
+
+CREATE TABLE public.users_debts
+(
+    user1 uuid NOT NULL,
+    user2 uuid,
+    is_user1 boolean,
+    debt money NOT NULL,
+    PRIMARY KEY (user1, user2)
+)
+WITH (
+    OIDS = FALSE
+);
