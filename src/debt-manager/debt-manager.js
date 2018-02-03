@@ -29,7 +29,8 @@ class DebtManager {
                 threadId: debt.threadId,
                 amount: toRelativeAmount(debt.debtType, debt.amount, debt.isUser1),
                 date: debt.date,
-                userName: debt.fullName
+                userName: debt.fullName,
+                avatarUrl: debt.avatarUrl
             })))
     }
 
@@ -45,7 +46,8 @@ class DebtManager {
                             amount: status[key].map(d => d.amount).reduce((sum, cur) => sum + cur),
                             date: null,
                             threadId: null,
-                            userName: status[key][0].userName
+                            userName: status[key][0].userName,
+                            avatarUrl: status[key][0].avatarUrl
                         }
                     } else {
                         return status[key].map(d => ({
@@ -53,7 +55,8 @@ class DebtManager {
                             amount: d.amount,
                             date: d.date,
                             threadId: d.threadId,
-                            userName: null
+                            userName: null,
+                            avatarUrl: null
                         }))
                     }
                 })
