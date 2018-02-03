@@ -6,6 +6,7 @@ CREATE TABLE public.users
     name text,
     full_name text,
     gender text,
+    avatar_url text,
     PRIMARY KEY (id),
     CONSTRAINT psuser UNIQUE (psid),
     CONSTRAINT fbuser UNIQUE (fbid)
