@@ -61,7 +61,7 @@ export default {
     computed: {
         lentText: function () {
             if (this.isContactAccepted || this.contactName) {
-                return `${this.contactName} pożycza od mnie`
+                return `${this.contactName} pożycza ode mnie`
             }
 
             return 'Pożyczam Komuś'
