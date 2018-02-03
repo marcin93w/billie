@@ -81,6 +81,14 @@ router.route('/status').get((req, res) => {
         .catch(err => sendErrorMessage(res, err));
 });
 
+router.route('/userHistory/:id').get((req, res) => {
+    debtManager.getDebtsHistory(req.user.id, id)
+        .then(data => {
+            res.status(200).send(data);
+        })
+        .catch(err => sendErrorMessage(res, err));
+});
+
 function sendErrorMessage(res, error) {
     console.error(error)
     res.status(500).send()

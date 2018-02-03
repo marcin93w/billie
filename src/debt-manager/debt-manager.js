@@ -34,6 +34,10 @@ class DebtManager {
             })))
     }
 
+    getDebtsHistory (userId, contactId) {
+        return this.debtRepository.getDebts(userId, contactId);
+    }
+
     getDebtStatus (userId) {
         return this.getUserDebts(userId)
             .then(userDebts => {

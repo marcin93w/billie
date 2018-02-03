@@ -30,5 +30,8 @@ module.exports = {
                 FROM public.debts d \
                 JOIN public.users u on(d.user1 = u.id) \
                 WHERE user2 = $1;', userId)
+    },
+    getDebts (user1, user2) {
+        return db.any('', user1, user2);
     }
 };
