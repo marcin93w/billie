@@ -62,7 +62,6 @@ caption {
 }
 
 .status {
-    background-color: azure;
     font-weight: bolder;
     font-style: oblique;
     color: black;
@@ -71,7 +70,6 @@ caption {
 
 .statusTable {
 border-width: 40px;
-background-color: azure;
 margin: 25px auto;
 max-width: 400px;
 

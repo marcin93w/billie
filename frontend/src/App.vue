@@ -16,6 +16,7 @@ export default {
 
 <style>
 body {
+    background-color: azure; 
     margin: 0;
 }
 #app {
