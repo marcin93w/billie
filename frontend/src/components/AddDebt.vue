@@ -7,18 +7,26 @@
                 value="0" name="debtActionButton">
                 <span>{{lentText}}</span>
             </button>
-            <button class="button"  
-                v-bind:class="[debtType === debtTypes.BORROWED ? '' : 'button-outline' ]" 
-                v-on:click="setDebtType(false, true)" 
-                value="1" name="debtActionButton">
-                <span>{{borrowedText}}</span>
-            </button>
+            <img class="arrow" src="../assets/arrow1.png" />
+            <div class="between-arrows">
+            <div class="avatar" ><img src="../assets/avat.png" /> </div>  
+            <div class="butt-middle">         
             <button class="button"  
                 v-if="isContactAccepted"
                 v-bind:class="[debtType === debtTypes.LENT_PAYOFF || debtType === debtTypes.BORROWED_PAYOFF ? '' : 'button-outline' ]" 
                 v-on:click="setDebtType(true)" 
                 value="2" name="debtActionButton">
                 <span>{{payoffText}}</span>
+            </button>
+            </div>            
+            <div class="avatar" ><img src="../assets/avat2.png" /></div>
+            </div>
+            <img class="arrow" src="../assets/arrow2.png" />
+                        <button class="button "  
+                v-bind:class="[debtType === debtTypes.BORROWED ? '' : 'button-outline' ]" 
+                v-on:click="setDebtType(false, true)" 
+                value="1" name="debtActionButton">
+                <span>{{borrowedText}}</span>
             </button>
         </div>
         <div>
@@ -77,7 +85,7 @@ export default {
             if (this.balance < 0) {
                 return 'Oddaję'
             } else {
-                return `${this.contactName} oddaje mi`
+                return `Oddaje mi`
             }
         }
     },
@@ -110,7 +118,7 @@ export default {
     margin-top: 40px;
 }
 
-.adding-panel div {
+.adding-panel div:not(.between-arrows, .avatar) {
     margin: 20px 10px;
 }
 
@@ -124,5 +132,19 @@ export default {
 .currency-text {
     margin-left: 5px;
 }
+.butt-middle{
+display: inline-block;
+}
+.avatar{
+margin: auto 5%; 
+vertical-align: middle;
 
+display: inline-block;
+}
+.arrow{
+    width: 50%;
+}
+.between-arrows{
+margin: 0px;
+}
 </style>
