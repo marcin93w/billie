@@ -5,8 +5,8 @@ module.exports = {
     add (user) {
         user.id = uuid()
         return db.none('INSERT INTO public.users( \
-            id, psid, fbid, name, full_name, gender) \
-            VALUES (${id}, ${psid}, ${fbId}, ${name}, ${fullName}, ${gender});', user)
+            id, psid, fbid, name, full_name, gender, avatar_url) \
+            VALUES (${id}, ${psid}, ${fbId}, ${name}, ${fullName}, ${gender}, ${profilePic});', user)
             .then(_ => user.id)
     },
     getById (id) {

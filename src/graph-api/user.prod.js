@@ -7,7 +7,7 @@ module.exports = {
                 url: "https://graph.facebook.com/v2.6/" + senderPsid,
                 qs: {
                     access_token: PAGE_ACCESS_TOKEN,
-                    fields: "first_name,last_name,gender"
+                    fields: "first_name,last_name,gender,profile_pic"
                 },
                 method: "GET"
             })
@@ -17,7 +17,8 @@ module.exports = {
                     id: bodyObj.id, 
                     name: bodyObj.first_name,
                     fullName: `${bodyObj.first_name} ${bodyObj.last_name}`,
-                    gender: bodyObj.gender 
+                    gender: bodyObj.gender, 
+                    profilePic: bodyObj.profile_pic
                 };
             });
     }
