@@ -32,6 +32,9 @@ module.exports = {
                 WHERE user2 = $1;', userId)
     },
     getDebts (user1, user2) {
-        return db.any('', user1, user2);
+        return db.any('SELECT case when user1 = $1 then 1 else 2 end as which_user, amount, date, debt_type \
+		FROM public.debts \
+		WHERE (user1 = $1 AND user2 =  $2) \
+		OR (user1 = $2 AND user2 = $2);', user1, user2);
     }
 };
