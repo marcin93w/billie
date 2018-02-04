@@ -7,9 +7,14 @@
                 value="0" name="debtActionButton">
                 <span>{{lentText}}</span>
             </button>
-            <img class="arrow" src="../assets/arrow1.png" />
+            <img class="arrow" src="../assets/arrow1.png" 
+                v-bind:class="[debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF ? 'arrow-active' : 'arrow-inactive' ] 
+                " 
+            />
             <div class="between-arrows">
-            <div class="avatar" ><img src="../assets/avat.png" /> </div>  
+            <div class="avatar">
+                <img :src="userAvatarURL" :alt="userName" /> 
+            </div>  
             <div class="butt-middle">         
             <button class="button"  
                 v-if="isContactAccepted"
@@ -19,9 +24,13 @@
                 <span>{{payoffText}}</span>
             </button>
             </div>            
-            <div class="avatar" ><img src="../assets/avat2.png" /></div>
+            <div class="avatar" > 
+                 <img :src="contactAvatarURL" :alt="contactName"  /> 
             </div>
-            <img class="arrow" src="../assets/arrow2.png" />
+            </div>
+            <img class="arrow" src="../assets/arrow2.png" 
+                v-bind:class="[debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF ? 'arrow-active' : 'arrow-inactive' ]
+               " />
                         <button class="button "  
                 v-bind:class="[debtType === debtTypes.BORROWED ? '' : 'button-outline' ]" 
                 v-on:click="setDebtType(false, true)" 
@@ -46,6 +55,7 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import debtTypes from '../utils/debt-types'
 import config from '../config'
+import avatar from '../assets/avatar.svg'
 
 function getDebtType (isPayoff, isBorrowed, currentAmount) {
     if (isPayoff) {
@@ -70,14 +80,14 @@ export default {
     computed: {
         lentText: function () {
             if (this.isContactAccepted || this.contactName) {
-                return `${this.contactName} pożycza ode mnie`
+                return `pożycza ode mnie`
             }
 
             return 'Pożyczam Komuś'
         },
         borrowedText: function () {
             if (this.isContactAccepted || this.contactName) {
-                return `${this.contactName} pożycza mi`
+                return `pożycza mi`
             }
 
             return 'Pożyczam od kogoś'
@@ -88,6 +98,12 @@ export default {
             } else {
                 return `Oddaje mi`
             }
+        },
+        userAvatarURL: function () {
+         return this.userAvatar || avatar
+        },
+        contactAvatarURL: function () {
+         return this.contactAvatar || avatar
         }
     },
     data () {
@@ -125,6 +141,7 @@ export default {
 
 #amount, .currency-text {
     width: 50%;
+    max-width: 300px;
     text-align: center;
     font-weight: bold;
     font-size: 2rem;
@@ -136,16 +153,37 @@ export default {
 .butt-middle{
 display: inline-block;
 }
+.butt-middle button{
+    margin: 0 15px 0 15px;
+}
+@media screen  and (min-width: 500px) {
+    .butt-middle button{
+    margin: 0 50px 0 50px;
+}
+}
 .avatar{
-margin: auto 5%; 
+margin: auto; 
+width: 45px;
 vertical-align: middle;
-
 display: inline-block;
 }
+.avatar img {
+border-radius: 50%;
+}
 .arrow{
-    width: 50%;
+    width: 30%;
+    max-width: 300px;
+    margin: auto auto 1.0rem auto;
+    display: block;
+}
+.arrow-active{
+    opacity: 1;
+}
+.arrow-inactive{
+     opacity: 0.5;   
 }
 .between-arrows{
-margin: 0px;
+display: inline-block;
 }
+
 </style>
