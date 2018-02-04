@@ -4,13 +4,21 @@
             <table class="statusTable">
                 <tr v-for="item in items">
                     <td><img :src="item.avatarUrl" :alt="item.name"></td>
-                    <td>{{item.userName}}</td>
-                    <td class="amountCell">{{item.amount}} zł</td>
+                    <td>{{item.name}}</td>
+                    <td 
+                        class="amountCell" 
+                        v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
+                        {{item.amount}} zł
+                    </td>
                 </tr>
                 <tr class="totalRow">
                     <td></td>
                     <td>Razem</td>
-                    <td class="amountCell">{{total}} zł</td>
+                    <td 
+                        class="amountCell" 
+                        v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
+                        {{total}} zł
+                    </td>
                 </tr>
             </table>
         <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
@@ -24,6 +32,7 @@ import { getStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
+import avatar from '../assets/avatar.svg'
 
 export default {
     name: 'Status',
@@ -31,6 +40,7 @@ export default {
         return {
             items: [],
             total: 0,
+            isTotalPositive: true,
             back: () => {
                 this.$router.push('/')
             }
@@ -42,9 +52,17 @@ export default {
             .then(info => getStatus(info))
             .then(data => {
                 this.items = data.status
-                this.total = this.items
+                    .map(item => ({
+                        name: item.userName,
+                        amount: Math.abs(item.amount),
+                        avatarUrl: item.avatarUrl || avatar,
+                        isPositive: item.amount >= 0
+                    }))
+                let totalValue = data.status
                     .map(item => item.amount)
                     .reduce((sum, cur) => sum + cur, 0)
+                this.isTotalPositive = totalValue >= 0
+                this.total = Math.abs(totalValue)
             })
             .catch(alert)
     }
@@ -72,5 +90,14 @@ export default {
 
 .amountCell {
     text-align: center;
+    font-weight: bold;
+}
+
+.text-positive {
+    color: green
+}
+
+.text-negative {
+    color: darkred
 }
 </style>
