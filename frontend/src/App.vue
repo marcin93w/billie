@@ -16,8 +16,8 @@ export default {
 
 <style>
 body {
-    background-color: azure; 
     margin: 0;
+    background-color: ghostwhite;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
