@@ -84,7 +84,7 @@ router.route('/status').get((req, res) => {
 });
 
 router.route('/userHistory/:id').get((req, res) => {
-    debtManager.getDebtsHistory(req.user.id, id)
+    debtManager.getDebtsHistory(req.user.id, req.params.id)
         .then(data => {
             res.status(200).send(data);
         })
