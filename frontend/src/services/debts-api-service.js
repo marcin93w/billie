@@ -53,6 +53,13 @@ export function getStatus (context) {
     .then(handleResponse)
 }
 
+export function debtHistory (context, userId) {
+    return fetch(`${config.apiUrl}/debts/userHistory/${userId}`, {
+        headers: createHeaders(context)
+    })
+    .then(handleResponse)
+}
+
 function handleResponse (res) {
     return new Promise((resolve, reject) => {
         if (res.status !== 200) {

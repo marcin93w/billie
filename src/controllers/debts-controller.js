@@ -86,9 +86,15 @@ router.route('/status').get((req, res) => {
 router.route('/userHistory/:id').get((req, res) => {
     debtManager.getDebtsHistory(req.user.id, req.params.id)
         .then(data => {
-            res.status(200).send(data);
-        })
-        .catch(err => sendErrorMessage(res, err));
+            usersManager.getUserForThreadId(req.user.id, req.threadId)
+                .then(contact => 
+                    res.status(200).send({
+                        contactName: contact ? contact.name : '',
+                        contactAvatar: contact ? contact.avatarUrl : '',
+                        debts: data
+                    }))
+        })        
+        .catch(err => sendErrorMessage(res, err))
 });
 
 function sendErrorMessage(res, error) {
