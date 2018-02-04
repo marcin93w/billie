@@ -4,7 +4,7 @@
 
         <div v-if="!isloading">
             <table class="statusTable">
-                <tr v-for="item in items" v-on:click="DebtHistory(item.userId)">
+                <tr v-for="item in items" v-on:click="showDebtHistory(item)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
                     <td v-bind:class="[item.isNotAccepted ? 'text-italics' : '' ]">{{item.name}}</td>
                     <td 
@@ -54,8 +54,12 @@ export default {
             back: () => {
                 this.$router.push('/')
             },
-            DebtHistory: (userId) => {
-                this.$router.push(`DebtHistory/${userId}`)
+            showDebtHistory: (item) => {
+                if (item.isNotAccepted) {
+                    // TODO unaccpeted history
+                } else {
+                    this.$router.push(`DebtHistory/${item.userId}`)
+                }
             }
         }
     },
@@ -94,6 +98,10 @@ export default {
 .statusTable {
     margin: 25px auto;
     max-width: 400px;
+}
+
+.statusTable tr {
+    cursor: pointer;
 }
 
 .totalRow {
