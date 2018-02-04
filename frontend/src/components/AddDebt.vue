@@ -180,7 +180,7 @@ border-radius: 50%;
     opacity: 1;
 }
 .arrow-inactive{
-     opacity: 0.5;   
+     opacity: 0.2;   
 }
 .between-arrows{
 display: inline-block;
