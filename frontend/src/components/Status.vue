@@ -1,6 +1,8 @@
 <template>
     <div class="status">
-        <div>
+        <Loader :isloading="isloading" />
+
+        <div v-if="!isloading">
             <table class="statusTable">
                 <tr v-for="item in items">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
@@ -35,11 +37,16 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
+import Loader from './Loader.vue'
 
 export default {
     name: 'Status',
+    components: {
+        'Loader': Loader
+    },
     data () {
         return {
+            isloading: true,
             items: [],
             total: 0,
             isTotalPositive: true,
@@ -53,6 +60,7 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info))
             .then(data => {
+                this.isloading = false,
                 this.items = data.status
                     .map(item => ({
                         name: item.userName,
