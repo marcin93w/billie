@@ -36,9 +36,11 @@ router.route('/threadStatus').get((req, res) => {
                 res.status(200).send({
                     userName: req.user.name,
                     userGender: req.user.gender,
+                    userAvatar: req.user.avatarUrl,
                     isContactAccepted: !!contact,
                     contactName: contact ? contact.name : '',
                     contactGender: contact ? contact.gender : '',
+                    contactAvatar: contact ? contact.avatarUrl : '',
                     threadBalance
                 }))
         )
