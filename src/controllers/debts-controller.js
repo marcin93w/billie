@@ -89,8 +89,10 @@ router.route('/userHistory/:id').get((req, res) => {
             usersManager.getUserById(req.params.id)
                 .then(contact => 
                     res.status(200).send({
-                        contactName: contact ? contact.name : '',
-                        contactAvatar: contact ? contact.avatarUrl : '',
+                        contactName: contact.name,
+                        contactFullName: contact.fullName,
+                        contactAvatar: contact.avatarUrl,
+                        contactGender: contact.gender,
                         debts: data
                     }))
         })        

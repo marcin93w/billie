@@ -1,20 +1,21 @@
 <template>
     <div class="debtHistory">
+        <div class="contact-panel">
+            <img :src=avatarUrl :alt=contactName />
+            <p>{{contactFullName}}</p>
+        </div>
             <table>
-                <tr>
-                    <td><img :src=avatarUrl :alt=contactName></td>
-                    <td>{{contactName}}</td>
-                </tr>
                 <tr v-for="item in items">
-                    <td>{{item.date}}</td>
-                    <td 
-                        class="amountCell" 
-                        v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
-                        {{item.amount}} zł
+                    <td><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</td> 
+                    <td>
+                        <span class="amount" 
+                            v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
+                            {{item.amount}} zł
+                        </span>
                     </td>
                 </tr>
             </table>
-        <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
+        <button v-on:click="back">Powrót</button>
     </div>
 </template>
 
@@ -26,6 +27,7 @@ import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
 import debtTypes from '../utils/debt-types'
+import moment from 'moment'
 
 export default {
     name: 'DebtHistory',
@@ -35,25 +37,39 @@ export default {
             total: 0,
             isTotalPositive: true,
             avatarUrl: '',
+            contactFullName: '',
             contactName: '',
+            contactGender: 'male',
+            getDebtTypeDescription (debtType) {
+                switch (debtType) {
+                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.BORROWED: return `pożyczyłeś`
+                case debtTypes.LENT_PAYOFF: return `${this.contactName} oddał${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.BORROWED_PAYOFF: return `oddałeś`
+                }
+            },
             back: () => {
-                this.$router.push('/')
+                this.$router.push('/Status/')
             }
         }
     },
     created () {
+        moment.locale('pl')
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => debtHistory(info, this.$route.params.id))
             .then(data => {
                 this.items = data.debts
                     .map(item => ({
-                        date: item.date,
+                        date: moment(item.date).fromNow(),
                         amount: item.amount,
+                        debtType: item.debtType,
                         isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
                     }))
                 this.avatarUrl = data.contactAvatar || avatar
                 this.contactName = data.contactName
+                this.contactFullName = data.contactFullName
+                this.contactGender = data.contactGender
             })
             .catch(alert)
     }
@@ -61,34 +77,35 @@ export default {
 </script>
 
 <style scoped>
+.contact-panel img {
+    display: inline-block;
+    width: 45px;
+    border-radius: 50%;
+}
 
 .debtHistory {
     margin: 25px auto;
     max-width: 400px;
 }
 
-.totalRow {
-    font-weight: bold;
+ul {
+    list-style: none;
 }
 
-.debtHistory img {
-    width: 45px;
-    height: 45px;
-    margin: auto;
-    display: block;
-    border-radius: 50%;
+.date {
+    font-style: italic;
 }
 
-.amountCell {
-    text-align: center;
+.amount {
     font-weight: bold;
 }
 
 .text-positive {
-    color: green
+    color: green;
 }
 
 .text-negative {
-    color: darkred
+    color: darkred;
 }
+
 </style>
