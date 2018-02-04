@@ -62,7 +62,7 @@ export default {
                 this.items = data.debts
                     .map(item => ({
                         date: moment(item.date).fromNow(),
-                        amount: item.amount,
+                        amount: item.amount.toFixed(2),
                         debtType: item.debtType,
                         isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
                     }))

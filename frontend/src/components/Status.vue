@@ -73,7 +73,7 @@ export default {
                     .map(item => ({
                         userId: item.userId,
                         name: item.userName || 'Niezaakceptowany',
-                        amount: Math.abs(item.amount),
+                        amount: Math.abs(item.amount).toFixed(2),
                         avatarUrl: item.avatarUrl || avatar,
                         isPositive: item.amount >= 0,
                         isNotAccepted: !item.userName
@@ -82,7 +82,7 @@ export default {
                     .map(item => item.amount)
                     .reduce((sum, cur) => sum + cur, 0)
                 this.isTotalPositive = totalValue >= 0
-                this.total = Math.abs(totalValue)
+                this.total = Math.abs(totalValue).toFixed(2)
             })
             .catch(alert)
     }

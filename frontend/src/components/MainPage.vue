@@ -55,6 +55,7 @@ export default {
                 Object.assign(this, threadStatus)
                 this.hasDebtAlready = threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
                 this.hasUnacceptedDebt = !threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
+                this.threadBalance = this.threadBalance.toFixed(2)
             })
             .catch(alert)
     }
