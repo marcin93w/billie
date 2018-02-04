@@ -58,7 +58,7 @@ export default {
                 if (item.isNotAccepted) {
                     // TODO unaccpeted history
                 } else {
-                    this.$router.push(`DebtHistory/${item.userId}`)
+                    this.$router.push(`/DebtHistory/${item.userId}`)
                 }
             }
         }
