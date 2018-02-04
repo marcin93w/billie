@@ -3,22 +3,24 @@
         <div>
             <table class="statusTable">
                 <tr v-for="item in items">
-                    <td><img :src="item.avatarUrl" :alt="item.name"></td>
+                    <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
                     <td>{{item.name}}</td>
                     <td 
                         class="amountCell" 
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
                         {{item.amount}} zł
                     </td>
+                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły" /></td>
                 </tr>
                 <tr class="totalRow">
-                    <td></td>
+                    <td />
                     <td>Razem</td>
                     <td 
                         class="amountCell" 
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
                         {{total}} zł
                     </td>
+                    <td />
                 </tr>
             </table>
         <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
@@ -71,6 +73,10 @@ export default {
 
 <style scoped>
 
+.status {
+    padding: 10px;
+}
+
 .statusTable {
     margin: 25px auto;
     max-width: 400px;
@@ -80,9 +86,8 @@ export default {
     font-weight: bold;
 }
 
-.statusTable img {
+.avatar img {
     width: 45px;
-    height: 45px;
     margin: auto;
     display: block;
     border-radius: 50%;
@@ -99,5 +104,11 @@ export default {
 
 .text-negative {
     color: darkred
+}
+
+.details-arrow img {
+    height: 1em;
+    margin: auto;
+    display: block;
 }
 </style>
