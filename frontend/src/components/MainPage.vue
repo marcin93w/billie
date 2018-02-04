@@ -14,7 +14,7 @@
             v-bind:is-contact-accepted="isContactAccepted"
             v-bind:contact-name="contactName" 
             v-bind:contact-gender="contactGender" 
-            v-bind:contact-Avatar="contactAvatar" 
+            v-bind:contact-avatar="contactAvatar" 
             v-bind:balance="threadBalance" />
     </div>
 </template>
