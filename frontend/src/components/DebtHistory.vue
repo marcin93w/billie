@@ -85,11 +85,8 @@ export default {
 
 .debtHistory {
     margin: 25px auto;
+    padding: 0 25px;
     max-width: 400px;
-}
-
-ul {
-    list-style: none;
 }
 
 .date {
