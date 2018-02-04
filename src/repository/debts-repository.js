@@ -35,6 +35,7 @@ module.exports = {
         return db.any('SELECT case when user1 = $1 then 1 else 2 end as which_user, amount::money::numeric::float8, date, debt_type \
 		FROM public.debts \
 		WHERE (user1 = $1 AND user2 =  $2) \
-		OR (user1 = $2 AND user2 = $1);', [user1, user2]);
+        OR (user1 = $2 AND user2 = $1) \
+        ORDER BY date DESC;', [user1, user2]);
     }
 };
