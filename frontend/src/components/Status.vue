@@ -6,7 +6,7 @@
             <table class="statusTable">
                 <tr v-for="item in items" v-on:click="DebtHistory(item.userId)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
-                    <td>{{item.name}}</td>
+                    <td v-bind:class="[item.isNotAccepted ? 'text-italics' : '' ]">{{item.name}}</td>
                     <td 
                         class="amountCell" 
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
@@ -52,7 +52,8 @@ export default {
             total: 0,
             isTotalPositive: true,
             back: () => {
-                this.$router.push('/') },
+                this.$router.push('/')
+            },
             DebtHistory: (userId) => {
                 this.$router.push(`DebtHistory/${userId}`)
             }
@@ -63,14 +64,15 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(info => getStatus(info))
             .then(data => {
-                this.isloading = false,
+                this.isloading = false
                 this.items = data.status
                     .map(item => ({
                         userId: item.userId,
-                        name: item.userName,
+                        name: item.userName || 'Niezaakceptowany',
                         amount: Math.abs(item.amount),
                         avatarUrl: item.avatarUrl || avatar,
-                        isPositive: item.amount >= 0
+                        isPositive: item.amount >= 0,
+                        isNotAccepted: !item.userName
                     }))
                 let totalValue = data.status
                     .map(item => item.amount)
@@ -111,11 +113,15 @@ export default {
 }
 
 .text-positive {
-    color: green
+    color: green;
 }
 
 .text-negative {
-    color: darkred
+    color: darkred;
+}
+
+.text-italics {
+    font-style: italic;
 }
 
 .details-arrow img {

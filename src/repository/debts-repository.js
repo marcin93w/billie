@@ -23,12 +23,12 @@ module.exports = {
     getUserDebts (userId) {
         return db.any('SELECT d.id, d.user2 as user, d.thread_id, d.debt_type, d.amount::money::numeric::float8, d.date, TRUE as is_user1, u.full_name, u.avatar_url \
                 FROM public.debts d \
-                JOIN public.users u on(d.user2 = u.id) \
+                LEFT JOIN public.users u on(d.user2 = u.id) \
                 WHERE user1 = $1 \
             UNION \
             SELECT d.id, d.user1 as user, d.thread_id, d.debt_type, d.amount::money::numeric::float8, d.date, FALSE as is_user1, u.full_name, u.avatar_url \
                 FROM public.debts d \
-                JOIN public.users u on(d.user1 = u.id) \
+                LEFT JOIN public.users u on(d.user1 = u.id) \
                 WHERE user2 = $1;', userId)
     },
     getDebts (user1, user2) {
