@@ -4,7 +4,7 @@
 
         <div v-if="!isloading">
             <table class="statusTable">
-                <tr v-for="item in items">
+                <tr v-for="item in items" v-on:click="DebtHistory(item.userId)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
                     <td>{{item.name}}</td>
                     <td 
@@ -12,7 +12,8 @@
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
                         {{item.amount}} zł
                     </td>
-                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły" /></td>
+                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły" 
+                    /></td>
                 </tr>
                 <tr class="totalRow">
                     <td />
@@ -51,7 +52,9 @@ export default {
             total: 0,
             isTotalPositive: true,
             back: () => {
-                this.$router.push('/')
+                this.$router.push('/') },
+            DebtHistory: (userId) => {
+                this.$router.push(`DebtHistory/${userId}`)
             }
         }
     },
@@ -63,6 +66,7 @@ export default {
                 this.isloading = false,
                 this.items = data.status
                     .map(item => ({
+                        userId: item.userId,
                         name: item.userName,
                         amount: Math.abs(item.amount),
                         avatarUrl: item.avatarUrl || avatar,
