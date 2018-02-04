@@ -35,7 +35,26 @@ class DebtManager {
     }
 
     getDebtsHistory (userId, contactId) {
-        return this.debtRepository.getDebts(userId, contactId);
+        function calculateDebtType(debtType, whichUser) {
+            if (whichUser === 1) {
+                return debtType;
+            }
+            switch (debtType) {
+                case debtTypes.BORROWED: return debtTypes.LENT
+                case debtTypes.LENT: return debtTypes.BORROWED
+                case debtTypes.BORROWED_PAYOFF: return debtTypes.LENT_PAYOFF
+                case debtTypes.LENT_PAYOFF: return debtTypes.BORROWED_PAYOFF
+            }
+        }
+
+        return this.debtRepository.getDebts(userId, contactId)
+            .then(debts =>
+                debts.map(debt => ({
+                    amount: debt.amount,
+                    date: debt.date,
+                    debtType: calculateDebtType(debt.debtType, debt.whichUser)
+                }))
+            );
     }
 
     getDebtStatus (userId) {
