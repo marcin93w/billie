@@ -16,6 +16,7 @@
             </button>
             <div class="avatars-panel">
                 <img class="arrow arrow-top" src="../assets/arrow1.png" 
+                    v-on:click="setDebtType(false, false)"
                     v-bind:class="[debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF ? 'arrow-active' : 'arrow-inactive' ]" 
                 />
                 <div class="between-arrows">
@@ -26,7 +27,8 @@
                         <img :src="contactAvatarURL" :alt="contactName"  /> 
                     </div>
                 </div>
-                <img class="arrow arrow-bottom" src="../assets/arrow2.png" 
+                <img class="arrow arrow-bottom" src="../assets/arrow2.png"
+                    v-on:click="setDebtType(false, true)" 
                     v-bind:class="[debtType === debtTypes.BORROWED || debtType === debtTypes.LENT_PAYOFF ? 'arrow-active' : 'arrow-inactive' ]"
                 />
             </div>
