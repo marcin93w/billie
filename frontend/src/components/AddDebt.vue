@@ -65,7 +65,8 @@ function getDebtType (isPayoff, isBorrowed, currentAmount) {
 
 export default {
     name: 'AddDebt',
-    props: ['userName', 'userGender', 'showPayoff', 'isContactAccepted', 'contactName', 'contactGender', 'balance'],
+    props: ['userName', 'userGender', 'userAvatar', 'showPayoff', 'isContactAccepted', 
+            'contactName', 'contactGender', 'contactAvatar', 'balance'],
     computed: {
         lentText: function () {
             if (this.isContactAccepted || this.contactName) {

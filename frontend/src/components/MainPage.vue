@@ -9,10 +9,12 @@
         <add-debt 
             v-bind:user-name="userName" 
             v-bind:user-gender="userGender" 
+            v-bind:user-avatar="userAvatar" 
             v-bind:show-payoff="hasDebtAlready"
             v-bind:is-contact-accepted="isContactAccepted"
             v-bind:contact-name="contactName" 
             v-bind:contact-gender="contactGender" 
+            v-bind:contact-Avatar="contactAvatar" 
             v-bind:balance="threadBalance" />
     </div>
 </template>
@@ -35,8 +37,11 @@ export default {
         return {
             userName: '',
             userGender: '',
+            userAvatar: '',
             contactName: '',
             contactGender: '',
+            contactAvatar: '',
+            isContactAccepted: false,
             threadBalance: 0,
             hasDebtAlready: false,
             hasUnacceptedDebt: false
