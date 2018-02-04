@@ -50,6 +50,10 @@ class UsersManager {
         return this.usersRepository.getByPsid(psid)
     }
 
+    getUserById(id) {
+        return this.usersRepository.getById(id)
+    }
+
     getUserForThreadId(requesterId, threadId) {
         return this.threadsRepository.getUserThreadsByThreadId(threadId)
             .then(threadUsers => threadUsers.find(t => t.userId !== requesterId && t.isGroup === false))

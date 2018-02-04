@@ -86,7 +86,7 @@ router.route('/status').get((req, res) => {
 router.route('/userHistory/:id').get((req, res) => {
     debtManager.getDebtsHistory(req.user.id, req.params.id)
         .then(data => {
-            usersManager.getUserForThreadId(req.user.id, req.threadId)
+            usersManager.getUserById(req.params.id)
                 .then(contact => 
                     res.status(200).send({
                         contactName: contact ? contact.name : '',
