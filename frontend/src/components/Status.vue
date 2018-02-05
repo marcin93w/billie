@@ -1,25 +1,24 @@
 <template>
     <div class="status">
         <Loader :isloading="isloading" />
-
         <div v-if="!isloading">
             <table class="statusTable">
                 <tr v-for="item in items" v-on:click="showDebtHistory(item)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
                     <td v-bind:class="[item.isNotAccepted ? 'text-italics' : '' ]">{{item.name}}</td>
-                    <td 
-                        class="amountCell" 
+                    <td
+                        class="amountCell"
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
                         {{item.amount}} zł
                     </td>
-                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły" 
+                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły"
                     /></td>
                 </tr>
                 <tr class="totalRow">
                     <td />
                     <td>Razem</td>
-                    <td 
-                        class="amountCell" 
+                    <td
+                        class="amountCell"
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
                         {{total}} zł
                     </td>

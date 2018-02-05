@@ -1,27 +1,31 @@
 <template>
     <div>
-        <view-balance 
-            v-bind:has-debt-already="hasDebtAlready" 
-            v-bind:has-unaccepted-debt="hasUnacceptedDebt" 
-            v-bind:contact-name="contactName" 
-            v-bind:contact-gender="contactGender" 
-            v-bind:balance="threadBalance" />
-        <add-debt 
-            v-bind:user-name="userName" 
-            v-bind:user-gender="userGender" 
-            v-bind:user-avatar="userAvatar" 
-            v-bind:show-payoff="hasDebtAlready"
-            v-bind:is-contact-accepted="isContactAccepted"
-            v-bind:contact-name="contactName" 
-            v-bind:contact-gender="contactGender" 
-            v-bind:contact-avatar="contactAvatar" 
-            v-bind:balance="threadBalance" />
+      <Loader :isloading="isloading" />
+        <div v-if="!isloading">
+          <view-balance
+              v-bind:has-debt-already="hasDebtAlready"
+              v-bind:has-unaccepted-debt="hasUnacceptedDebt"
+              v-bind:contact-name="contactName"
+              v-bind:contact-gender="contactGender"
+              v-bind:balance="threadBalance" />
+          <add-debt
+              v-bind:user-name="userName"
+              v-bind:user-gender="userGender"
+              v-bind:user-avatar="userAvatar"
+              v-bind:show-payoff="hasDebtAlready"
+              v-bind:is-contact-accepted="isContactAccepted"
+              v-bind:contact-name="contactName"
+              v-bind:contact-gender="contactGender"
+              v-bind:contact-avatar="contactAvatar"
+              v-bind:balance="threadBalance" />
+        </div>
     </div>
 </template>
 
 <script>
 import AddDebt from './AddDebt.vue'
 import ViewBalance from './ViewBalance.vue'
+import Loader from './Loader.vue'
 import { getThreadStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
@@ -31,7 +35,8 @@ export default {
     name: 'MainPage',
     components: {
         'add-debt': AddDebt,
-        'view-balance': ViewBalance
+        'view-balance': ViewBalance,
+        'Loader': Loader
     },
     data () {
         return {
