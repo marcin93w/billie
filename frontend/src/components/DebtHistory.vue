@@ -41,6 +41,7 @@ export default {
         return {
             items: [],
             total: 0,
+            isloading: true,
             isTotalPositive: true,
             avatarUrl: '',
             contactFullName: '',
@@ -66,7 +67,6 @@ export default {
             .then(info => debtHistory(info, this.$route.params.id))
             .then(data => {
                 this.isloading = false
-
                 this.items = data.debts.map(item => ({
                     date: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),

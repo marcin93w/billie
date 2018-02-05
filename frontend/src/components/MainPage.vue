@@ -49,7 +49,8 @@ export default {
             isContactAccepted: false,
             threadBalance: 0,
             hasDebtAlready: false,
-            hasUnacceptedDebt: false
+            hasUnacceptedDebt: false,
+            isloading: true
         }
     },
     created () {
@@ -61,6 +62,7 @@ export default {
                 this.hasDebtAlready = threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
                 this.hasUnacceptedDebt = !threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
                 this.threadBalance = this.threadBalance.toFixed(2)
+                this.isloading = false
             })
             .catch(alert)
     }
