@@ -58,34 +58,29 @@ export default {
                 this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
             }
         }
-      },
-      back: () => {
-        this.$router.push("/Status/");
-      }
-    };
-  },
-  created() {
-    moment.locale("pl");
-    ensurePermissions()
-      .then(_ => getContext(config.fbAppId))
-      .then(info => debtHistory(info, this.$route.params.id))
-      .then(data => {
-        this.isloading = false;
-        this.items = data.debts.map(item => ({
-          date: moment(item.date).fromNow(),
-          amount: item.amount.toFixed(2),
-          debtType: item.debtType,
-          isPositive:
-            item.debtType === debtTypes.LENT ||
-            item.debtType === debtTypes.BORROWED_PAYOFF
-        }));
-        this.avatarUrl = data.contactAvatar || avatar;
-        this.contactName = data.contactName;
-        this.contactFullName = data.contactFullName;
-        this.contactGender = data.contactGender;
-      })
-      .catch(alert);
-  }
+    },
+    created() {
+        moment.locale("pl")
+        ensurePermissions()
+            .then(_ => getContext(config.fbAppId))
+            .then(info => debtHistory(info, this.$route.params.id))
+            .then(data => {
+                this.isloading = false;
+                
+                this.items = data.debts.map(item => ({
+                    date: moment(item.date).fromNow(),
+                    amount: item.amount.toFixed(2),
+                    debtType: item.debtType,
+                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
+                }));
+                
+                this.avatarUrl = data.contactAvatar || avatar;
+                this.contactName = data.contactName;
+                this.contactFullName = data.contactFullName;
+                this.contactGender = data.contactGender;
+            })
+            .catch(alert)
+    }
 };
 </script>
 
