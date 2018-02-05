@@ -54,7 +54,7 @@ module.exports = {
             } else if (totalBalance > 0) {
                 return `Twoi znajomi pożyczyli od ciebie ${totalBalance}`
             } else {
-                return `Pożyczyłeś od swoich znajomych ${totalBalance}`
+                return `Pożyczyłeś od swoich znajomych ${-totalBalance}`
             }
         }
         
