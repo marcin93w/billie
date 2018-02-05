@@ -49,7 +49,7 @@ export default {
                 }
             },
             back: () => {
-                this.$router.push('/Status/')
+                this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
             }
         }
     },
