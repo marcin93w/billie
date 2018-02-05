@@ -15,7 +15,9 @@ module.exports = {
             recipient: {
                 id: receiverPsid
             },
-            message: `Możesz dodać dług na ekranie konwersacji z dowolną osobą na messengerze, ikonkę menedżera długów znajdziesz w rozszerzeniach.`
+            message: { 
+                text: `Możesz dodać dług na ekranie konwersacji z dowolną osobą na messengerze, ikonkę menedżera długów znajdziesz w rozszerzeniach.`
+            }
         })
     },
     sendActionButtons (receiverPsid) {
