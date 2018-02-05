@@ -7,7 +7,7 @@ class DebtAssistant {
     }
 
     handleMessage(senderPsid, receivedMessage) {
-        this.usersManager.signIn(senderPsid)
+        this.usersManager.signInAssistantMode(senderPsid)
             .then(user => this.processMessage(senderPsid, user, receivedMessage))
     }
 

@@ -3,9 +3,6 @@ import config from '../config'
 function createHeaders (context, isPost) {
     let headers = {
         'Accept': 'application/json, text/plain, */*',
-        'X-Psid': context.psid,
-        'X-Thread-Id': context.tid,
-        'X-Thread-Type': context.thread_type,
         'X-Signed-Request': context.signed_request
     }
 

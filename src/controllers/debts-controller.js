@@ -17,10 +17,10 @@ router.route('/*').all(function (req, res, next) {
         return
     }
 
-    usersManager.signIn(req.headers['x-psid'], req.headers['x-thread-id'], req.headers['x-thread-type'], req.headers['x-signed-request'])
-        .then(user => {
-            req.user = user
-            req.threadId = req.headers['x-thread-id']
+    usersManager.signIn(req.headers['x-signed-request'])
+        .then(userData => {
+            req.user = userData.user
+            req.threadId = userData.threadId
             next()
         })
         .catch(err => {
