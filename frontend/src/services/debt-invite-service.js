@@ -2,10 +2,6 @@ import config from '../config.js'
 import debtTypes from '../utils/debt-types'
 import { beginShareFlow } from '../messenger-extensions/messenger-extensions.js'
 
-function isPayoff (debtType) {
-    return debtType === debtTypes.BORROWED_PAYOFF || debtType === debtTypes.LENT_PAYOFF
-}
-
 function getGenderSuffix (userGender) {
     return userGender === 'male' ? '' : 'a'
 }
@@ -29,7 +25,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
     if (isContactAccepted) {
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
-            subtitle: 'Kliknij any zobaczyć aktualny status długów.',
+            subtitle: 'Kliknij aby zobaczyć aktualny status długów.',
             image_url: `${config.homeUrl}assets/debt-invite.png`,
             default_action: {
                 type: 'web_url',
@@ -40,7 +36,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
             buttons: [{
                 type: 'web_url',
                 url: `${config.homeUrl}#/Status`,
-                title: 'Zobacz status',
+                title: 'Zobacz długi',
                 messenger_extensions: true,
                 webview_height_ratio: 'tall'
             }]
@@ -48,7 +44,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
     } else {
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
-            subtitle: isPayoff(debtType) ? 'Akceptuj aby zapisać spłatę' : 'Akceptuj dług aby otrzymać przypomnienie.',
+            subtitle: 'Akceptuj aby zapisać dług.',
             image_url: `${config.homeUrl}assets/debt-invite.png`,
             default_action: {
                 type: 'web_url',
