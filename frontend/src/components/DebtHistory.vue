@@ -23,19 +23,19 @@
 </template>
 
 <script>
-import { debtHistory } from "../services/debts-api-service";
-import { ensurePermissions } from "../services/fb-permission-service";
-import { getContext } from "../messenger-extensions/messenger-extensions";
-import config from "../config";
-import avatar from "../assets/avatar.svg";
-import debtTypes from "../utils/debt-types";
-import moment from "moment";
-import Loader from "./Loader.vue";
+import { debtHistory } from '../services/debts-api-service'
+import { ensurePermissions } from '../services/fb-permission-service'
+import { getContext } from '../messenger-extensions/messenger-extensions'
+import config from '../config'
+import avatar from '../assets/avatar.svg'
+import debtTypes from '../utils/debt-types'
+import moment from 'moment'
+import Loader from './Loader.vue'
 
 export default {
     name: 'DebtHistory',
     components: {
-      Loader: Loader
+        Loader: Loader
     },
     data () {
         return {
@@ -59,29 +59,29 @@ export default {
             }
         }
     },
-    created() {
-        moment.locale("pl")
+    created () {
+        moment.locale('pl')
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => debtHistory(info, this.$route.params.id))
             .then(data => {
-                this.isloading = false;
-                
+                this.isloading = false
+
                 this.items = data.debts.map(item => ({
                     date: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),
                     debtType: item.debtType,
                     isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
-                }));
-                
-                this.avatarUrl = data.contactAvatar || avatar;
-                this.contactName = data.contactName;
-                this.contactFullName = data.contactFullName;
-                this.contactGender = data.contactGender;
+                }))
+
+                this.avatarUrl = data.contactAvatar || avatar
+                this.contactName = data.contactName
+                this.contactFullName = data.contactFullName
+                this.contactGender = data.contactGender
             })
             .catch(alert)
     }
-};
+}
 </script>
 
 <style scoped>
