@@ -2,6 +2,10 @@ import config from '../config.js'
 import debtTypes from '../utils/debt-types'
 import { beginShareFlow } from '../messenger-extensions/messenger-extensions.js'
 
+function isPayoff (debtType) {
+    return debtType === debtTypes.BORROWED_PAYOFF || debtType === debtTypes.LENT_PAYOFF
+}
+
 function getGenderSuffix (userGender) {
     return userGender === 'male' ? '' : 'a'
 }
@@ -26,7 +30,7 @@ export function sendDebtInvite (isContactAccepted, userName, userGender, debtId,
         element = {
             title: createInviteText(userName, userGender, debtType, amount),
             subtitle: 'Kliknij aby zobaczyć aktualny status długów.',
-            image_url: `${config.homeUrl}assets/debt-invite.png`,
+            image_url: isPayoff(debtType) ? `${config.homeUrl}assets/paid.png` : `${config.homeUrl}assets/new-debt.png`,
             default_action: {
                 type: 'web_url',
                 url: `${config.homeUrl}#/Status`,
