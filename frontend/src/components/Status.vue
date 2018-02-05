@@ -2,6 +2,7 @@
     <div class="status">
         <Loader :isloading="isloading" />
         <div v-if="!isloading">
+            <h4>Twoje długi</h4>
             <table class="statusTable">
                 <tr v-for="item in items" v-on:click="showDebtHistory(item)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
@@ -25,7 +26,8 @@
                     <td />
                 </tr>
             </table>
-        <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
+            <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
+            <button v-if="!$route.params.allowReturn" v-on:click="close">Zamknij</button>
         </div>
     </div>
 </template>
@@ -34,7 +36,7 @@
 
 import { getStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
-import { getContext } from '../messenger-extensions/messenger-extensions'
+import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
 import Loader from './Loader.vue'
@@ -53,11 +55,14 @@ export default {
             back: () => {
                 this.$router.push('/')
             },
+            close: () => {
+                requestCloseBrowser()
+            },
             showDebtHistory: (item) => {
                 if (item.isNotAccepted) {
                     // TODO unaccpeted history
                 } else {
-                    this.$router.push(`/DebtHistory/${item.userId}`)
+                    this.$router.push(`/DebtHistory/${item.userId}/${this.$route.params.allowReturn || ''}`)
                 }
             }
         }
@@ -95,7 +100,7 @@ export default {
 }
 
 .statusTable {
-    margin: 25px auto;
+    margin: 0 auto 25px auto;
     max-width: 400px;
 }
 

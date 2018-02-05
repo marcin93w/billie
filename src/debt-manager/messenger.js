@@ -15,7 +15,9 @@ module.exports = {
             recipient: {
                 id: receiverPsid
             },
-            message: `Możesz dodać dług na ekranie konwersacji z dowolną osobą na messengerze, ikonkę menedżera długów znajdziesz w rozszerzeniach.`
+            message: { 
+                text: `Możesz dodać dług na ekranie konwersacji z dowolną osobą, ikonę menedżera długów znajdziesz w rozszerzeniach.`
+            }
         })
     },
     sendActionButtons (receiverPsid) {
@@ -32,12 +34,12 @@ module.exports = {
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
-                            title: 'Zobacz długi',
+                            title: 'Zobaczyć długi',
                             webview_height_ratio: 'tall',
                             messenger_extensions: true
                         }, {
                             type: 'postback',
-                            title: 'Dodaj dług',
+                            title: 'Dodać dług',
                             payload: 'ADD_DEBT_INSTRUCTIONS'
                         }]
                     }
@@ -46,6 +48,16 @@ module.exports = {
         })
     },
     sendStatusMessage(receiverPsid, totalBalance) {
+        function getTotalBalanceText(balance) {
+            if (totalBalance === 0) {
+                return 'Nie masz żadnych zaległych długów'
+            } else if (totalBalance > 0) {
+                return `Twoi znajomi pożyczyli od ciebie ${totalBalance}`
+            } else {
+                return `Pożyczyłeś od swoich znajomych ${-totalBalance}`
+            }
+        }
+        
         return messagesApi.sendPost({
             recipient: {
                 id: receiverPsid
@@ -55,7 +67,7 @@ module.exports = {
                     type: 'template',
                     payload: {
                         template_type: 'button',
-                        text: `Twój całkowity status długów to: ${totalBalance}`,
+                        text: getTotalBalanceText(totalBalance),
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,

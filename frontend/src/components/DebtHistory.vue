@@ -33,34 +33,30 @@ import moment from "moment";
 import Loader from "./Loader.vue";
 
 export default {
-  name: "DebtHistory",
-  components: {
-    Loader: Loader
-  },
-  data() {
-    return {
-      items: [],
-      isloading: true,
-      total: 0,
-      isTotalPositive: true,
-      avatarUrl: "",
-      contactFullName: "",
-      contactName: "",
-      contactGender: "male",
-      getDebtTypeDescription(debtType) {
-        switch (debtType) {
-          case debtTypes.LENT:
-            return `${this.contactName} pożyczył${
-              this.contactGender !== "male" ? "a" : ""
-            }`;
-          case debtTypes.BORROWED:
-            return `pożyczyłeś`;
-          case debtTypes.LENT_PAYOFF:
-            return `${this.contactName} oddał${
-              this.contactGender !== "male" ? "a" : ""
-            }`;
-          case debtTypes.BORROWED_PAYOFF:
-            return `oddałeś`;
+    name: 'DebtHistory',
+    components: {
+      Loader: Loader
+    },
+    data () {
+        return {
+            items: [],
+            total: 0,
+            isTotalPositive: true,
+            avatarUrl: '',
+            contactFullName: '',
+            contactName: '',
+            contactGender: 'male',
+            getDebtTypeDescription (debtType) {
+                switch (debtType) {
+                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.BORROWED: return `pożyczyłeś`
+                case debtTypes.LENT_PAYOFF: return `${this.contactName} oddał${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.BORROWED_PAYOFF: return `oddałeś`
+                }
+            },
+            back: () => {
+                this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
+            }
         }
       },
       back: () => {
