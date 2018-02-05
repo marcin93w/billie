@@ -100,7 +100,7 @@ export default {
     max-width: 400px;
 }
 
-.statusTable tr {
+.statusTable tr:not(.totalRow) {
     cursor: pointer;
 }
 
