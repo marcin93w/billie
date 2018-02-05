@@ -48,7 +48,11 @@ function processIncomingEvent(entry) {
     if (webhookEvent.message) {
         debtAssistant.handleMessage(webhookEvent.sender.id, webhookEvent.message);        
     } else if (webhookEvent.postback) {
-        //TODO handle postbacks 
+        switch (webhookEvent.postback.payload) {
+            case 'ADD_DEBT_INSTRUCTIONS':
+                messenger.sendAddDebtInstructions(webhookEvent.sender.id);
+                break;
+        }
     }
 }
 

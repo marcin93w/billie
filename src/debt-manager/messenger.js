@@ -10,6 +10,14 @@ module.exports = {
             message: `Cześć ${name}, jestem botem`
         })
     },
+    sendAddDebtInstructions(receiverPsid) {
+        return messagesApi.sendPost({
+            recipient: {
+                id: receiverPsid
+            },
+            message: `Możesz dodać dług na ekranie konwersacji z dowolną osobą na messengerze, ikonkę menedżera długów znajdziesz w rozszerzeniach.`
+        })
+    },
     sendActionButtons (receiverPsid) {
         return messagesApi.sendPost({
             recipient: {
@@ -24,9 +32,13 @@ module.exports = {
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
-                            title: 'Pokaż moje długi',
+                            title: 'Zobacz długi',
                             webview_height_ratio: 'tall',
                             messenger_extensions: true
+                        }, {
+                            type: 'postback',
+                            title: 'Dodaj dług',
+                            payload: 'ADD_DEBT_INSTRUCTIONS'
                         }]
                     }
                 }
@@ -47,7 +59,7 @@ module.exports = {
                         buttons: [{
                             type: 'web_url',
                             url: `${config.homeUrl}#/Status`,
-                            title: 'Pokaż moje długi',
+                            title: 'Zobacz długi',
                             webview_height_ratio: 'tall',
                             messenger_extensions: true
                         }]
