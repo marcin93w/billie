@@ -1,25 +1,30 @@
 <template>
     <div>
-      <Loader :isloading="isloading" />
-        <div v-if="!isloading">
-          <view-balance
-              v-bind:has-debt-already="hasDebtAlready"
-              v-bind:has-unaccepted-debt="hasUnacceptedDebt"
-              v-bind:contact-name="contactName"
-              v-bind:contact-gender="contactGender"
-              v-bind:balance="threadBalance" />
-          <add-debt
-              v-bind:user-name="userName"
-              v-bind:user-gender="userGender"
-              v-bind:user-avatar="userAvatar"
-              v-bind:show-payoff="hasDebtAlready"
-              v-bind:is-contact-accepted="isContactAccepted"
-              v-bind:contact-name="contactName"
-              v-bind:contact-gender="contactGender"
-              v-bind:contact-avatar="contactAvatar"
-              v-bind:balance="threadBalance" />
+        <div class="group" v-if="threadType==='GROUP'">
+            <h4>Obecnie bot działa wyłącznie dla konwersacji z pojedynczymi osobami</h4>
         </div>
-    </div>
+        <div class="single" v-else>
+            <Loader :isloading="isloading" />
+                <div v-if="!isloading">
+                    <view-balance
+                        v-bind:has-debt-already="hasDebtAlready"
+                        v-bind:has-unaccepted-debt="hasUnacceptedDebt"
+                        v-bind:contact-name="contactName"
+                        v-bind:contact-gender="contactGender"
+                        v-bind:balance="threadBalance" />
+                    <add-debt
+                        v-bind:user-name="userName"
+                        v-bind:user-gender="userGender"
+                        v-bind:user-avatar="userAvatar"
+                        v-bind:show-payoff="hasDebtAlready"
+                        v-bind:is-contact-accepted="isContactAccepted"
+                        v-bind:contact-name="contactName"
+                        v-bind:contact-gender="contactGender"
+                        v-bind:contact-avatar="contactAvatar"
+                        v-bind:balance="threadBalance" />
+                </div>
+        </div>
+  </div>
 </template>
 
 <script>
@@ -50,13 +55,17 @@ export default {
             threadBalance: 0,
             hasDebtAlready: false,
             hasUnacceptedDebt: false,
-            isloading: true
+            isloading: true,
+            threadType: ''
         }
     },
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getThreadStatus(info))
+            .then(context => {
+                this.threadType = context.thread_type
+                return getThreadStatus(context)
+            })
             .then(threadStatus => {
                 Object.assign(this, threadStatus)
                 this.hasDebtAlready = threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
@@ -68,3 +77,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.group{
+  padding-top: 20rem
+}
+</style>
