@@ -2,12 +2,19 @@ const debtTypes = require('./debt-types.js'),
     _ = require('lodash');
 
 class DebtManager {
-    constructor(debtRepository) {
+    constructor(debtRepository, debtBalancesRepository) {
         this.debtRepository = debtRepository
+        this.debtBalancesRepository = debtBalancesRepository
     }
     
     addDebt (userId, threadId, contact, debtType, amount) {
         return this.debtRepository.add({ user1: userId, user2: contact && contact.id, threadId, debtType, amount, date: new Date()})
+            .then(_ => { 
+                if (contact) {
+                    return debtBalancesRepository.updateDebt(userId, contact.id, toRelativeAmount(debtType, amount, true))
+                } 
+                return Promise.resolve()
+            })
     }
 
     cancelDebt (id, userId) {
