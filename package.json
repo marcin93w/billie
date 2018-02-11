@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ava",
     "start": "node src/app.js",
-    "postinstall": "cd frontend && npm install --dev && npm run build"
+    "postinstall": "cd frontend && npm install --dev && npm run build",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,8 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "@types/node": "^9.4.4",
+    "@types/uuid": "^3.4.3",
     "ava": "^0.24.0",
     "eslint": "^4.14.0",
     "eslint-config-defaults": "^9.0.0"

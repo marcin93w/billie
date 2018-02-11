@@ -2,14 +2,16 @@ const
     express = require('express'),
     router = express.Router(),
     DebtManager = require('../debt-manager/debt-manager.js'),
-    debtsRepository = require('../repository/debts-repository.js'),
+    DebtsRepository = require('../repository/debts-repository.js').default,
     UsersManager = require('../debt-manager/users-manager.js'),
-    usersRepository = require('../repository/users-repository.js'),
+    UsersRepository = require('../repository/users-repository.js').default,
     threadsRepository = require('../repository/threads-repository.js'),
-    usersGraphApi = require('../graph-api/user.js');
+    DebtBalanceRepository = require('../repository/debt-balances-repository.js').default,
+    usersGraphApi = require('../graph-api/user.js'),
+    messengerSignedRequestParser = require('../utils/messenger-signed-request-parser');
 
-const debtManager = new DebtManager(debtsRepository);
-const usersManager = new UsersManager(usersGraphApi, usersRepository, threadsRepository);
+const debtManager = new DebtManager(new DebtsRepository(), new DebtBalanceRepository(), threadsRepository, new UsersRepository());
+const usersManager = new UsersManager(usersGraphApi, new UsersRepository());
 
 router.route('/*').all(function (req, res, next) {
     if(req.method === 'OPTIONS') {
@@ -17,10 +19,16 @@ router.route('/*').all(function (req, res, next) {
         return
     }
 
-    usersManager.signIn(req.headers['x-signed-request'])
-        .then(userData => {
-            req.user = userData.user
-            req.threadId = userData.threadId
+    const context = messengerSignedRequestParser.parseSignedRequest(req.headers['x-signed-request'])
+    
+    req.thread = {
+        id: context.tid,
+        type: context.thread_type
+    }
+
+    usersManager.signIn(context.psid)
+        .then(user => {
+            req.user = user
             next()
         })
         .catch(err => {
@@ -29,30 +37,22 @@ router.route('/*').all(function (req, res, next) {
         })
 })
 
-router.route('/threadStatus').get((req, res) => {
-    usersManager.getUserForThreadId(req.user.id, req.threadId)
-        .then(contact => debtManager.getThreadBalance(req.user.id, req.threadId)
-            .then(threadBalance =>
-                res.status(200).send({
-                    userName: req.user.name,
-                    userGender: req.user.gender,
-                    userAvatar: req.user.avatarUrl,
-                    isContactAccepted: !!contact,
-                    contactName: contact ? contact.name : '',
-                    contactGender: contact ? contact.gender : '',
-                    contactAvatar: contact ? contact.avatarUrl : '',
-                    threadBalance
-                }))
-        )
+router.route('/threadContext').get((req, res) => { 
+    debtManager.getThreadContext(req.user.id, req.thread)
+        .then(threadContext =>
+            res.status(200).send({
+                user: req.user,
+                contact: threadContext.contact,
+                threadBalance: threadContext.threadBalance
+            }))
         .catch(err => sendErrorMessage(res, err));
 });
 
 router.route('/add').post((req, res) => { 
-    usersManager.getUserForThreadId(req.user.id, req.threadId)
-        .then(contact => debtManager.addDebt(req.user.id, req.threadId, contact, req.body.debtType, parseFloat(req.body.amount))
+    debtManager.addDebt(req.user.id, req.thread, req.body.debtType, parseFloat(req.body.amount))
         .then(debtId => res.status(200).send({
             debtId
-        })))
+        }))
     .catch(err => sendErrorMessage(res, err));
 });
 
@@ -62,19 +62,14 @@ router.route('/cancel/:id').get((req, res) =>
         .catch(err => sendErrorMessage(res, err))
 );
 
-router.route('/accept/:id').get((req, res) => {
-    debtManager.acceptDebt(req.threadId, req.user.id)
-        .then(_ => debtManager.getDebt(req.params.id))
-        .then(debt => {
-            res.status(200).send({
-                debt
-            })
-        })
+router.route('/threadHistory').get((req, res) => { 
+    debtManager.getThreadHistory(req.user.id, req.thread)
+        .then(threadHistory => res.status(200).send(threadHistory))
         .catch(err => sendErrorMessage(res, err));
 });
 
 router.route('/status').get((req, res) => {
-    debtManager.getDebtStatus(req.user.id)
+    debtManager.getUserBalances(req.user.id)
         .then(status => {
             res.status(200).send({
                 status
@@ -85,17 +80,7 @@ router.route('/status').get((req, res) => {
 
 router.route('/userHistory/:id').get((req, res) => {
     debtManager.getDebtsHistory(req.user.id, req.params.id)
-        .then(data => {
-            usersManager.getUserById(req.params.id)
-                .then(contact => 
-                    res.status(200).send({
-                        contactName: contact.name,
-                        contactFullName: contact.fullName,
-                        contactAvatar: contact.avatarUrl,
-                        contactGender: contact.gender,
-                        debts: data
-                    }))
-        })        
+        .then(debts => res.status(200).send(debts))
         .catch(err => sendErrorMessage(res, err))
 });
 
