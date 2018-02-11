@@ -135,7 +135,7 @@ class DebtManager {
         return this.debtBalancesRepository.getUserBalances(userId)
     }
 
-    getDebtTotalBalance(userId) {
+    getTotalBalance(userId) {
         return this.debtBalancesRepository.getUserBalances(userId)
             .then(balances => balances
                 .map(s => s.amount)

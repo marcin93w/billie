@@ -50,10 +50,8 @@ router.route('/threadContext').get((req, res) => {
 
 router.route('/add').post((req, res) => { 
     debtManager.addDebt(req.user.id, req.thread, req.body.debtType, parseFloat(req.body.amount))
-        .then(debtId => res.status(200).send({
-            debtId
-        }))
-    .catch(err => sendErrorMessage(res, err));
+        .then(debtId => res.status(200).send(debtId))
+        .catch(err => sendErrorMessage(res, err));
 });
 
 router.route('/cancel/:id').get((req, res) =>
@@ -70,11 +68,7 @@ router.route('/threadHistory').get((req, res) => {
 
 router.route('/status').get((req, res) => {
     debtManager.getUserBalances(req.user.id)
-        .then(status => {
-            res.status(200).send({
-                status
-            });
-        })
+        .then(balances => res.status(200).send(balances))
         .catch(err => sendErrorMessage(res, err));
 });
 

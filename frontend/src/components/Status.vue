@@ -59,11 +59,7 @@ export default {
                 requestCloseBrowser()
             },
             showDebtHistory: (item) => {
-                if (item.isNotAccepted) {
-                    // TODO unaccpeted history
-                } else {
-                    this.$router.push(`/DebtHistory/${item.userId}/${this.$route.params.allowReturn || ''}`)
-                }
+                this.$router.push(`/DebtHistory/${item.userId}/${this.$route.params.allowReturn || ''}`)
             }
         }
     },
@@ -71,15 +67,15 @@ export default {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(info => debtBalancesService.getDebtBalances(info))
-            .then(data => {
+            .then(balances => {
                 this.isloading = false
-                this.items = data.status
+                this.items = balances
                     .map(item => ({ ...item,
                         amount: Math.abs(item.amount).toFixed(2),
                         avatarUrl: item.avatarUrl || avatar,
                         isPositive: item.amount >= 0
                     }))
-                let totalValue = data.status
+                let totalValue = balances
                     .map(item => item.amount)
                     .reduce((sum, cur) => sum + cur, 0)
                 this.isTotalPositive = totalValue >= 0

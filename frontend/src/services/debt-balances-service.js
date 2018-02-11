@@ -13,7 +13,7 @@ class DebtBalancesService {
     }
     getDebtBalanceForUser (context, userId) {
         return this.getDebtBalances(context)
-            .then(db => db.status.find(d => d.userId === userId))
+            .then(db => db.find(d => d.userId === userId))
     }
 }
 
