@@ -22,13 +22,6 @@ export function addDebt (context, debtType, amount) {
     .then(handleResponse)
 }
 
-export function acceptDebt (context, debtId) {
-    return fetch(`${config.apiUrl}/debts/accept/${debtId}`, {
-        headers: createHeaders(context)
-    })
-    .then(handleResponse)
-}
-
 export function cancelDebt (context, debtId) {
     return fetch(`${config.apiUrl}/debts/cancel/${debtId}`, {
         headers: createHeaders(context)
@@ -37,13 +30,13 @@ export function cancelDebt (context, debtId) {
 }
 
 export function getThreadStatus (context) {
-    return fetch(`${config.apiUrl}/debts/threadStatus`, {
+    return fetch(`${config.apiUrl}/debts/threadContext`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function getStatus (context) {
+export function getDebtBalances (context) {
     return fetch(`${config.apiUrl}/debts/status`, {
         headers: createHeaders(context)
     })

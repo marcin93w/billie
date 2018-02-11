@@ -9,18 +9,18 @@
                     <view-balance
                         v-bind:has-debt-already="hasDebtAlready"
                         v-bind:has-unaccepted-debt="hasUnacceptedDebt"
-                        v-bind:contact-name="contactName"
-                        v-bind:contact-gender="contactGender"
+                        v-bind:contact-name="contact && contact.name"
+                        v-bind:contact-gender="contact && contact.gender"
                         v-bind:balance="threadBalance" />
                     <add-debt
-                        v-bind:user-name="userName"
-                        v-bind:user-gender="userGender"
-                        v-bind:user-avatar="userAvatar"
+                        v-bind:user-name="user.name"
+                        v-bind:user-gender="user.gender"
+                        v-bind:user-avatar="user.avatarUrl"
                         v-bind:show-payoff="hasDebtAlready"
-                        v-bind:is-contact-accepted="isContactAccepted"
-                        v-bind:contact-name="contactName"
-                        v-bind:contact-gender="contactGender"
-                        v-bind:contact-avatar="contactAvatar"
+                        v-bind:is-contact-accepted="!!contact"
+                        v-bind:contact-name="contact && contact.name"
+                        v-bind:contact-gender="contact && contact.gender"
+                        v-bind:contact-avatar="contact && contact.avatarUrl"
                         v-bind:balance="threadBalance" />
                 </div>
         </div>
@@ -45,13 +45,8 @@ export default {
     },
     data () {
         return {
-            userName: '',
-            userGender: '',
-            userAvatar: '',
-            contactName: '',
-            contactGender: '',
-            contactAvatar: '',
-            isContactAccepted: false,
+            user: null,
+            contact: null,
             threadBalance: 0,
             hasDebtAlready: false,
             hasUnacceptedDebt: false,
@@ -68,8 +63,8 @@ export default {
             })
             .then(threadStatus => {
                 Object.assign(this, threadStatus)
-                this.hasDebtAlready = threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
-                this.hasUnacceptedDebt = !threadStatus.isContactAccepted && threadStatus.threadBalance !== 0
+                this.hasDebtAlready = threadStatus.contact && threadStatus.threadBalance !== 0
+                this.hasUnacceptedDebt = !threadStatus.contact && threadStatus.threadBalance !== 0
                 this.threadBalance = this.threadBalance.toFixed(2)
                 this.isloading = false
             })

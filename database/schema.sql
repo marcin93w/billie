@@ -73,3 +73,24 @@ CREATE INDEX fki_user2
     ON public.debt_balances USING btree
     (user2_id)
     TABLESPACE pg_default;
+
+CREATE TABLE public.pending_debts
+(
+    id uuid,
+    user_id uuid,
+    thread_id character varying(50),
+    amount money,
+    date timestamp with time zone,
+    debt_type smallint,
+    PRIMARY KEY (id),
+    CONSTRAINT "user" FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+);
+
+ALTER TABLE public.pending_debts
+    OWNER to postgres;

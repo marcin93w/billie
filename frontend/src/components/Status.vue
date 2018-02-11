@@ -5,8 +5,8 @@
             <h4>Twoje długi</h4>
             <table class="statusTable">
                 <tr v-for="item in items" v-on:click="showDebtHistory(item)">
-                    <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
-                    <td v-bind:class="[item.isNotAccepted ? 'text-italics' : '' ]">{{item.name}}</td>
+                    <td class="avatar"><img :src="item.avatarUrl" :alt="item.fullName"></td>
+                    <td>{{item.fullName}}</td>
                     <td
                         class="amountCell"
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
@@ -34,7 +34,7 @@
 
 <script>
 
-import { getStatus } from '../services/debts-api-service'
+import debtBalancesService from '../services/debt-balances-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -70,17 +70,14 @@ export default {
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getStatus(info))
+            .then(info => debtBalancesService.getDebtBalances(info))
             .then(data => {
                 this.isloading = false
                 this.items = data.status
-                    .map(item => ({
-                        userId: item.userId,
-                        name: item.userName || 'Niezaakceptowany',
+                    .map(item => ({ ...item,
                         amount: Math.abs(item.amount).toFixed(2),
                         avatarUrl: item.avatarUrl || avatar,
-                        isPositive: item.amount >= 0,
-                        isNotAccepted: !item.userName
+                        isPositive: item.amount >= 0
                     }))
                 let totalValue = data.status
                     .map(item => item.amount)

@@ -31,6 +31,7 @@ import avatar from '../assets/avatar.svg'
 import debtTypes from '../utils/debt-types'
 import moment from 'moment'
 import Loader from './Loader.vue'
+import debtBalancesService from '../services/debt-balances-service'
 
 export default {
     name: 'DebtHistory',
@@ -64,21 +65,24 @@ export default {
         moment.locale('pl')
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => debtHistory(info, this.$route.params.id))
-            .then(data => {
-                this.isloading = false
-                this.items = data.debts.map(item => ({
-                    date: moment(item.date).fromNow(),
-                    amount: item.amount.toFixed(2),
-                    debtType: item.debtType,
-                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
-                }))
+            .then(context => debtHistory(context, this.$route.params.id)
+                .then(debts => {
+                    this.items = debts.map(item => ({
+                        date: moment(item.date).fromNow(),
+                        amount: item.amount.toFixed(2),
+                        debtType: item.debtType,
+                        isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
+                    }))
+                    return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id)
+                })
+                .then(contactBalance => {
+                    this.avatarUrl = contactBalance.avatarUrl || avatar
+                    this.contactName = contactBalance.name
+                    this.contactFullName = contactBalance.fullName
+                    this.contactGender = contactBalance.gender
 
-                this.avatarUrl = data.contactAvatar || avatar
-                this.contactName = data.contactName
-                this.contactFullName = data.contactFullName
-                this.contactGender = data.contactGender
-            })
+                    this.isloading = false
+                }))
             .catch(alert)
     }
 }
