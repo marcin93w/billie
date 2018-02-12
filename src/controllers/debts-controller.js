@@ -54,8 +54,14 @@ router.route('/add').post((req, res) => {
         .catch(err => sendErrorMessage(res, err));
 });
 
-router.route('/cancel/:id').get((req, res) =>
-    debtManager.cancelDebt(req.params.id, req.user.id)
+router.route('/remove/:id').get((req, res) =>
+    debtManager.removeDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
+
+router.route('/removeUnaccpeted/:id').get((req, res) =>
+    debtManager.removePendingDebt(req.params.id, req.user.id)
         .then(_ => res.status(200).send({}))
         .catch(err => sendErrorMessage(res, err))
 );

@@ -23,7 +23,7 @@ function createInviteText (userName, userGender, debtType, amount) {
     }
 }
 
-export function sendDebtInvite (isContactAccepted, userName, userGender, debtId, debtType, amount) {
+export function sendDebtInvite (isContactAccepted, userName, userGender, debtType, amount) {
     const element = {
         title: createInviteText(userName, userGender, debtType, amount),
         subtitle: isContactAccepted ? 'Kliknij aby zobaczyć długi.' : 'Akceptuj aby zapisać dług.',

@@ -18,6 +18,12 @@ export default class DebtsRepository {
                 VALUES (${id}, ${userId}, ${threadId}, ${amount}, ${date}, ${debtType});', debt)
             .then(() => debt.id)
     }
+
+    getPending(id: string) : Promise<PendingDebt> {
+        return db.one('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type \
+                FROM public.pending_debts \
+                WHERE id = $1;', id)
+    }
     
     getPendingDebtsByThreadId(threadId: string) : Promise<PendingDebt[]> {
         return db.any('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type \

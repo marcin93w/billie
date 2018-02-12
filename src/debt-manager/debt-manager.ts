@@ -13,7 +13,7 @@ class DebtManager {
         private usersRepository: UsersRepository) {
     }
     
-    addDebt (userId, threadInfo, debtType, amount) {
+    addDebt (userId: string, threadInfo, debtType: number, amount: number) : Promise<string> {
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
                 if (contact) {
@@ -30,7 +30,7 @@ class DebtManager {
             })
     }
     
-    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount) {
+    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount) : Promise<string> {
         return this.debtsRepository.add({ 
             id: null, 
             user1: userId, 
@@ -39,7 +39,8 @@ class DebtManager {
             debtType, 
             amount, 
             date: new Date()})
-        .then(() =>  this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount)))
+        .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
+            .then(() => debtId))
     }
 
     private toRelativeAmount(debtType, amount) {
@@ -90,20 +91,26 @@ class DebtManager {
             })))
     }
 
-    cancelDebt (id, userId) {
+    removeDebt (id, userId) {
         return this.debtsRepository.get(id)
             .then(debt => {
                 if(debt.user1 !== userId) {
                     return Promise.reject('Unauthorized')
                 } else {
                     return this.debtsRepository.remove(id)
-                        .then(_ => {
-                            if (debt.user2) {
-                                return this.debtBalancesRepository.updateDebt(
-                                    userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount))
-                            }
-                            return Promise.resolve()
-                        })
+                        .then(() => this.debtBalancesRepository.updateDebt(
+                            userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount)))
+                }
+            })
+    }
+
+    removePendingDebt (id, userId) {
+        return this.debtsRepository.getPending(id)
+            .then(debt => {
+                if(debt.userId !== userId) {
+                    return Promise.reject('Unauthorized')
+                } else {
+                    return this.debtsRepository.removePendingDebtById(id)
                 }
             })
     }

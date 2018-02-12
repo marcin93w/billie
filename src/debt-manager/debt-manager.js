@@ -35,7 +35,8 @@ class DebtManager {
             amount,
             date: new Date()
         })
-            .then(() => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount)));
+            .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
+            .then(() => debtId));
     }
     toRelativeAmount(debtType, amount) {
         if (debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF) {
@@ -81,7 +82,7 @@ class DebtManager {
                 .then(() => this.debtsRepository.removePendingDebtById(d.id));
         })));
     }
-    cancelDebt(id, userId) {
+    removeDebt(id, userId) {
         return this.debtsRepository.get(id)
             .then(debt => {
             if (debt.user1 !== userId) {
@@ -89,12 +90,18 @@ class DebtManager {
             }
             else {
                 return this.debtsRepository.remove(id)
-                    .then(_ => {
-                    if (debt.user2) {
-                        return this.debtBalancesRepository.updateDebt(userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount));
-                    }
-                    return Promise.resolve();
-                });
+                    .then(() => this.debtBalancesRepository.updateDebt(userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount)));
+            }
+        });
+    }
+    removePendingDebt(id, userId) {
+        return this.debtsRepository.getPending(id)
+            .then(debt => {
+            if (debt.userId !== userId) {
+                return Promise.reject('Unauthorized');
+            }
+            else {
+                return this.debtsRepository.removePendingDebtById(id);
             }
         });
     }

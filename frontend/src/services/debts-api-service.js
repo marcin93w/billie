@@ -22,8 +22,8 @@ export function addDebt (context, debtType, amount) {
     .then(handleResponse)
 }
 
-export function cancelDebt (context, debtId) {
-    return fetch(`${config.apiUrl}/debts/cancel/${debtId}`, {
+export function cancelDebt (context, debtId, isUnaccepted) {
+    return fetch(`${config.apiUrl}/debts/remove${isUnaccepted ? 'Unaccpeted' : ''}/${debtId}`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
