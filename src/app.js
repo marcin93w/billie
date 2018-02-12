@@ -15,7 +15,7 @@ function allowCrossDomain(req, res, next) {
     next();
 }
 
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+app.listen(process.env.PORT || 1337, () => console.log('app started'));
 
 if(process.env.NODE_ENV === 'development') {
     app.use(allowCrossDomain);

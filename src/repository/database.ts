@@ -1,5 +1,6 @@
 import {IMain, IDatabase} from 'pg-promise';
 import * as pgPromise from 'pg-promise';
+import * as logger from '../utils/logger';
 
 function camelizeColumns(data) {
     const tmp = data[0];
@@ -16,7 +17,7 @@ function camelizeColumns(data) {
 }
 
 const pgp:IMain = pgPromise({
-    error: console.error,
+    error: logger.error,
     receive(data, result, e) {
         camelizeColumns(data);
     }
