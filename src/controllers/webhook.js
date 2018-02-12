@@ -1,18 +1,18 @@
 const 
     express = require('express'),
     router = express.Router(),
-    DebtAssistant = require('../debt-manager/debt-assistant.js'),
     DebtManager = require('../debt-manager/debt-manager.js'),
-    debtsRepository = require('../repository/debts-repository.js'),
+    DebtsRepository = require('../repository/debts-repository.js').default,
     UsersManager = require('../debt-manager/users-manager.js'),
-    usersRepository = require('../repository/users-repository.js'),
+    UsersRepository = require('../repository/users-repository.js').default,
     threadsRepository = require('../repository/threads-repository.js'),
+    DebtBalanceRepository = require('../repository/debt-balances-repository.js').default,
     usersGraphApi = require('../graph-api/user.js'),
     messenger = require('../debt-manager/messenger.js'),
     facebookWebhookValidator = require('../utils/facebook-webhook-validator.js');
 
-const debtManager = new DebtManager(debtsRepository);
-const usersManager = new UsersManager(usersGraphApi, usersRepository, threadsRepository);
+const debtManager = new DebtManager(new DebtsRepository(), new DebtBalanceRepository(), threadsRepository, new UsersRepository());
+const usersManager = new UsersManager(usersGraphApi, new UsersRepository());
 const debtAssistant = new DebtAssistant(messenger, usersManager, debtManager);
 
 router.route('/').get((req, res) => {
