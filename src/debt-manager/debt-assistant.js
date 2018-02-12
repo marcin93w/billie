@@ -7,7 +7,7 @@ class DebtAssistant {
     }
 
     handleMessage(senderPsid, receivedMessage) {
-        this.usersManager.signInAssistantMode(senderPsid)
+        this.usersManager.signIn(senderPsid)
             .then(user => this.processMessage(senderPsid, user, receivedMessage))
     }
 
@@ -25,7 +25,7 @@ class DebtAssistant {
         }
 
         if (intent === 'show') {
-            return this.debtManager.getDebtTotalBalance(user.id)
+            return this.debtManager.getTotalBalance(user.id)
                 .then(balance => this.messenger.sendStatusMessage(senderPsid, balance))
         }
 
