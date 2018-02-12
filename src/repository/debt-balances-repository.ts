@@ -23,7 +23,7 @@ export default class DebtBalancesRepository {
             JOIN public.users on (users.id = balances.id)', userId)
     }
 
-    getUsersBalance(userId: string, contactId: string) : Promise<number> {
+    getUsersBalance(userId: string, contactId: string) : Promise<{amount: number}> {
         return db.oneOrNone('SELECT \
             SUM(CASE WHEN user1_id = $1 THEN amount::money::numeric::float8 ELSE -amount::money::numeric::float8 END) as amount \
             FROM public.debt_balances \

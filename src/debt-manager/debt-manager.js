@@ -131,10 +131,10 @@ class DebtManager {
             .then(contact => {
             if (!contact) {
                 return this.debtsRepository.getThreadPendingDebtsBalance(threadInfo.id)
-                    .then(balance => ({ contact: null, threadBalance: balance ? balance.amount : 0 }));
+                    .then(balance => ({ contact: null, threadBalance: balance ? (balance.amount || 0) : 0 }));
             }
             return this.debtBalancesRepository.getUsersBalance(userId, contact.id)
-                .then(threadBalance => ({ contact, threadBalance }));
+                .then(balance => ({ contact, threadBalance: balance ? (balance.amount || 0) : 0 }));
         });
     }
     getPendingDebtsForThread(userId, threadInfo) {
