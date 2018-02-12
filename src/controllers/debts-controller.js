@@ -50,7 +50,7 @@ router.route('/threadContext').get((req, res) => {
 
 router.route('/add').post((req, res) => { 
     debtManager.addDebt(req.user.id, req.thread, req.body.debtType, parseFloat(req.body.amount))
-        .then(() => res.status(200).send({}))
+        .then(debtId => res.status(200).send({ debtId }))
         .catch(err => sendErrorMessage(res, err));
 });
 
