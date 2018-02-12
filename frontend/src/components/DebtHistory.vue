@@ -17,13 +17,14 @@
                       </td>
                   </tr>
               </table>
-          <button v-on:click="back">Powrót</button>
+          <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
+          <button v-else v-on:click="back">Zobacz innych znajomych</button>
         </div>
     </div>
 </template>
 
 <script>
-import { debtHistory } from '../services/debts-api-service'
+import { debtHistory, getThreadStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -65,24 +66,40 @@ export default {
         moment.locale('pl')
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(context => debtHistory(context, this.$route.params.id)
-                .then(debts => {
-                    this.items = debts.map(item => ({
-                        date: moment(item.date).fromNow(),
-                        amount: item.amount.toFixed(2),
-                        debtType: item.debtType,
-                        isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
-                    }))
-                    return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id)
-                })
-                .then(contactBalance => {
-                    this.avatarUrl = contactBalance.avatarUrl || avatar
-                    this.contactName = contactBalance.name
-                    this.contactFullName = contactBalance.fullName
-                    this.contactGender = contactBalance.gender
+            .then(context => {
+                if (this.$route.params.id) {
+                    return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
+                        this.avatarUrl = contactBalance.avatarUrl || avatar
+                        this.contactName = contactBalance.name
+                        this.contactFullName = contactBalance.fullName
+                        this.contactGender = contactBalance.gender
 
-                    this.isloading = false
+                        return debtHistory(context, this.$route.params.id)
+                    })
+                } else {
+                    return getThreadStatus(context).then(thread => {
+                        if (!thread.contact) {
+                            return Promise.resolve([])
+                        }
+
+                        this.avatarUrl = thread.contact.avatarUrl || avatar
+                        this.contactName = thread.contact.name
+                        this.contactFullName = thread.contact.fullName
+                        this.contactGender = thread.contact.gender
+
+                        return debtHistory(context, thread.contact.id)
+                    })
+                }
+            })
+            .then(debts => {
+                this.items = debts.map(item => ({
+                    date: moment(item.date).fromNow(),
+                    amount: item.amount.toFixed(2),
+                    debtType: item.debtType,
+                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
                 }))
+                this.isloading = false
+            })
             .catch(alert)
     }
 }
