@@ -68,14 +68,25 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(context => {
                 if (this.$route.params.id) {
-                    return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
-                        this.avatarUrl = contactBalance.avatarUrl || avatar
-                        this.contactName = contactBalance.name
-                        this.contactFullName = contactBalance.fullName
-                        this.contactGender = contactBalance.gender
+                    if (this.$route.params.isUnaccpeted === 'true') {
+                        return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
+                            .then(contactBalance => {
+                                this.avatarUrl = avatar
+                                this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
+                                this.contactName = 'ktoś'
 
-                        return debtHistory(context, this.$route.params.id)
-                    })
+                                return getPendingDebtsHistory(context, this.$route.params.id)
+                            })
+                    } else {
+                        return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
+                            this.avatarUrl = contactBalance.avatarUrl || avatar
+                            this.contactName = contactBalance.name
+                            this.contactFullName = contactBalance.fullName
+                            this.contactGender = contactBalance.gender
+
+                            return debtHistory(context, this.$route.params.id)
+                        })
+                    }
                 } else {
                     return getThreadStatus(context).then(thread => {
                         if (!thread.contact) {
@@ -104,7 +115,7 @@ export default {
                 }))
                 this.isloading = false
             })
-            .catch(alert)
+            .catch(console.error)
     }
 }
 </script>

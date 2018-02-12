@@ -25,11 +25,20 @@ export default class DebtsRepository {
                 WHERE thread_id = $1;', threadId)
     }
 
-    getThreadPendingDebtsBalance(threadId: string) {
+    getThreadPendingDebtsBalance(threadId: string) : Promise<{amount: number}> {
         return db.oneOrNone('SELECT \
                 SUM(CASE WHEN debt_type = 0 THEN amount::money::numeric::float8 ELSE -amount::money::numeric::float8 END) as amount \
                 FROM public.pending_debts \
                 WHERE thread_id = $1;', threadId)
+    }
+
+    getPendingDebtsBalancesForUser(userId: string) : Promise<{threadId: string, amount: number}[]> {
+        return db.any('SELECT \
+                thread_id, \
+                SUM(CASE WHEN debt_type = 0 THEN amount::money::numeric::float8 ELSE -amount::money::numeric::float8 END) as amount \
+                FROM public.pending_debts \
+                WHERE user_id = $1 \
+                GROUP BY thread_id;', userId);
     }
     
     removePendingDebtById(id: string) : Promise<null> {

@@ -61,7 +61,13 @@ router.route('/cancel/:id').get((req, res) =>
 );
 
 router.route('/pendingForThread').get((req, res) => { 
-    debtManager.getPendingDebtsForThread(req.user.id, req.thread)
+    debtManager.getPendingDebtsForThread(req.user.id, req.thread.id)
+        .then(threadHistory => res.status(200).send(threadHistory))
+        .catch(err => sendErrorMessage(res, err));
+});
+
+router.route('/pendingForThread/:id').get((req, res) => { 
+    debtManager.getPendingDebtsForThread(req.user.id, req.params.id)
         .then(threadHistory => res.status(200).send(threadHistory))
         .catch(err => sendErrorMessage(res, err));
 });

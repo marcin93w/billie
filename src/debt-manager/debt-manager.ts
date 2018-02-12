@@ -132,7 +132,13 @@ class DebtManager {
     }
 
     getUserBalances (userId: string) {
-        return this.debtBalancesRepository.getUserBalances(userId)
+        return Promise.all([
+            this.debtBalancesRepository.getUserBalances(userId),
+            this.debtsRepository.getPendingDebtsBalancesForUser(userId)])
+            .then(results => ({
+                contacts: results[0],
+                unaccpeted: results[1]
+            }))
     }
 
     getTotalBalance(userId) {
@@ -154,8 +160,8 @@ class DebtManager {
             })
     }
 
-    getPendingDebtsForThread(userId, threadInfo) {
-        return this.debtsRepository.getPendingDebtsByThreadId(threadInfo.id)
+    getPendingDebtsForThread(userId, threadId) {
+        return this.debtsRepository.getPendingDebtsByThreadId(threadId)
     }
 }; 
 

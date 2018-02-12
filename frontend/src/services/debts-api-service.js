@@ -50,8 +50,8 @@ export function debtHistory (context, userId) {
     .then(handleResponse)
 }
 
-export function getPendingDebtsHistory (context) {
-    return fetch(`${config.apiUrl}/debts/pendingForThread`, {
+export function getPendingDebtsHistory (context, threadId) {
+    return fetch(`${config.apiUrl}/debts/pendingForThread/${threadId || ''}`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)

@@ -4,7 +4,7 @@
         <div v-if="!isloading">
             <h4>Twoje długi</h4>
             <table class="statusTable">
-                <tr v-for="item in items" v-on:click="showDebtHistory(item)">
+                <tr v-for="item in contacts" v-on:click="showDebtHistory(item)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.fullName"></td>
                     <td>{{item.fullName}}</td>
                     <td
@@ -49,7 +49,8 @@ export default {
     data () {
         return {
             isloading: true,
-            items: [],
+            contacts: [],
+            unaccpeted: [],
             total: 0,
             isTotalPositive: true,
             back: () => {
@@ -59,7 +60,9 @@ export default {
                 requestCloseBrowser()
             },
             showDebtHistory: (item) => {
-                this.$router.push(`/DebtHistory/${item.userId}/${this.$route.params.allowReturn || ''}`)
+                const isUnaccepted = !item.userId
+                const id = item.userId || item.threadId
+                this.$router.push(`/DebtHistory/${id}/${isUnaccepted}/${this.$route.params.allowReturn || ''}`)
             }
         }
     },
@@ -69,14 +72,21 @@ export default {
             .then(info => debtBalancesService.getDebtBalances(info))
             .then(balances => {
                 this.isloading = false
-                this.items = balances
+                this.contacts = balances.contacts
                     .map(item => ({ ...item,
                         amount: Math.abs(item.amount).toFixed(2),
                         avatarUrl: item.avatarUrl || avatar,
                         isPositive: item.amount >= 0
                     }))
-                let totalValue = balances
-                    .map(item => item.amount)
+                    .concat(balances.unaccpeted
+                        .map(item => ({ ...item,
+                            amount: Math.abs(item.amount).toFixed(2),
+                            avatarUrl: avatar,
+                            isPositive: item.amount >= 0,
+                            fullName: 'Niezaakceptowany'
+                        })))
+                let totalValue = balances.contacts.map(item => item.amount)
+                    .concat(balances.unaccpeted.map(b => b.amount))
                     .reduce((sum, cur) => sum + cur, 0)
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)

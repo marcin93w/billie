@@ -28,6 +28,14 @@ class DebtsRepository {
                 FROM public.pending_debts \
                 WHERE thread_id = $1;', threadId);
     }
+    getPendingDebtsBalancesForUser(userId) {
+        return db.any('SELECT \
+                thread_id, \
+                SUM(CASE WHEN debt_type = 0 THEN amount::money::numeric::float8 ELSE -amount::money::numeric::float8 END) as amount \
+                FROM public.pending_debts \
+                WHERE user_id = $1 \
+                GROUP BY thread_id;', userId);
+    }
     removePendingDebtById(id) {
         return db.none('DELETE FROM public.pending_debts \
                 WHERE id = $1;', id);

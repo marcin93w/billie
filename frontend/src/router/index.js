@@ -19,7 +19,7 @@ export default new Router({
             component: Status
         },
         {
-            path: '/DebtHistory/:id?/:allowReturn?',
+            path: '/DebtHistory/:id?/:isUnaccpeted?/:allowReturn?',
             name: 'DebtHistory',
             component: DebtHistory
         }

@@ -13,7 +13,11 @@ class DebtBalancesService {
     }
     getDebtBalanceForUser (context, userId) {
         return this.getDebtBalances(context)
-            .then(db => db.find(d => d.userId === userId))
+            .then(db => db.contacts.find(d => d.userId === userId))
+    }
+    getDebtBalanceForUnacceptedThread (context, threadId) {
+        return this.getDebtBalances(context)
+            .then(db => db.unaccpeted.find(d => d.threadId === threadId))
     }
 }
 
