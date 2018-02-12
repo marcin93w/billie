@@ -61,9 +61,6 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE public.debt_balances
-    OWNER to postgres;
-
 CREATE INDEX fki_user1
     ON public.debt_balances USING btree
     (user1_id)
@@ -92,5 +89,3 @@ WITH (
     OIDS = FALSE
 );
 
-ALTER TABLE public.pending_debts
-    OWNER to postgres;
