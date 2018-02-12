@@ -51,8 +51,8 @@ export default {
             contactGender: 'male',
             getDebtTypeDescription (debtType) {
                 switch (debtType) {
-                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''}`
-                case debtTypes.BORROWED: return `pożyczyłeś`
+                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} od ciebie`
+                case debtTypes.BORROWED: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} ci`
                 case debtTypes.LENT_PAYOFF: return `${this.contactName} oddał${this.contactGender !== 'male' ? 'a' : ''}`
                 case debtTypes.BORROWED_PAYOFF: return `oddałeś`
                 }

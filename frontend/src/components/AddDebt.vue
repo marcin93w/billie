@@ -168,7 +168,6 @@ export default {
 }
 
 .avatar {
-    margin: auto; 
     width: 45px;
     vertical-align: middle;
     display: inline-block;
