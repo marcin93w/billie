@@ -1,6 +1,7 @@
 const 
     express = require('express'),
     router = express.Router(),
+    DebtAssistant = require('../debt-manager/debt-assistant.js'),
     DebtManager = require('../debt-manager/debt-manager.js'),
     DebtsRepository = require('../repository/debts-repository.js').default,
     UsersManager = require('../debt-manager/users-manager.js'),
