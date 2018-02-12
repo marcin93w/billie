@@ -50,6 +50,13 @@ export function debtHistory (context, userId) {
     .then(handleResponse)
 }
 
+export function getPendingDebtsHistory (context) {
+    return fetch(`${config.apiUrl}/debts/pendingForThread`, {
+        headers: createHeaders(context)
+    })
+    .then(handleResponse)
+}
+
 function handleResponse (res) {
     return new Promise((resolve, reject) => {
         if (res.status !== 200) {

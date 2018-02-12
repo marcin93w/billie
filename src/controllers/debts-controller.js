@@ -60,8 +60,8 @@ router.route('/cancel/:id').get((req, res) =>
         .catch(err => sendErrorMessage(res, err))
 );
 
-router.route('/threadHistory').get((req, res) => { 
-    debtManager.getThreadHistory(req.user.id, req.thread)
+router.route('/pendingForThread').get((req, res) => { 
+    debtManager.getPendingDebtsForThread(req.user.id, req.thread)
         .then(threadHistory => res.status(200).send(threadHistory))
         .catch(err => sendErrorMessage(res, err));
 });

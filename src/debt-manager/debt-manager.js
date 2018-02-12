@@ -120,7 +120,7 @@ class DebtManager {
     getUserBalances(userId) {
         return this.debtBalancesRepository.getUserBalances(userId);
     }
-    getDebtTotalBalance(userId) {
+    getTotalBalance(userId) {
         return this.debtBalancesRepository.getUserBalances(userId)
             .then(balances => balances
             .map(s => s.amount)
@@ -137,15 +137,8 @@ class DebtManager {
                 .then(threadBalance => ({ contact, threadBalance }));
         });
     }
-    getThreadHistory(userId, threadInfo) {
-        return this.getThreadContext(userId, threadInfo)
-            .then(threadContext => {
-            if (!threadContext.contact) {
-                return Object.assign({}, threadContext, { debtsHistory: null });
-            }
-            return this.getDebtsHistory(userId, threadContext.contact)
-                .then(debtsHistory => (Object.assign({}, threadContext, { debtsHistory })));
-        });
+    getPendingDebtsForThread(userId, threadInfo) {
+        return this.debtsRepository.getPendingDebtsByThreadId(threadInfo.id);
     }
 }
 ;

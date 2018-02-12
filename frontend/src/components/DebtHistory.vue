@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { debtHistory, getThreadStatus } from '../services/debts-api-service'
+import { debtHistory, getThreadStatus, getPendingDebtsHistory } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -79,7 +79,11 @@ export default {
                 } else {
                     return getThreadStatus(context).then(thread => {
                         if (!thread.contact) {
-                            return Promise.resolve([])
+                            this.avatarUrl = avatar
+                            this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
+                            this.contactName = 'ktoś'
+
+                            return getPendingDebtsHistory(context)
                         }
 
                         this.avatarUrl = thread.contact.avatarUrl || avatar

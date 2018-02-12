@@ -154,15 +154,8 @@ class DebtManager {
             })
     }
 
-    getThreadHistory(userId, threadInfo) {
-        return this.getThreadContext(userId, threadInfo)
-            .then(threadContext => {
-                if(!threadContext.contact) {
-                    return { ...threadContext, debtsHistory: null };
-                }
-                return this.getDebtsHistory(userId, threadContext.contact)
-                    .then(debtsHistory => ({ ...threadContext, debtsHistory }))
-            })
+    getPendingDebtsForThread(userId, threadInfo) {
+        return this.debtsRepository.getPendingDebtsByThreadId(threadInfo.id)
     }
 }; 
 
