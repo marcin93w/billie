@@ -23,9 +23,12 @@ const pgp:IMain = pgPromise({
     }
 });
 
-const cn:string = process.env.DATABASE_URL ? 
-    process.env.DATABASE_URL + '?ssl=true' : 
-    'postgres://postgres:dupa.8@localhost:5432/postgres';
+let cn:string = 'postgres://postgres:dupa.8@localhost:5432/postgres';
+if (process.env.DATABASE_URL) {
+    cn = process.env.DATABASE_URL + '?ssl=true';
+} else if (process.env.RDS_HOSTNAME) {
+    cn = `postgres://${process.env.RDS_USERNAME}:${process.env.RDS_PASSWORD}@${process.env.RDS_HOSTNAME}:${process.env.RDS_PORT}/postgres?ssl=true`;
+}
 
 const db:IDatabase<any> = pgp(cn);
 
