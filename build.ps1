@@ -1,5 +1,5 @@
-#tsc
-#npm install
+tsc
+npm install
 $distPath = '../messenger-debt-bot-release/'
 Copy-Item "frontend/dist" -Destination $distPath"frontend" -Recurse -Force
 Copy-Item "src" -Destination $distPath -Recurse -Exclude "*.ts","*.js.map" -Force
