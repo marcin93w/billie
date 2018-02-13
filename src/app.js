@@ -10,12 +10,12 @@ const
 function allowCrossDomain(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type,x-psid,x-signed-request,x-thread-id,x-thread-type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,x-signed-request');
 
     next();
 }
 
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
+app.listen(process.env.PORT || 1337, () => console.log('app started'));
 
 if(process.env.NODE_ENV === 'development') {
     app.use(allowCrossDomain);

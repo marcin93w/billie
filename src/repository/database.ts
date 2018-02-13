@@ -1,5 +1,7 @@
-"use strict";
-const pgPromise = require("pg-promise");
+import {IMain, IDatabase} from 'pg-promise';
+import * as pgPromise from 'pg-promise';
+import * as logger from '../utils/logger';
+
 function camelizeColumns(data) {
     const tmp = data[0];
     for (let prop in tmp) {
@@ -13,15 +15,18 @@ function camelizeColumns(data) {
         }
     }
 }
-const pgp = pgPromise({
-    error: console.error,
+
+const pgp:IMain = pgPromise({
+    error: logger.error,
     receive(data, result, e) {
         camelizeColumns(data);
     }
 });
-const cn = process.env.DATABASE_URL ?
-    process.env.DATABASE_URL + '?ssl=true' :
+
+const cn:string = process.env.DATABASE_URL ? 
+    process.env.DATABASE_URL + '?ssl=true' : 
     'postgres://postgres:dupa.8@localhost:5432/postgres';
-const db = pgp(cn);
-module.exports = db;
-//# sourceMappingURL=database.js.map
+
+const db:IDatabase<any> = pgp(cn);
+
+export = db;

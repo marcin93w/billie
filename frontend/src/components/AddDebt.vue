@@ -129,8 +129,8 @@ export default {
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
                     .then(context => addDebt(context, this.debtType, this.amount)
-                        .then(debt => sendDebtInvite(this.isContactAccepted, this.userName, this.userGender, debt.debtId, this.debtType, this.amount)
-                            .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId))))
+                        .then(debt => sendDebtInvite(this.isContactAccepted, this.userName, this.userGender, this.debtType, this.amount)
+                            .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId, !this.isContactAccepted))))
                     .catch(alert)
             }
         }
@@ -168,7 +168,6 @@ export default {
 }
 
 .avatar {
-    margin: auto; 
     width: 45px;
     vertical-align: middle;
     display: inline-block;

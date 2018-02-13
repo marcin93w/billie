@@ -4,22 +4,22 @@
         <div v-if="!isloading">
             <h4>Twoje długi</h4>
             <table class="statusTable">
-                <tr v-for="item in items" v-on:click="showDebtHistory(item)">
-                    <td class="avatar"><img :src="item.avatarUrl" :alt="item.name"></td>
-                    <td v-bind:class="[item.isNotAccepted ? 'text-italics' : '' ]">{{item.name}}</td>
-                    <td 
-                        class="amountCell" 
+                <tr v-for="item in contacts" v-on:click="showDebtHistory(item)">
+                    <td class="avatar"><img :src="item.avatarUrl" :alt="item.fullName"></td>
+                    <td>{{item.fullName}}</td>
+                    <td
+                        class="amountCell"
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
                         {{item.amount}} zł
                     </td>
-                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły" 
+                    <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły"
                     /></td>
                 </tr>
                 <tr class="totalRow">
                     <td />
                     <td>Razem</td>
-                    <td 
-                        class="amountCell" 
+                    <td
+                        class="amountCell"
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
                         {{total}} zł
                     </td>
@@ -34,7 +34,7 @@
 
 <script>
 
-import { getStatus } from '../services/debts-api-service'
+import debtBalancesService from '../services/debt-balances-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -49,7 +49,8 @@ export default {
     data () {
         return {
             isloading: true,
-            items: [],
+            contacts: [],
+            unaccpeted: [],
             total: 0,
             isTotalPositive: true,
             back: () => {
@@ -59,31 +60,33 @@ export default {
                 requestCloseBrowser()
             },
             showDebtHistory: (item) => {
-                if (item.isNotAccepted) {
-                    // TODO unaccpeted history
-                } else {
-                    this.$router.push(`/DebtHistory/${item.userId}/${this.$route.params.allowReturn || ''}`)
-                }
+                const isUnaccepted = !item.userId
+                const id = item.userId || item.threadId
+                this.$router.push(`/DebtHistory/${id}/${isUnaccepted}/${this.$route.params.allowReturn || ''}`)
             }
         }
     },
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => getStatus(info))
-            .then(data => {
+            .then(info => debtBalancesService.getDebtBalances(info))
+            .then(balances => {
                 this.isloading = false
-                this.items = data.status
-                    .map(item => ({
-                        userId: item.userId,
-                        name: item.userName || 'Niezaakceptowany',
+                this.contacts = balances.contacts
+                    .map(item => ({ ...item,
                         amount: Math.abs(item.amount).toFixed(2),
                         avatarUrl: item.avatarUrl || avatar,
-                        isPositive: item.amount >= 0,
-                        isNotAccepted: !item.userName
+                        isPositive: item.amount >= 0
                     }))
-                let totalValue = data.status
-                    .map(item => item.amount)
+                    .concat(balances.unaccpeted
+                        .map(item => ({ ...item,
+                            amount: Math.abs(item.amount).toFixed(2),
+                            avatarUrl: avatar,
+                            isPositive: item.amount >= 0,
+                            fullName: 'Niezaakceptowany'
+                        })))
+                let totalValue = balances.contacts.map(item => item.amount)
+                    .concat(balances.unaccpeted.map(b => b.amount))
                     .reduce((sum, cur) => sum + cur, 0)
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)

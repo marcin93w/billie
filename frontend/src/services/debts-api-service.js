@@ -3,9 +3,6 @@ import config from '../config'
 function createHeaders (context, isPost) {
     let headers = {
         'Accept': 'application/json, text/plain, */*',
-        'X-Psid': context.psid,
-        'X-Thread-Id': context.tid,
-        'X-Thread-Type': context.thread_type,
         'X-Signed-Request': context.signed_request
     }
 
@@ -25,28 +22,21 @@ export function addDebt (context, debtType, amount) {
     .then(handleResponse)
 }
 
-export function acceptDebt (context, debtId) {
-    return fetch(`${config.apiUrl}/debts/accept/${debtId}`, {
-        headers: createHeaders(context)
-    })
-    .then(handleResponse)
-}
-
-export function cancelDebt (context, debtId) {
-    return fetch(`${config.apiUrl}/debts/cancel/${debtId}`, {
+export function cancelDebt (context, debtId, isUnaccepted) {
+    return fetch(`${config.apiUrl}/debts/remove${isUnaccepted ? 'Unaccpeted' : ''}/${debtId}`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
 export function getThreadStatus (context) {
-    return fetch(`${config.apiUrl}/debts/threadStatus`, {
+    return fetch(`${config.apiUrl}/debts/threadContext`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function getStatus (context) {
+export function getDebtBalances (context) {
     return fetch(`${config.apiUrl}/debts/status`, {
         headers: createHeaders(context)
     })
@@ -55,6 +45,13 @@ export function getStatus (context) {
 
 export function debtHistory (context, userId) {
     return fetch(`${config.apiUrl}/debts/userHistory/${userId}`, {
+        headers: createHeaders(context)
+    })
+    .then(handleResponse)
+}
+
+export function getPendingDebtsHistory (context, threadId) {
+    return fetch(`${config.apiUrl}/debts/pendingForThread/${threadId || ''}`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)

@@ -1,8 +1,8 @@
 <template>
 <div v-if="isloading">
 <svg id="triangle" width="100px" height="100px" viewBox="-3 -4 39 39">
-  <polygon fill="#EFEFEF" stroke="#333333" stroke-width="1" points="16,0 32,32 0,32"></polygon>
-</svg></div> 
+  <polygon fill="#F8F8FF" stroke="#9b4dca" stroke-width="1" points="16,0 32,32 0,32"></polygon>
+</svg></div>
 </template>
 
 <script>
@@ -31,6 +31,7 @@ html, body {
 svg {
 margin: 10% auto;
   transform-origin: 50% 65%;
+  animation: spin 2.5s infinite;
 }
 
 svg polygon {
@@ -48,6 +49,9 @@ svg polygon {
     transform: rotate(360deg);
   }
 }
-
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
 
 </style>

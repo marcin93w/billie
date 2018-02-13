@@ -1,3 +1,5 @@
+const logger = require('../utils/logger');
+
 class DebtAssistant {
     
     constructor(messenger, usersManager, debtManager) {
@@ -9,6 +11,7 @@ class DebtAssistant {
     handleMessage(senderPsid, receivedMessage) {
         this.usersManager.signIn(senderPsid)
             .then(user => this.processMessage(senderPsid, user, receivedMessage))
+            .catch(logger.error)
     }
 
     processMessage(senderPsid, user, receivedMessage) {
@@ -16,19 +19,23 @@ class DebtAssistant {
         
         const entities = receivedMessage.nlp.entities;
         if (!entities) {
+            logger.trace('Sending fallback message, did not received NLP data', receivedMessage)
             return sendFallbackMessage();
         }
 
         const intent = entities.Intent && entities.Intent[0].value;
         if (!intent) {
+            logger.trace('Sending fallback message, did not understood intent', entities)
             return sendFallbackMessage();
         }
 
         if (intent === 'show') {
-            return this.debtManager.getDebtTotalBalance(user.id)
+            logger.trace('Sending balance message to user', user)
+            return this.debtManager.getTotalBalance(user.id)
                 .then(balance => this.messenger.sendStatusMessage(senderPsid, balance))
         }
 
+        logger.warn('Sending fallback message, unknown intent', intent)
         return sendFallbackMessage();
 
         function sendFallbackMessage() {

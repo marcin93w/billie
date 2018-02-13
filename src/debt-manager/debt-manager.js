@@ -1,116 +1,160 @@
-const debtTypes = require('./debt-types.js'),
-    _ = require('lodash');
-
+"use strict";
+const debtTypes = require("./debt-types");
 class DebtManager {
-    constructor(debtRepository) {
-        this.debtRepository = debtRepository
+    constructor(debtsRepository, debtBalancesRepository, threadsRepository, usersRepository) {
+        this.debtsRepository = debtsRepository;
+        this.debtBalancesRepository = debtBalancesRepository;
+        this.threadsRepository = threadsRepository;
+        this.usersRepository = usersRepository;
     }
-    
-    addDebt (userId, threadId, contact, debtType, amount) {
-        return this.debtRepository.add({ user1: userId, user2: contact && contact.id, threadId, debtType, amount, date: new Date()})
+    addDebt(userId, threadInfo, debtType, amount) {
+        return this.findThreadContact(userId, threadInfo)
+            .then(contact => {
+            if (contact) {
+                return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount);
+            }
+            else {
+                return this.debtsRepository.addPending({
+                    id: null,
+                    userId,
+                    threadId: threadInfo.id,
+                    debtType,
+                    amount,
+                    date: new Date()
+                });
+            }
+        });
     }
-
-    cancelDebt (id, userId) {
-        return this.debtRepository.remove(id, userId)
+    saveDebt(userId, threadId, contactId, debtType, amount) {
+        return this.debtsRepository.add({
+            id: null,
+            user1: userId,
+            user2: contactId,
+            threadId,
+            debtType,
+            amount,
+            date: new Date()
+        })
+            .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
+            .then(() => debtId));
     }
-
-    acceptDebt (threadId, userId) {
-        return this.debtRepository.updateSecondUserByThreadId(threadId, userId)
+    toRelativeAmount(debtType, amount) {
+        if (debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF) {
+            return amount;
+        }
+        else {
+            return -amount;
+        }
     }
-
-    getDebt(id) {
-        return this.debtRepository.get(id)
+    findThreadContact(userId, threadInfo) {
+        return this.threadsRepository.getUserThreadsByThreadId(threadInfo.id)
+            .then(threads => {
+            const userThread = threads.find(t => t.userId === userId);
+            const contactThread = threads.find(t => t.userId !== userId);
+            const contactId = contactThread && contactThread.userId;
+            if (userThread) {
+                return Promise.resolve(contactId);
+            }
+            return this.threadsRepository.addUserThread({
+                userId,
+                threadId: threadInfo.id,
+                isGroup: threadInfo.type === 'GROUP'
+            })
+                .then(() => {
+                if (!contactThread) {
+                    return null;
+                }
+                return this.acceptPendingDebts(userId, threadInfo.id)
+                    .then(() => contactId);
+            });
+        })
+            .then(contactId => {
+            if (contactId) {
+                return this.usersRepository.getById(contactId);
+            }
+            return Promise.resolve(null);
+        });
     }
-
-    getUserDebts (userId) {
-        return this.debtRepository.getUserDebts(userId)
-            .then(debts => debts.map(debt => ({
-                user: debt.user,
-                threadId: debt.threadId,
-                amount: toRelativeAmount(debt.debtType, debt.amount, debt.isUser1),
-                date: debt.date,
-                userName: debt.fullName,
-                avatarUrl: debt.avatarUrl
-            })))
+    acceptPendingDebts(userId, threadId) {
+        return this.debtsRepository.getPendingDebtsByThreadId(threadId)
+            .then(debts => Promise.all(debts.map(d => {
+            return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount)
+                .then(() => this.debtsRepository.removePendingDebtById(d.id));
+        })));
     }
-
-    getDebtsHistory (userId, contactId) {
+    removeDebt(id, userId) {
+        return this.debtsRepository.get(id)
+            .then(debt => {
+            if (debt.user1 !== userId) {
+                return Promise.reject('Unauthorized');
+            }
+            else {
+                return this.debtsRepository.remove(id)
+                    .then(() => this.debtBalancesRepository.updateDebt(userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount)));
+            }
+        });
+    }
+    removePendingDebt(id, userId) {
+        return this.debtsRepository.getPending(id)
+            .then(debt => {
+            if (debt.userId !== userId) {
+                return Promise.reject('Unauthorized');
+            }
+            else {
+                return this.debtsRepository.removePendingDebtById(id);
+            }
+        });
+    }
+    getDebtsHistory(userId, contactId) {
         function calculateDebtType(debtType, whichUser) {
             if (whichUser === 1) {
                 return debtType;
             }
             switch (debtType) {
-                case debtTypes.BORROWED: return debtTypes.LENT
-                case debtTypes.LENT: return debtTypes.BORROWED
-                case debtTypes.BORROWED_PAYOFF: return debtTypes.LENT_PAYOFF
-                case debtTypes.LENT_PAYOFF: return debtTypes.BORROWED_PAYOFF
+                case debtTypes.BORROWED: return debtTypes.LENT;
+                case debtTypes.LENT: return debtTypes.BORROWED;
+                case debtTypes.BORROWED_PAYOFF: return debtTypes.LENT_PAYOFF;
+                case debtTypes.LENT_PAYOFF: return debtTypes.BORROWED_PAYOFF;
             }
         }
-
-        return this.debtRepository.getDebts(userId, contactId)
-            .then(debts =>
-                debts.map(debt => ({
-                    amount: debt.amount,
-                    date: debt.date,
-                    debtType: calculateDebtType(debt.debtType, debt.whichUser)
-                }))
-            );
+        return this.debtsRepository.getDebts(userId, contactId)
+            .then(debts => debts.map(debt => ({
+            amount: debt.amount,
+            date: debt.date,
+            debtType: calculateDebtType(debt.debtType, debt.whichUser)
+        })));
     }
-
-    getDebtStatus (userId) {
-        return this.getUserDebts(userId)
-            .then(userDebts => {
-                const status = _.groupBy(userDebts, 'user')
-
-                return _.flatMap(Object.keys(status), key => {
-                    if (key !== 'null') {
-                        return {
-                            userId: key,
-                            amount: status[key].map(d => d.amount).reduce((sum, cur) => sum + cur),
-                            date: null,
-                            threadId: null,
-                            userName: status[key][0].userName,
-                            avatarUrl: status[key][0].avatarUrl
-                        }
-                    } else {
-                        return status[key].map(d => ({
-                            userId: null,
-                            amount: d.amount,
-                            date: d.date,
-                            threadId: d.threadId,
-                            userName: null,
-                            avatarUrl: null
-                        }))
-                    }
-                })
-            })
+    getUserBalances(userId) {
+        return Promise.all([
+            this.debtBalancesRepository.getUserBalances(userId),
+            this.debtsRepository.getPendingDebtsBalancesForUser(userId)
+        ])
+            .then(results => ({
+            contacts: results[0],
+            unaccpeted: results[1]
+        }));
     }
-
-    getDebtTotalBalance(userId) {
-        return this.getDebtStatus(userId)
-            .then(status => status
-                .map(s => s.amount)
-                .reduce((sum, cur) => sum + cur, 0))
+    getTotalBalance(userId) {
+        return this.debtBalancesRepository.getUserBalances(userId)
+            .then(balances => balances
+            .map(s => s.amount)
+            .reduce((sum, cur) => sum + cur, 0));
     }
-
-    getThreadBalance(userId, threadId) {
-        return this.getUserDebts(userId)
-            .then(userDebts => {
-                const threadDebts = userDebts.filter(d => d.threadId === threadId)
-
-                return threadDebts
-                    .map(d => d.amount)
-                    .reduce((sum, cur) => sum + cur, 0)
-            })
+    getThreadContext(userId, threadInfo) {
+        return this.findThreadContact(userId, threadInfo)
+            .then(contact => {
+            if (!contact) {
+                return this.debtsRepository.getThreadPendingDebtsBalance(threadInfo.id)
+                    .then(balance => ({ contact: null, threadBalance: balance ? (balance.amount || 0) : 0 }));
+            }
+            return this.debtBalancesRepository.getUsersBalance(userId, contact.id)
+                .then(balance => ({ contact, threadBalance: balance ? (balance.amount || 0) : 0 }));
+        });
     }
-}; 
-
-function toRelativeAmount(debtType, amount, isUser1) {
-    if (debtType === debtTypes.LENT || debtType === debtTypes.BORROWED_PAYOFF) {
-        return isUser1 ? amount : -amount
-    } else {
-        return isUser1 ? -amount : amount
+    getPendingDebtsForThread(userId, threadId) {
+        return this.debtsRepository.getPendingDebtsByThreadId(threadId);
     }
 }
-
+;
 module.exports = DebtManager;
+//# sourceMappingURL=debt-manager.js.map

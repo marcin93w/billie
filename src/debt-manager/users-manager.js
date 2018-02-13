@@ -1,67 +1,26 @@
-const _ = require('lodash')
+const logger = require('../utils/logger');
 
 class UsersManager {
-    constructor(userGraphApi, usersRepository, threadRepository) {
+    constructor(userGraphApi, usersRepository) {
         this.userGraphApi = userGraphApi;
         this.usersRepository = usersRepository;
-        this.threadsRepository = threadRepository;
     }
 
-    signIn(psid, threadId, threadType, signedRequest) {
-        const saveThread = (userId, threadId, threadType) => {
-            if(threadId) {
-                return this.threadsRepository.addUserThread({
-                    userId,
-                    threadId,
-                    isGroup: threadType === 'GROUP'
-                })
-            }
-            return Promise.resolve()
-        }
-
+    signIn(psid) {
         return this.usersRepository.getByPsid(psid)
             .then(user => {
                 if (user) {
-                    if (!threadId) {
-                        return user;
-                    }
-                    return this.threadsRepository.getByUserAndThreadId(user.id, threadId)
-                        .then(thread => {
-                            if (thread) {
-                                return user;
-                            }
-                            return saveThread(user.id, threadId, threadType)
-                                .then(_ => user);
-                        })
+                    logger.trace('User found in database', user)
+                    return user
                 }
-        
                 return this.userGraphApi.fetchUserData(psid)
                     .then(userData => {
+                        logger.trace('New user fetched from GraphAPI', userData)
                         userData.psid = psid
                         userData.fbId = userData.id
                         return this.usersRepository.add(userData)
-                            .then(id => saveThread(id, threadId, threadType))
-                            .then(_ => userData)
+                            .then(() => userData)
                     });
-            })
-    }
-
-    getUser(psid) {
-        return this.usersRepository.getByPsid(psid)
-    }
-
-    getUserById(id) {
-        return this.usersRepository.getById(id)
-    }
-
-    getUserForThreadId(requesterId, threadId) {
-        return this.threadsRepository.getUserThreadsByThreadId(threadId)
-            .then(threadUsers => threadUsers.find(t => t.userId !== requesterId && t.isGroup === false))
-            .then(threadUser => {
-                if(!threadUser) {
-                    return Promise.resolve(null)
-                }
-                return this.usersRepository.getById(threadUser.userId)
             })
     }
 };
