@@ -1,5 +1,6 @@
 "use strict";
 const debtTypes = require("./debt-types");
+const logger = require("../utils/logger");
 class DebtManager {
     constructor(debtsRepository, debtBalancesRepository, threadsRepository, usersRepository) {
         this.debtsRepository = debtsRepository;
@@ -8,12 +9,15 @@ class DebtManager {
         this.usersRepository = usersRepository;
     }
     addDebt(userId, threadInfo, debtType, amount) {
+        logger.trace('adding new debt', { userId, threadInfo, debtType, amount });
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
             if (contact) {
+                logger.trace('saving debt for contact', contact);
                 return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount);
             }
             else {
+                logger.trace('saving unaccepted debt');
                 return this.debtsRepository.addPending({
                     id: null,
                     userId,
@@ -47,14 +51,17 @@ class DebtManager {
         }
     }
     findThreadContact(userId, threadInfo) {
+        logger.trace('finding thread contact');
         return this.threadsRepository.getUserThreadsByThreadId(threadInfo.id)
             .then(threads => {
             const userThread = threads.find(t => t.userId === userId);
             const contactThread = threads.find(t => t.userId !== userId);
             const contactId = contactThread && contactThread.userId;
             if (userThread) {
+                logger.trace('User thread found', { userThread, contactThread });
                 return Promise.resolve(contactId);
             }
+            logger.trace('Adding user thread');
             return this.threadsRepository.addUserThread({
                 userId,
                 threadId: threadInfo.id,
@@ -62,8 +69,10 @@ class DebtManager {
             })
                 .then(() => {
                 if (!contactThread) {
+                    logger.trace('No contact in thread already');
                     return null;
                 }
+                logger.trace('Found contact for thread, accepting pending debts', contactThread);
                 return this.acceptPendingDebts(userId, threadInfo.id)
                     .then(() => contactId);
             });
@@ -78,11 +87,13 @@ class DebtManager {
     acceptPendingDebts(userId, threadId) {
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
             .then(debts => Promise.all(debts.map(d => {
+            logger.trace('accepting debt', d);
             return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount)
                 .then(() => this.debtsRepository.removePendingDebtById(d.id));
         })));
     }
     removeDebt(id, userId) {
+        logger.trace('removing debt', { id, userId });
         return this.debtsRepository.get(id)
             .then(debt => {
             if (debt.user1 !== userId) {
@@ -95,6 +106,7 @@ class DebtManager {
         });
     }
     removePendingDebt(id, userId) {
+        logger.trace('removing pending debt', { id, userId });
         return this.debtsRepository.getPending(id)
             .then(debt => {
             if (debt.userId !== userId) {
@@ -117,6 +129,7 @@ class DebtManager {
                 case debtTypes.LENT_PAYOFF: return debtTypes.BORROWED_PAYOFF;
             }
         }
+        logger.trace('Showing debts history', { userId, contactId });
         return this.debtsRepository.getDebts(userId, contactId)
             .then(debts => debts.map(debt => ({
             amount: debt.amount,
@@ -125,6 +138,7 @@ class DebtManager {
         })));
     }
     getUserBalances(userId) {
+        logger.trace('showing user balances', { userId });
         return Promise.all([
             this.debtBalancesRepository.getUserBalances(userId),
             this.debtsRepository.getPendingDebtsBalancesForUser(userId)
@@ -135,12 +149,14 @@ class DebtManager {
         }));
     }
     getTotalBalance(userId) {
+        logger.trace('calculating total balance', { userId });
         return this.debtBalancesRepository.getUserBalances(userId)
             .then(balances => balances
             .map(s => s.amount)
             .reduce((sum, cur) => sum + cur, 0));
     }
     getThreadContext(userId, threadInfo) {
+        logger.trace('finding thread context', { userId, threadInfo });
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
             if (!contact) {
@@ -152,6 +168,7 @@ class DebtManager {
         });
     }
     getPendingDebtsForThread(userId, threadId) {
+        logger.trace('showing pending debts for thread', { userId, threadId });
         return this.debtsRepository.getPendingDebtsByThreadId(threadId);
     }
 }
