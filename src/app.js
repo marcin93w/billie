@@ -25,5 +25,8 @@ app.use(express.static('frontend/dist'));
 app.use('/assets', express.static('assets'));
 app.use('/webhook', webhook);
 app.use('/debts', debtsController);
+app.get('/privacy', function(req, res) {
+    res.redirect('https://termsfeed.com/privacy-policy/d69122341e558761c7a56e0ae60b28ef');
+});
 
 module.exports = app;
