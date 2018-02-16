@@ -68,7 +68,7 @@ export default {
                 this.threadBalance = this.threadBalance.toFixed(2)
                 this.isloading = false
             })
-            .catch(alert)
+            .catch(console.error)
     }
 }
 </script>

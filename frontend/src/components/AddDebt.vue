@@ -131,7 +131,7 @@ export default {
                     .then(context => addDebt(context, this.debtType, this.amount)
                         .then(debt => sendDebtInvite(this.isContactAccepted, this.userName, this.userGender, this.debtType, this.amount)
                             .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId, !this.isContactAccepted))))
-                    .catch(alert)
+                    .catch(console.error)
             }
         }
     }
