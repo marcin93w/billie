@@ -15,7 +15,7 @@
                     <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły"
                     /></td>
                 </tr>
-                <tr class="totalRow">
+                <tr v-if="contacts.length > 0" class="totalRow">
                     <td />
                     <td>Razem</td>
                     <td
@@ -26,6 +26,9 @@
                     <td />
                 </tr>
             </table>
+            <div v-if="contacts.length === 0">
+                <p>Nie masz jeszcze żadnych długów</p>
+            </div>
             <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
             <button v-if="!$route.params.allowReturn" v-on:click="close">Zamknij</button>
         </div>
