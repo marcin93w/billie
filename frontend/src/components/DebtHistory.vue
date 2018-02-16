@@ -29,6 +29,7 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
+import questionMark from '../assets/question-mark.png'
 import debtTypes from '../utils/debt-types'
 import moment from 'moment'
 import Loader from './Loader.vue'
@@ -71,7 +72,7 @@ export default {
                     if (this.$route.params.isUnaccpeted === 'true') {
                         return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
                             .then(contactBalance => {
-                                this.avatarUrl = avatar
+                                this.avatarUrl = questionMark
                                 this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
                                 this.contactName = 'ktoś'
 
@@ -90,7 +91,7 @@ export default {
                 } else {
                     return getThreadStatus(context).then(thread => {
                         if (!thread.contact) {
-                            this.avatarUrl = avatar
+                            this.avatarUrl = questionMark
                             this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
                             this.contactName = 'ktoś'
 

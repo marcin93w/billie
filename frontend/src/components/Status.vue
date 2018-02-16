@@ -42,6 +42,7 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
+import questionMark from '../assets/question-mark.png'
 import Loader from './Loader.vue'
 
 export default {
@@ -84,7 +85,7 @@ export default {
                     .concat(balances.unaccpeted
                         .map(item => ({ ...item,
                             amount: Math.abs(item.amount).toFixed(2),
-                            avatarUrl: avatar,
+                            avatarUrl: questionMark,
                             isPositive: item.amount >= 0,
                             fullName: 'Niezaakceptowany'
                         })))
