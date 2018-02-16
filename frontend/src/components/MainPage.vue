@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="group" v-if="threadType==='GROUP'">
-            <h4>Obecnie bot działa wyłącznie dla konwersacji z pojedynczymi osobami</h4>
+            <h4>Obecnie Billie działa tylko dla konwersacji z pojedynczymi osobami, pracujemy nad tym ;)</h4>
         </div>
         <div class="single" v-else>
             <Loader :isloading="isloading" />
@@ -75,6 +75,9 @@ export default {
 
 <style>
 .group{
-  padding-top: 20rem
+  margin: 100px 15px 0 15px;
+}
+.group h4 {
+  vertical-align: middle;
 }
 </style>
