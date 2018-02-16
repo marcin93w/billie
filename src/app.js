@@ -21,7 +21,13 @@ if(process.env.NODE_ENV === 'development') {
     app.use(allowCrossDomain);
 }
 
-app.use(express.static('frontend/dist'));
+app.use(express.static('frontend/dist', {
+    setHeaders: function(res, path) {
+        if (path.indexOf("index.html") !== -1) {
+            res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        }
+    }
+}));
 app.use('/assets', express.static('assets'));
 app.use('/webhook', webhook);
 app.use('/debts', debtsController);
