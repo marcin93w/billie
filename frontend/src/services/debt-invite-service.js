@@ -13,13 +13,13 @@ function getGenderSuffix (userGender) {
 function createInviteText (userName, userGender, debtType, amount) {
     switch (debtType) {
     case debtTypes.BORROWED:
-        return `${userName} pożyczył${getGenderSuffix(userGender)} od ciebie ${amount}&nbsp;zł`
+        return `${userName} pożyczył${getGenderSuffix(userGender)} od ciebie ${amount} zł`
     case debtTypes.LENT:
-        return `${userName} pożyczył${getGenderSuffix(userGender)} ci ${amount}&nbsp;zł`
+        return `${userName} pożyczył${getGenderSuffix(userGender)} ci ${amount} zł`
     case debtTypes.BORROWED_PAYOFF:
-        return `${userName} oddał${getGenderSuffix(userGender)} ci ${amount}&nbsp;zł`
+        return `${userName} oddał${getGenderSuffix(userGender)} ci ${amount} zł`
     case debtTypes.LENT_PAYOFF:
-        return `${userName} otrzymał${getGenderSuffix(userGender)} od ciebie ${amount}&nbsp;zł`
+        return `${userName} otrzymał${getGenderSuffix(userGender)} od ciebie ${amount} zł`
     }
 }
 

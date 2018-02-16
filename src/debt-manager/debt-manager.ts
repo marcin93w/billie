@@ -20,7 +20,7 @@ class DebtManager {
             .then(contact => {
                 if (contact) {
                     logger.trace('saving debt for contact', contact)
-                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount)
+                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date())
                 } else {
                     logger.trace('saving unaccepted debt')
                     return this.debtsRepository.addPending({ 
@@ -34,7 +34,7 @@ class DebtManager {
             })
     }
     
-    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount) : Promise<string> {
+    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount: number, date: Date) : Promise<string> {
         return this.debtsRepository.add({ 
             id: null, 
             user1: userId, 
@@ -42,7 +42,7 @@ class DebtManager {
             threadId, 
             debtType, 
             amount, 
-            date: new Date()})
+            date})
         .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
             .then(() => debtId))
     }
@@ -96,7 +96,7 @@ class DebtManager {
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
             .then(debts => Promise.all(debts.map(d => {
                 logger.trace('accepting debt', d)
-                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount)
+                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date)
                     .then(() => this.debtsRepository.removePendingDebtById(d.id))
             })))
     }
