@@ -21,7 +21,7 @@
                     <td
                         class="amountCell"
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
-                        {{total}} zł
+                        {{total}}&nbsp;zł
                     </td>
                     <td />
                 </tr>

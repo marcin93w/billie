@@ -12,7 +12,7 @@
                       <td>
                           <span class="amount"
                               v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
-                              {{item.amount}} zł
+                              {{item.amount}}&nbsp;zł
                           </span>
                       </td>
                   </tr>

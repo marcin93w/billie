@@ -4,7 +4,7 @@
             <a @click="showStatus()">{{balanceText}}</a>
         </div>
         <div v-if="hasUnacceptedDebt" class="balance-bar">
-            <a @click="showStatus()">Dotychczasowy dług z tą osobą na kwotę {{Math.abs(balance)}} zł nie został jeszcze zaakceptowany!</a>
+            <a @click="showStatus()">Dotychczasowy dług z tą osobą na kwotę {{Math.abs(balance)}}&nbsp;zł nie został jeszcze zaakceptowany!</a>
         </div>
     </div>
 </template>
@@ -21,9 +21,9 @@ export default {
     computed: {
         balanceText: function () {
             if (this.balance < 0) {
-                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} ci już ${-this.balance} zł`
+                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} ci już ${-this.balance}&nbsp;zł`
             } else {
-                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} już od ciebie ${this.balance} zł`
+                return `${this.contactName} pożyczył${getGenderSuffix(this.contactGender)} już od ciebie ${this.balance}&nbsp;zł`
             }
         }
     },
