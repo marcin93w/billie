@@ -64,6 +64,7 @@ import { getContext, requestCloseBrowser } from '../messenger-extensions/messeng
 import debtTypes from '../utils/debt-types'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
+import handleError from '../utils/handle-error'
 
 function getDebtType (isPayoff, isBorrowed, currentAmount) {
     if (isPayoff) {
@@ -131,7 +132,7 @@ export default {
                     .then(context => addDebt(context, this.debtType, this.amount)
                         .then(debt => sendDebtInvite(this.isContactAccepted, this.userName, this.userGender, this.debtType, this.amount)
                             .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId, !this.isContactAccepted))))
-                    .catch(console.error)
+                    .catch(handleError)
             }
         }
     }

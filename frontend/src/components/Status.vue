@@ -44,6 +44,7 @@ import config from '../config'
 import avatar from '../assets/avatar.svg'
 import questionMark from '../assets/question-mark.png'
 import Loader from './Loader.vue'
+import handleError from '../utils/handle-error'
 
 export default {
     name: 'Status',
@@ -95,7 +96,7 @@ export default {
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)
             })
-            .catch(console.error)
+            .catch(handleError)
     }
 }
 </script>

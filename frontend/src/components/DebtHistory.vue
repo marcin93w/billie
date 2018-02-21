@@ -34,6 +34,7 @@ import debtTypes from '../utils/debt-types'
 import moment from 'moment'
 import Loader from './Loader.vue'
 import debtBalancesService from '../services/debt-balances-service'
+import handleError from '../utils/handle-error'
 
 export default {
     name: 'DebtHistory',
@@ -116,7 +117,7 @@ export default {
                 }))
                 this.isloading = false
             })
-            .catch(console.error)
+            .catch(handleError)
     }
 }
 </script>

@@ -5,7 +5,8 @@ const
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()),
   webhook = require('./controllers/webhook.js'),
-  debtsController = require('./controllers/debts-controller.js');
+  debtsController = require('./controllers/debts-controller.js'),
+  errorHandler = require('./controllers/error-handler.js');
 
 function allowCrossDomain(req, res, next) {
     res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
@@ -31,6 +32,7 @@ app.use(express.static('frontend/dist', {
 app.use('/assets', express.static('assets'));
 app.use('/webhook', webhook);
 app.use('/debts', debtsController);
+app.use('/errorHandler', errorHandler);
 app.get('/privacy', function(req, res) {
     res.redirect('https://termsfeed.com/privacy-policy/d69122341e558761c7a56e0ae60b28ef');
 });

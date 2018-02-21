@@ -35,6 +35,7 @@ import { getThreadStatus } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
+import handleError from '../utils/handle-error'
 
 export default {
     name: 'MainPage',
@@ -68,7 +69,7 @@ export default {
                 this.threadBalance = this.threadBalance.toFixed(2)
                 this.isloading = false
             })
-            .catch(console.error)
+            .catch(handleError)
     }
 }
 </script>
