@@ -96,7 +96,10 @@ export default {
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)
             })
-            .catch(handleError)
+            .catch(error => {
+                handleError(error)
+                this.isloading = false
+            })
     }
 }
 </script>
