@@ -45,6 +45,6 @@ export function getGrantedPermissions () {
         window.MessengerExtensions.getGrantedPermissions(permissionsResponse => {
             let permission = permissionsResponse.permissions
             resolve(permission)
-        }, _ => reject(new Error('permisions error')))
+        }, reject)
     })
 }

@@ -9,4 +9,7 @@ export function ensurePermissions () {
                 return askPermission('user_profile')
             }
         })
+        .catch(() => {
+            return askPermission('user_profile')
+        })
 }
