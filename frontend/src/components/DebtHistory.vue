@@ -125,7 +125,9 @@ export default {
 <style scoped>
 .contact-panel img {
   display: inline-block;
+  height: 45px;
   width: 45px;
+  object-fit: cover;
   border-radius: 50%;
 }
 
