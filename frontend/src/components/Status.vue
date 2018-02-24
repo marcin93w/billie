@@ -124,7 +124,9 @@ export default {
 }
 
 .avatar img {
+    height: 45px;
     width: 45px;
+    object-fit: cover;
     margin: auto;
     display: block;
     border-radius: 50%;
