@@ -25,7 +25,7 @@ if(process.env.NODE_ENV === 'development') {
 app.use(express.static('frontend/dist', {
     setHeaders: function(res, path) {
         if (path.indexOf("index.html") !== -1) {
-            res.header('Cache-Control', 'public, max-age=360');
+            res.header('Cache-Control', 'public, no-cache');
         }
     }
 }));
