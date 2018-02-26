@@ -69,6 +69,18 @@ router.route('/removeUnaccpeted/:id').get((req, res) =>
         .catch(err => sendErrorMessage(res, err))
 );
 
+router.route('/cancel/:id').get((req, res) =>
+    debtManager.removeDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
+
+router.route('/cancelUnaccpeted/:id').get((req, res) =>
+    debtManager.removePendingDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
+
 router.route('/pendingForThread').get((req, res) => { 
     debtManager.getPendingDebtsForThread(req.user.id, req.thread.id)
         .then(threadHistory => res.status(200).send(threadHistory))

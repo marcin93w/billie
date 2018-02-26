@@ -20,7 +20,7 @@ class DebtManager {
             .then(contact => {
                 if (contact) {
                     logger.trace('saving debt for contact', contact)
-                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date())
+                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date(), false, false)
                 } else {
                     logger.trace('saving unaccepted debt')
                     return this.debtsRepository.addPending({ 
@@ -29,12 +29,15 @@ class DebtManager {
                         threadId: threadInfo.id, 
                         debtType, 
                         amount, 
-                        date: new Date()})
+                        date: new Date(),
+                        isCanceled: false
+                    })
                 }
             })
     }
     
-    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount: number, date: Date) : Promise<string> {
+    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount: number, date: Date, 
+            isCanceled: boolean, canceledByCreator: boolean) : Promise<string> {
         return this.debtsRepository.add({ 
             id: null, 
             user1: userId, 
@@ -42,9 +45,16 @@ class DebtManager {
             threadId, 
             debtType, 
             amount, 
-            date})
-        .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
-            .then(() => debtId))
+            date,
+            isCanceled,
+            canceledByCreator})
+        .then(debtId => {
+            if(isCanceled) {
+                return Promise.resolve(debtId)
+            } 
+            return this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
+                .then(() => debtId)
+        })
     }
 
     private toRelativeAmount(debtType, amount) {
@@ -96,7 +106,7 @@ class DebtManager {
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
             .then(debts => Promise.all(debts.map(d => {
                 logger.trace('accepting debt', d)
-                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date)
+                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date, d.isCanceled, true)
                     .then(() => this.debtsRepository.removePendingDebtById(d.id))
             })))
     }
@@ -127,6 +137,32 @@ class DebtManager {
             })
     }
 
+    cancelPendingDebt (id, userId) {
+        logger.trace('canceling pending debt', {id, userId})
+        return this.debtsRepository.getPending(id)
+            .then(debt => {
+                if(debt.userId !== userId) {
+                    return Promise.reject('Unauthorized')
+                } else {
+                    return this.debtsRepository.cancelPendingDebtById(id)
+                }
+            })
+    }
+
+    cancelDebt (id, userId) {
+        logger.trace('canceling debt', {id, userId})
+        return this.debtsRepository.get(id)
+            .then(debt => {
+                if(debt.user1 !== userId || debt.user2 !== userId) {
+                    return Promise.reject('Unauthorized')
+                } else {
+                    return this.debtsRepository.cancelDebtById(id, debt.user1 === userId)
+                        .then(() => this.debtBalancesRepository.updateDebt(
+                            userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount)))
+                }
+            })
+    }
+
     getDebtsHistory (userId, contactId) {
         function calculateDebtType(debtType, whichUser) {
             if (whichUser === 1) {
@@ -146,7 +182,9 @@ class DebtManager {
                 debts.map(debt => ({
                     amount: debt.amount,
                     date: debt.date,
-                    debtType: calculateDebtType(debt.debtType, debt.whichUser)
+                    debtType: calculateDebtType(debt.debtType, debt.whichUser),
+                    isCanceled: debt.isCanceled,
+                    userCanceled: debt.whichUser === 1 ? debt.canceledByCreator : !debt.canceledByCreator
                 }))
             );
     }
