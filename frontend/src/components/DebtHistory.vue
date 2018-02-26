@@ -3,8 +3,8 @@
         <Loader :isloading="isloading" />
         <div v-if="!isloading">
           <div class="contact-panel">
-              <img :src=avatarUrl :alt=contactName />
-              <p>{{contactFullName}}</p>
+              <img :src=contact.avatarUrl :alt=contact.name />
+              <p>{{contact.fullName}}</p>
           </div>
               <table>
                   <tr v-for="item in items">
@@ -47,15 +47,17 @@ export default {
             total: 0,
             isloading: true,
             isTotalPositive: true,
-            avatarUrl: '',
-            contactFullName: '',
-            contactName: '',
-            contactGender: 'male',
+            contact: {
+                name: '',
+                fullName: '',
+                gender: 'male',
+                avatarUrl: ''
+            },
             getDebtTypeDescription (debtType) {
                 switch (debtType) {
-                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} od ciebie`
-                case debtTypes.BORROWED: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} ci`
-                case debtTypes.LENT_PAYOFF: return `${this.contactName} oddał${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.LENT: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} od ciebie`
+                case debtTypes.BORROWED: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} ci`
+                case debtTypes.LENT_PAYOFF: return `${this.contact.name} oddał${this.contact.gender !== 'male' ? 'a' : ''}`
                 case debtTypes.BORROWED_PAYOFF: return `oddałeś`
                 }
             },
@@ -69,22 +71,24 @@ export default {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(context => {
+                const unknownContact = {
+                    name: 'ktoś',
+                    fullName: 'Ten znajomy nie zaakceptował twoich długów',
+                    gender: 'male',
+                    avatarUrl: questionMark
+                }
+
                 if (this.$route.params.id) {
                     if (this.$route.params.isUnaccpeted === 'true') {
                         return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
                             .then(contactBalance => {
-                                this.avatarUrl = questionMark
-                                this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
-                                this.contactName = 'ktoś'
-
+                                this.contact = unknownContact
                                 return getPendingDebtsHistory(context, this.$route.params.id)
                             })
                     } else {
                         return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
-                            this.avatarUrl = contactBalance.avatarUrl || avatar
-                            this.contactName = contactBalance.name
-                            this.contactFullName = contactBalance.fullName
-                            this.contactGender = contactBalance.gender
+                            this.contact = contactBalance
+                            this.contact.avatarUrl = this.contact.avatarUrl || avatar
 
                             return debtHistory(context, this.$route.params.id)
                         })
@@ -92,17 +96,11 @@ export default {
                 } else {
                     return getThreadStatus(context).then(thread => {
                         if (!thread.contact) {
-                            this.avatarUrl = questionMark
-                            this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
-                            this.contactName = 'ktoś'
-
+                            this.contact = unknownContact
                             return getPendingDebtsHistory(context)
                         }
-
-                        this.avatarUrl = thread.contact.avatarUrl || avatar
-                        this.contactName = thread.contact.name
-                        this.contactFullName = thread.contact.fullName
-                        this.contactGender = thread.contact.gender
+                        this.contact = thread.contact
+                        this.contact.avatarUrl = this.contact.avatarUrl || avatar
 
                         return debtHistory(context, thread.contact.id)
                     })
@@ -134,7 +132,7 @@ export default {
 .debtHistory {
   margin: 25px auto;
   padding: 0 25px;
-  max-width: 400px;
+  max-width: 800px;
 }
 
 .date {
