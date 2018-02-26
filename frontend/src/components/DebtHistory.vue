@@ -2,23 +2,29 @@
     <div class="debtHistory">
         <Loader :isloading="isloading" />
         <div v-if="!isloading">
-          <div class="contact-panel">
-              <img :src=contact.avatarUrl :alt=contact.name />
-              <p>{{contact.fullName}}</p>
-          </div>
-              <table>
-                  <tr v-for="item in items">
-                      <td><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</td>
-                      <td>
-                          <span class="amount"
-                              v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
-                              {{item.amount}}&nbsp;zł
-                          </span>
-                      </td>
-                  </tr>
-              </table>
-          <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
-          <button v-else v-on:click="back">Zobacz innych znajomych</button>
+            <div class="contact-panel">
+                <img :src=contact.avatarUrl :alt=contact.name />
+                <p>{{contact.fullName}}</p>
+            </div>
+            <div>
+                <div class="debt-item" v-for="item in items">
+                    <div class="debt-desc"><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</div>
+                    <div class="debt-amount">
+                        <span class="amount"
+                            v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
+                            {{item.amount}}&nbsp;zł
+                        </span>
+                    </div>
+                    <div class="debt-arrow">
+                        <img src="../assets/right-chevron.svg" alt="pokaż szczegóły" />
+                    </div>
+                    <div class="debt-details">
+                        Lorem ipsum dolor sit amet, lorem ipsum dolor sit amet, lorem ipsum dolor sit amet.
+                    </div>
+                </div>
+            </div>
+            <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
+            <button v-else v-on:click="back">Zobacz innych znajomych</button>
         </div>
     </div>
 </template>
@@ -121,33 +127,72 @@ export default {
 </script>
 
 <style scoped>
-.contact-panel img {
-  display: inline-block;
-  height: 45px;
-  width: 45px;
-  object-fit: cover;
-  border-radius: 50%;
+.debtHistory {
+    margin: 25px auto;
+    padding: 0 5px;
+    max-width: 600px;
 }
 
-.debtHistory {
-  margin: 25px auto;
-  padding: 0 25px;
-  max-width: 800px;
+.contact-panel img {
+    display: inline-block;
+    height: 45px;
+    width: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.debt-item {
+    border-bottom: 0.1rem solid #e1e1e1;
+    display: grid;
+    grid-template-columns: auto auto 30px;
+    padding: 10px;
+    align-items:center;
+}
+
+.debt-desc {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+}
+
+.debt-amount {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    margin: 0 15px;
+}
+
+.debt-arrow {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.debt-arrow img {
+    height: 1em;
+    margin: auto;
+    vertical-align: middle;
+    transform: rotate(90deg);
+}
+
+.debt-details {
+    display: none;
+    grid-column: 1 / 3;
+    grid-row: 2;
 }
 
 .date {
-  font-style: italic;
+    font-style: italic;
 }
 
 .amount {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .text-positive {
-  color: green;
+    color: green;
 }
 
 .text-negative {
-  color: darkred;
+    color: darkred;
 }
 </style>
