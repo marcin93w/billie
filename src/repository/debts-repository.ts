@@ -30,7 +30,8 @@ export default class DebtsRepository {
     getPendingDebtsByThreadId(threadId: string) : Promise<PendingDebt[]> {
         return db.any('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, comment, is_canceled \
                 FROM public.pending_debts \
-                WHERE thread_id = $1;', threadId)
+                WHERE thread_id = $1 \
+                ORDER BY date DESC;', threadId)
     }
 
     getThreadPendingDebtsBalance(threadId: string) : Promise<{amount: number}> {
@@ -64,11 +65,6 @@ export default class DebtsRepository {
         return db.one(
             'SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
                 FROM public.debts WHERE id = $1', id);
-    }
-
-    getDebtsByThreadId (threadId) {
-        return db.any('SELECT user1, user2, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
-                FROM public.debts WHERE thread_id = $1', threadId)
     }
 
     remove (id) {

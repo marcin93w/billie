@@ -26,7 +26,8 @@ class DebtsRepository {
     getPendingDebtsByThreadId(threadId) {
         return db.any('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, comment, is_canceled \
                 FROM public.pending_debts \
-                WHERE thread_id = $1;', threadId);
+                WHERE thread_id = $1 \
+                ORDER BY date DESC;', threadId);
     }
     getThreadPendingDebtsBalance(threadId) {
         return db.oneOrNone('SELECT \
@@ -54,10 +55,6 @@ class DebtsRepository {
     get(id) {
         return db.one('SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
                 FROM public.debts WHERE id = $1', id);
-    }
-    getDebtsByThreadId(threadId) {
-        return db.any('SELECT user1, user2, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
-                FROM public.debts WHERE thread_id = $1', threadId);
     }
     remove(id) {
         return db.none('DELETE FROM public.debts WHERE id = $1;', id);
