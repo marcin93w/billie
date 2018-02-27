@@ -5,7 +5,9 @@ export type Debt = {
     threadId: string, 
     debtType: number, 
     amount: number, 
-    date: Date
+    date: Date,
+    isCanceled: boolean,
+    canceledByCreator: boolean
 }
 
 export type PendingDebt = {
@@ -14,7 +16,8 @@ export type PendingDebt = {
     threadId: string, 
     debtType: number, 
     amount: number, 
-    date: Date
+    date: Date,
+    isCanceled: boolean
 }
 
 export type User = {

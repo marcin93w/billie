@@ -2,23 +2,29 @@
     <div class="debtHistory">
         <Loader :isloading="isloading" />
         <div v-if="!isloading">
-          <div class="contact-panel">
-              <img :src=avatarUrl :alt=contactName />
-              <p>{{contactFullName}}</p>
-          </div>
-              <table>
-                  <tr v-for="item in items">
-                      <td><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</td>
-                      <td>
-                          <span class="amount"
-                              v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
-                              {{item.amount}}&nbsp;zł
-                          </span>
-                      </td>
-                  </tr>
-              </table>
-          <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
-          <button v-else v-on:click="back">Zobacz innych znajomych</button>
+            <div class="contact-panel">
+                <img :src=contact.avatarUrl :alt=contact.name />
+                <p>{{contact.fullName}}</p>
+            </div>
+            <div class="debts-panel">
+                <div class="debt-item" v-for="item in items" v-bind:key="item.id" v-on:click="item.isOpen = !item.isOpen">
+                    <div class="debt-desc"><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</div>
+                    <div class="debt-amount">
+                        <span class="amount"
+                            v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
+                            {{item.amount}}&nbsp;zł
+                        </span>
+                    </div>
+                    <div class="debt-arrow" :class="{'debt-arrow-open' : item.isOpen}">
+                        <img src="../assets/right-chevron.svg" alt="pokaż szczegóły" />
+                    </div>
+                    <div class="debt-details" v-show="item.isOpen" :class="{'debt-details-open' : item.isOpen}">
+                        Lorem ipsum dolor sit amet, lorem ipsum dolor sit amet, lorem ipsum dolor sit amet.
+                    </div>
+                </div>
+            </div>
+            <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
+            <button v-else v-on:click="back">Zobacz innych znajomych</button>
         </div>
     </div>
 </template>
@@ -47,15 +53,17 @@ export default {
             total: 0,
             isloading: true,
             isTotalPositive: true,
-            avatarUrl: '',
-            contactFullName: '',
-            contactName: '',
-            contactGender: 'male',
+            contact: {
+                name: '',
+                fullName: '',
+                gender: 'male',
+                avatarUrl: ''
+            },
             getDebtTypeDescription (debtType) {
                 switch (debtType) {
-                case debtTypes.LENT: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} od ciebie`
-                case debtTypes.BORROWED: return `${this.contactName} pożyczył${this.contactGender !== 'male' ? 'a' : ''} ci`
-                case debtTypes.LENT_PAYOFF: return `${this.contactName} oddał${this.contactGender !== 'male' ? 'a' : ''}`
+                case debtTypes.LENT: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} od ciebie`
+                case debtTypes.BORROWED: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} ci`
+                case debtTypes.LENT_PAYOFF: return `${this.contact.name} oddał${this.contact.gender !== 'male' ? 'a' : ''}`
                 case debtTypes.BORROWED_PAYOFF: return `oddałeś`
                 }
             },
@@ -69,22 +77,24 @@ export default {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(context => {
+                const unknownContact = {
+                    name: 'ktoś',
+                    fullName: 'Ten znajomy nie zaakceptował twoich długów',
+                    gender: 'male',
+                    avatarUrl: questionMark
+                }
+
                 if (this.$route.params.id) {
                     if (this.$route.params.isUnaccpeted === 'true') {
                         return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
                             .then(contactBalance => {
-                                this.avatarUrl = questionMark
-                                this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
-                                this.contactName = 'ktoś'
-
+                                this.contact = unknownContact
                                 return getPendingDebtsHistory(context, this.$route.params.id)
                             })
                     } else {
                         return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
-                            this.avatarUrl = contactBalance.avatarUrl || avatar
-                            this.contactName = contactBalance.name
-                            this.contactFullName = contactBalance.fullName
-                            this.contactGender = contactBalance.gender
+                            this.contact = contactBalance
+                            this.contact.avatarUrl = this.contact.avatarUrl || avatar
 
                             return debtHistory(context, this.$route.params.id)
                         })
@@ -92,28 +102,24 @@ export default {
                 } else {
                     return getThreadStatus(context).then(thread => {
                         if (!thread.contact) {
-                            this.avatarUrl = questionMark
-                            this.contactFullName = 'Ten znajomy nie zaakceptował twoich długów'
-                            this.contactName = 'ktoś'
-
+                            this.contact = unknownContact
                             return getPendingDebtsHistory(context)
                         }
-
-                        this.avatarUrl = thread.contact.avatarUrl || avatar
-                        this.contactName = thread.contact.name
-                        this.contactFullName = thread.contact.fullName
-                        this.contactGender = thread.contact.gender
+                        this.contact = thread.contact
+                        this.contact.avatarUrl = this.contact.avatarUrl || avatar
 
                         return debtHistory(context, thread.contact.id)
                     })
                 }
             })
             .then(debts => {
-                this.items = debts.map(item => ({
+                this.items = debts.map((item, idx) => ({
+                    id: idx,
                     date: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),
                     debtType: item.debtType,
-                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF
+                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF,
+                    isOpen: false
                 }))
                 this.isloading = false
             })
@@ -123,33 +129,79 @@ export default {
 </script>
 
 <style scoped>
-.contact-panel img {
-  display: inline-block;
-  height: 45px;
-  width: 45px;
-  object-fit: cover;
-  border-radius: 50%;
+.debtHistory {
+    margin: 25px auto;
+    padding: 0 5px;
+    max-width: 600px;
 }
 
-.debtHistory {
-  margin: 25px auto;
-  padding: 0 25px;
-  max-width: 400px;
+.contact-panel img {
+    display: inline-block;
+    height: 45px;
+    width: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.debts-panel {
+    margin-bottom: 30px;
+}
+
+.debt-item {
+    border-bottom: 0.1rem solid #e1e1e1;
+    display: grid;
+    grid-template-columns: 1fr fit-content(200px) 30px;
+    padding: 10px;
+    align-items:center;
+}
+
+.debt-desc {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+}
+
+.debt-amount {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    margin: 0 15px;
+}
+
+.debt-arrow {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.debt-arrow img {
+    height: 1em;
+    margin: auto;
+    vertical-align: middle;
+    transform: rotate(90deg);
+}
+
+.debt-arrow-open img {
+    transform: rotate(270deg);
+}
+
+.debt-details {
+    grid-column: 1 / span 3;
+    grid-row: 2;
 }
 
 .date {
-  font-style: italic;
+    font-style: italic;
 }
 
 .amount {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .text-positive {
-  color: green;
+    color: green;
 }
 
 .text-negative {
-  color: darkred;
+    color: darkred;
 }
 </style>
