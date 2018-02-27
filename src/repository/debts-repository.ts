@@ -6,8 +6,9 @@ export default class DebtsRepository {
     add (debt: Debt) : Promise<string> {
         debt.id = uuid()
         return db.none('INSERT INTO public.debts( \
-                id, user1, user2, thread_id, debt_type, amount, date, is_canceled, canceled_by_creator) \
-                VALUES (${id}, ${user1}, ${user2}, ${threadId}, ${debtType}, ${amount}, ${date}, ${isCanceled}, ${canceledByCreator});', 
+                id, user1, user2, thread_id, debt_type, amount, date, comment, is_canceled, canceled_by_creator) \
+                VALUES (${id}, ${user1}, ${user2}, ${threadId}, ${debtType}, ${amount}, ${date}, ${comment}, \
+                    ${isCanceled}, ${canceledByCreator});', 
                 debt)
             .then(() => debt.id)
     }
@@ -15,19 +16,19 @@ export default class DebtsRepository {
     addPending (debt: PendingDebt) : Promise<string> {
         debt.id = uuid()
         return db.none('INSERT INTO public.pending_debts( \
-                id, user_id, thread_id, amount, date, debt_type, is_canceled) \
-                VALUES (${id}, ${userId}, ${threadId}, ${amount}, ${date}, ${debtType}, ${isCanceled});', debt)
+                id, user_id, thread_id, amount, date, debt_type, comment, is_canceled) \
+                VALUES (${id}, ${userId}, ${threadId}, ${amount}, ${date}, ${debtType}, ${comment}, ${isCanceled});', debt)
             .then(() => debt.id)
     }
 
     getPending(id: string) : Promise<PendingDebt> {
-        return db.one('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, is_canceled \
+        return db.one('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, comment, is_canceled \
                 FROM public.pending_debts \
                 WHERE id = $1;', id)
     }
     
     getPendingDebtsByThreadId(threadId: string) : Promise<PendingDebt[]> {
-        return db.any('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, is_canceled \
+        return db.any('SELECT id, user_id, thread_id, amount::money::numeric::float8, date, debt_type, comment, is_canceled \
                 FROM public.pending_debts \
                 WHERE thread_id = $1;', threadId)
     }
@@ -61,12 +62,12 @@ export default class DebtsRepository {
     
     get (id) {
         return db.one(
-            'SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date, is_canceled, canceled_by_creator \
+            'SELECT user1, user2, thread_id, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
                 FROM public.debts WHERE id = $1', id);
     }
 
     getDebtsByThreadId (threadId) {
-        return db.any('SELECT user1, user2, debt_type, amount::money::numeric::float8, date, is_canceled, canceled_by_creator \
+        return db.any('SELECT user1, user2, debt_type, amount::money::numeric::float8, date, comment, is_canceled, canceled_by_creator \
                 FROM public.debts WHERE thread_id = $1', threadId)
     }
 
@@ -83,7 +84,7 @@ export default class DebtsRepository {
     getDebts (user1, user2) {
         return db.any('SELECT \
                 case when user1 = $1 then 1 else 2 end as which_user, \
-                amount::money::numeric::float8, date, debt_type, is_canceled, canceled_by_creator \
+                amount::money::numeric::float8, date, debt_type, comment, is_canceled, canceled_by_creator \
                 FROM public.debts \
                 WHERE (user1 = $1 AND user2 =  $2) \
                 OR (user1 = $2 AND user2 = $1) \

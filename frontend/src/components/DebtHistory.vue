@@ -19,7 +19,7 @@
                         <img src="../assets/right-chevron.svg" alt="pokaż szczegóły" />
                     </div>
                     <div class="debt-details" v-show="item.isOpen" :class="{'debt-details-open' : item.isOpen}">
-                        Lorem ipsum dolor sit amet, lorem ipsum dolor sit amet, lorem ipsum dolor sit amet.
+                        <span v-show="item.comment" class="debt-comment">Komentarz: {{item.comment}}</span>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,8 @@ export default {
                     amount: item.amount.toFixed(2),
                     debtType: item.debtType,
                     isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF,
-                    isOpen: false
+                    isOpen: false,
+                    comment: item.comment
                 }))
                 this.isloading = false
             })
@@ -187,6 +188,13 @@ export default {
 .debt-details {
     grid-column: 1 / span 3;
     grid-row: 2;
+    text-align: left;
+    color: #888;
+    margin: 10px;
+}
+
+.debt-comment {
+    font-style: italic;
 }
 
 .date {
