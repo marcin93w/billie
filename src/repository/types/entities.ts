@@ -6,6 +6,7 @@ export type Debt = {
     debtType: number, 
     amount: number, 
     date: Date,
+    comment: string,
     isCanceled: boolean,
     canceledByCreator: boolean
 }
@@ -17,6 +18,7 @@ export type PendingDebt = {
     debtType: number, 
     amount: number, 
     date: Date,
+    comment: string,
     isCanceled: boolean
 }
 

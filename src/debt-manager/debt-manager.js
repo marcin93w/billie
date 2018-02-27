@@ -8,13 +8,13 @@ class DebtManager {
         this.threadsRepository = threadsRepository;
         this.usersRepository = usersRepository;
     }
-    addDebt(userId, threadInfo, debtType, amount) {
+    addDebt(userId, threadInfo, debtType, amount, comment) {
         logger.trace('adding new debt', { userId, threadInfo, debtType, amount });
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
             if (contact) {
                 logger.trace('saving debt for contact', contact);
-                return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date(), false, false);
+                return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date(), comment, false, false);
             }
             else {
                 logger.trace('saving unaccepted debt');
@@ -25,12 +25,13 @@ class DebtManager {
                     debtType,
                     amount,
                     date: new Date(),
+                    comment,
                     isCanceled: false
                 });
             }
         });
     }
-    saveDebt(userId, threadId, contactId, debtType, amount, date, isCanceled, canceledByCreator) {
+    saveDebt(userId, threadId, contactId, debtType, amount, date, comment, isCanceled, canceledByCreator) {
         return this.debtsRepository.add({
             id: null,
             user1: userId,
@@ -39,6 +40,7 @@ class DebtManager {
             debtType,
             amount,
             date,
+            comment,
             isCanceled,
             canceledByCreator
         })
@@ -96,7 +98,7 @@ class DebtManager {
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
             .then(debts => Promise.all(debts.map(d => {
             logger.trace('accepting debt', d);
-            return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date, d.isCanceled, true)
+            return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date, d.comment, d.isCanceled, true)
                 .then(() => this.debtsRepository.removePendingDebtById(d.id));
         })));
     }
@@ -169,7 +171,8 @@ class DebtManager {
             date: debt.date,
             debtType: calculateDebtType(debt.debtType, debt.whichUser),
             isCanceled: debt.isCanceled,
-            userCanceled: debt.whichUser === 1 ? debt.canceledByCreator : !debt.canceledByCreator
+            userCanceled: debt.whichUser === 1 ? debt.canceledByCreator : !debt.canceledByCreator,
+            comment: debt.comment
         })));
     }
     getUserBalances(userId) {
