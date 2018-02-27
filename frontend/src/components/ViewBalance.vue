@@ -10,10 +10,7 @@
 </template>
 
 <script>
-
-function getGenderSuffix (userGender) {
-    return userGender === 'male' ? '' : 'a'
-}
+import { getGenderSuffix } from '../utils/utils'
 
 export default {
     name: 'ViewBalance',
