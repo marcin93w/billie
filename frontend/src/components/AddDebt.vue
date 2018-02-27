@@ -40,7 +40,7 @@
             </button>
             <button class="button"  
                 v-if="isContactAccepted && balance > 0"
-                v-bind:class="[debtType === debtTypes.LENT_PAYOFF || debtType === debtTypes.BORROWED_PAYOFF ? '' : 'button-outline' ]" 
+                v-bind:class="[isPayoff() ? '' : 'button-outline' ]" 
                 v-on:click="setDebtType(true)" 
                 value="2" name="debtActionButton">
                 <span>{{payoffText}}</span>
@@ -50,7 +50,12 @@
             <input type="number" id="amount" v-model="amount" /> 
             <span class="currency-text">zł</span>
         </div>
-        <div>
+        <div class="comment-panel">
+            <a v-show="!displayCommentInput" @click="showCommentInput()">Dodaj komentarz</a>
+            <input id="comment-input" v-show="displayCommentInput" type="text" v-model="comment"
+                v-bind:placeholder="isPayoff() ? 'Oddałem...' : 'Pożyczyłem na...'" />
+        </div>
+        <div class="add-button-panel">
             <button @click="add()">Dodaj</button>
         </div>
     </div>
@@ -120,6 +125,15 @@ export default {
             amount: 10,
             debtTypes,
             debtType: debtTypes.LENT,
+            comment: '',
+            displayCommentInput: false,
+            showCommentInput () {
+                this.displayCommentInput = true
+                setTimeout(() => document.getElementById('comment-input').focus(), 0)
+            },
+            isPayoff: () => {
+                return this.debtType === debtTypes.LENT_PAYOFF || this.debtType === debtTypes.BORROWED_PAYOFF
+            },
             setDebtType: (isPayoff, isBorrowed) => {
                 this.debtType = getDebtType(isPayoff, isBorrowed, this.balance)
                 if (isPayoff) {
@@ -129,7 +143,7 @@ export default {
             add: () => {
                 ensurePermissions()
                     .then(_ => getContext(config.fbAppId))
-                    .then(context => addDebt(context, this.debtType, this.amount)
+                    .then(context => addDebt(context, this.debtType, this.amount, this.comment)
                         .then(debt => sendDebtInvite(this.isContactAccepted, this.userName, this.userGender, this.debtType, this.amount)
                             .then(isSent => isSent ? requestCloseBrowser() : cancelDebt(context, debt.debtId, !this.isContactAccepted))))
                     .catch(handleError)
@@ -153,7 +167,26 @@ export default {
 }
 
 .amount-panel {
-    margin: 20px auto;
+    margin: 20px auto 5px auto;
+}
+
+.comment-panel {
+    margin-bottom: 20px;
+}
+
+.comment-panel a {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-transform: uppercase;
+    font-size: small;
+}
+
+.comment-panel a:hover {
+    text-decoration-style: solid;
+}
+
+.comment-panel input {
+    width: 80%;
 }
 
 #amount, .currency-text {
