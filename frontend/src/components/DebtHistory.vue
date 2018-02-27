@@ -5,6 +5,11 @@
             <div class="contact-panel">
                 <img :src=contact.avatarUrl :alt=contact.name />
                 <p>{{contact.fullName}}</p>
+                <p>{{getDebtSummaryText()}}
+                    <span class="amount" v-bind:class="[total > 0 ? 'text-positive' : 'text-negative' ]">
+                        {{Math.abs(total).toFixed(2)}}&nbsp;zł
+                    </span>
+                </p>
             </div>
             <div class="debts-panel">
                 <div class="debt-item" v-for="item in items" v-bind:key="item.id" v-on:click="item.isOpen = !item.isOpen">
@@ -41,6 +46,7 @@ import moment from 'moment'
 import Loader from './Loader.vue'
 import debtBalancesService from '../services/debt-balances-service'
 import handleError from '../utils/handle-error'
+import { getGenderSuffix } from '../utils/utils'
 
 export default {
     name: 'DebtHistory',
@@ -52,12 +58,20 @@ export default {
             items: [],
             total: 0,
             isloading: true,
-            isTotalPositive: true,
             contact: {
                 name: '',
                 fullName: '',
                 gender: 'male',
                 avatarUrl: ''
+            },
+            getDebtSummaryText: function () {
+                if (this.total === 0) {
+                    return `${this.contact.name} i ty nie macie w tej chwili żadnych długów`
+                } else if (this.total < 0) {
+                    return `Łącznie ${this.contact.name} pożyczył${getGenderSuffix(this.contact.gender)} ci `
+                } else {
+                    return `Łącznie ${this.contact.name} pożyczył${getGenderSuffix(this.contact.gender)} od ciebie `
+                }
             },
             getDebtTypeDescription (debtType) {
                 switch (debtType) {
@@ -88,11 +102,13 @@ export default {
                     if (this.$route.params.isUnaccpeted === 'true') {
                         return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
                             .then(contactBalance => {
+                                this.total = contactBalance.amount
                                 this.contact = unknownContact
                                 return getPendingDebtsHistory(context, this.$route.params.id)
                             })
                     } else {
                         return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
+                            this.total = contactBalance.amount
                             this.contact = contactBalance
                             this.contact.avatarUrl = this.contact.avatarUrl || avatar
 
@@ -101,6 +117,7 @@ export default {
                     }
                 } else {
                     return getThreadStatus(context).then(thread => {
+                        this.total = thread.threadBalance
                         if (!thread.contact) {
                             this.contact = unknownContact
                             return getPendingDebtsHistory(context)

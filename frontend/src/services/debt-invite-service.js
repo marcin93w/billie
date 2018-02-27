@@ -1,13 +1,10 @@
 import config from '../config.js'
 import debtTypes from '../utils/debt-types'
 import { beginShareFlow } from '../messenger-extensions/messenger-extensions.js'
+import { getGenderSuffix } from '../utils/utils'
 
 function isPayoff (debtType) {
     return debtType === debtTypes.BORROWED_PAYOFF || debtType === debtTypes.LENT_PAYOFF
-}
-
-function getGenderSuffix (userGender) {
-    return userGender === 'male' ? '' : 'a'
 }
 
 function createInviteText (userName, userGender, debtType, amount) {
