@@ -8,7 +8,8 @@ const
     threadsRepository = require('../repository/threads-repository.js'),
     DebtBalanceRepository = require('../repository/debt-balances-repository.js').default,
     usersGraphApi = require('../graph-api/user.js'),
-    messengerSignedRequestParser = require('../utils/messenger-signed-request-parser');
+    messengerSignedRequestParser = require('../utils/messenger-signed-request-parser'),
+    logger = require('../utils/logger');
 
 const debtManager = new DebtManager(new DebtsRepository(), new DebtBalanceRepository(), threadsRepository, new UsersRepository());
 const usersManager = new UsersManager(usersGraphApi, new UsersRepository());
@@ -18,6 +19,8 @@ router.route('/*').all(function (req, res, next) {
         next()
         return
     }
+
+    logger.trace('HTTP request', { url: req.originalUrl, headers: req.headers, params: req.params, body: req.body });
 
     const context = messengerSignedRequestParser.parseSignedRequest(req.headers['x-signed-request'])
     
@@ -32,7 +35,7 @@ router.route('/*').all(function (req, res, next) {
             next()
         })
         .catch(err => {
-            console.error(err)
+            logger.error(err)
             res.status(403).send({})
         })
 })
@@ -49,7 +52,7 @@ router.route('/threadContext').get((req, res) => {
 });
 
 router.route('/add').post((req, res) => { 
-    debtManager.addDebt(req.user.id, req.thread, req.body.debtType, parseFloat(req.body.amount))
+    debtManager.addDebt(req.user.id, req.thread, req.body.debtType, parseFloat(req.body.amount), req.body.comment)
         .then(debtId => res.status(200).send({ debtId }))
         .catch(err => sendErrorMessage(res, err));
 });
@@ -61,6 +64,18 @@ router.route('/remove/:id').get((req, res) =>
 );
 
 router.route('/removeUnaccpeted/:id').get((req, res) =>
+    debtManager.removePendingDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
+
+router.route('/cancel/:id').get((req, res) =>
+    debtManager.removeDebt(req.params.id, req.user.id)
+        .then(_ => res.status(200).send({}))
+        .catch(err => sendErrorMessage(res, err))
+);
+
+router.route('/cancelUnaccpeted/:id').get((req, res) =>
     debtManager.removePendingDebt(req.params.id, req.user.id)
         .then(_ => res.status(200).send({}))
         .catch(err => sendErrorMessage(res, err))
@@ -91,7 +106,7 @@ router.route('/userHistory/:id').get((req, res) => {
 });
 
 function sendErrorMessage(res, error) {
-    console.error(error)
+    logger.error(error)
     res.status(500).send()
 }
 

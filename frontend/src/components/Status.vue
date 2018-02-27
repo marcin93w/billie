@@ -10,22 +10,25 @@
                     <td
                         class="amountCell"
                         v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
-                        {{item.amount}} zł
+                        {{item.amount}}&nbsp;zł
                     </td>
                     <td class="details-arrow"><img src="../assets/right-chevron.svg" alt="pokaż szczegóły"
                     /></td>
                 </tr>
-                <tr class="totalRow">
+                <tr v-if="contacts.length > 0" class="totalRow">
                     <td />
                     <td>Razem</td>
                     <td
                         class="amountCell"
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
-                        {{total}} zł
+                        {{total}}&nbsp;zł
                     </td>
                     <td />
                 </tr>
             </table>
+            <div v-if="contacts.length === 0">
+                <p>Nie masz jeszcze żadnych długów</p>
+            </div>
             <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
             <button v-if="!$route.params.allowReturn" v-on:click="close">Zamknij</button>
         </div>
@@ -39,7 +42,9 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import avatar from '../assets/avatar.svg'
+import questionMark from '../assets/question-mark.png'
 import Loader from './Loader.vue'
+import handleError from '../utils/handle-error'
 
 export default {
     name: 'Status',
@@ -81,7 +86,7 @@ export default {
                     .concat(balances.unaccpeted
                         .map(item => ({ ...item,
                             amount: Math.abs(item.amount).toFixed(2),
-                            avatarUrl: avatar,
+                            avatarUrl: questionMark,
                             isPositive: item.amount >= 0,
                             fullName: 'Niezaakceptowany'
                         })))
@@ -91,7 +96,10 @@ export default {
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)
             })
-            .catch(alert)
+            .catch(error => {
+                handleError(error)
+                this.isloading = false
+            })
     }
 }
 </script>
@@ -116,7 +124,9 @@ export default {
 }
 
 .avatar img {
+    height: 45px;
     width: 45px;
+    object-fit: cover;
     margin: auto;
     display: block;
     border-radius: 50%;

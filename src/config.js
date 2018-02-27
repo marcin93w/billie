@@ -1,3 +1,4 @@
 module.exports = {
-    homeUrl: 'https://messenger-debt-bot.herokuapp.com/'
+    //FIXME nasty hack to detect PROD environment
+    homeUrl: process.env.RDS_HOSTNAME ? 'https://billie.money/' : 'https://messenger-debt-bot.herokuapp.com/'
 }

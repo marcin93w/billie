@@ -18,13 +18,18 @@ let isStarted = false;
 
 if (process.env.NODE_ENV === 'development') {
     isStarted = true
+    // showMarketingWebsite()
     bootStrapApp()
 }
 
 window.extAsyncInit = function () {
     /* eslint-disable no-new */
     if (!isStarted) {
-        bootStrapApp()
+        if (window.MessengerExtensions.isInExtension()) {
+            bootStrapApp()
+        } else {
+            showMarketingWebsite()
+        }
     }
 }
 
@@ -36,3 +41,7 @@ function bootStrapApp () {
         components: { App }
     })
 };
+
+function showMarketingWebsite () {
+    document.getElementById('website').style.display = 'block'
+}

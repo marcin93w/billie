@@ -4,6 +4,7 @@ import DebtsRepository from '../repository/debts-repository'
 import UsersRepository from '../repository/users-repository'
 import DebtBalancesRepository from '../repository/debt-balances-repository'
 import { User } from '../repository/types/entities'
+import * as logger from '../utils/logger'
 
 class DebtManager {
     constructor(
@@ -13,24 +14,31 @@ class DebtManager {
         private usersRepository: UsersRepository) {
     }
     
-    addDebt (userId: string, threadInfo, debtType: number, amount: number) : Promise<string> {
+    addDebt (userId: string, threadInfo, debtType: number, amount: number, comment: string) : Promise<string> {
+        logger.trace('adding new debt', { userId, threadInfo, debtType, amount })
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
                 if (contact) {
-                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount)
+                    logger.trace('saving debt for contact', contact)
+                    return this.saveDebt(userId, threadInfo.id, contact.id, debtType, amount, new Date(), comment, false, false)
                 } else {
+                    logger.trace('saving unaccepted debt')
                     return this.debtsRepository.addPending({ 
                         id: null, 
                         userId, 
                         threadId: threadInfo.id, 
                         debtType, 
                         amount, 
-                        date: new Date()})
+                        date: new Date(),
+                        comment,
+                        isCanceled: false
+                    })
                 }
             })
     }
     
-    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount) : Promise<string> {
+    private saveDebt (userId: string, threadId: string, contactId: string, debtType, amount: number, date: Date, 
+            comment: string, isCanceled: boolean, canceledByCreator: boolean) : Promise<string> {
         return this.debtsRepository.add({ 
             id: null, 
             user1: userId, 
@@ -38,9 +46,17 @@ class DebtManager {
             threadId, 
             debtType, 
             amount, 
-            date: new Date()})
-        .then(debtId => this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
-            .then(() => debtId))
+            date,
+            comment,
+            isCanceled,
+            canceledByCreator})
+        .then(debtId => {
+            if(isCanceled) {
+                return Promise.resolve(debtId)
+            } 
+            return this.debtBalancesRepository.updateDebt(userId, contactId, this.toRelativeAmount(debtType, amount))
+                .then(() => debtId)
+        })
     }
 
     private toRelativeAmount(debtType, amount) {
@@ -52,6 +68,7 @@ class DebtManager {
     }
 
     private findThreadContact(userId, threadInfo) : Promise<User> {
+        logger.trace('finding thread contact')
         return this.threadsRepository.getUserThreadsByThreadId(threadInfo.id)
             .then(threads => {
                 const userThread = threads.find(t => t.userId === userId)
@@ -59,9 +76,11 @@ class DebtManager {
                 const contactId = contactThread && contactThread.userId
 
                 if (userThread) {
+                    logger.trace('User thread found', { userThread, contactThread })
                     return Promise.resolve(contactId);
                 }
 
+                logger.trace('Adding user thread')
                 return this.threadsRepository.addUserThread({
                         userId,
                         threadId: threadInfo.id,
@@ -69,8 +88,10 @@ class DebtManager {
                     })
                     .then(() => { 
                         if (!contactThread) {
+                            logger.trace('No contact in thread already')
                             return null
                         }
+                        logger.trace('Found contact for thread, accepting pending debts', contactThread)
                         return this.acceptPendingDebts(userId, threadInfo.id)
                             .then(() => contactId)
                     })
@@ -86,12 +107,14 @@ class DebtManager {
     private acceptPendingDebts(userId, threadId) {
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
             .then(debts => Promise.all(debts.map(d => {
-                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount)
+                logger.trace('accepting debt', d)
+                return this.saveDebt(d.userId, threadId, userId, d.debtType, d.amount, d.date, d.comment, d.isCanceled, true)
                     .then(() => this.debtsRepository.removePendingDebtById(d.id))
             })))
     }
 
     removeDebt (id, userId) {
+        logger.trace('removing debt', {id, userId})
         return this.debtsRepository.get(id)
             .then(debt => {
                 if(debt.user1 !== userId) {
@@ -105,12 +128,39 @@ class DebtManager {
     }
 
     removePendingDebt (id, userId) {
+        logger.trace('removing pending debt', {id, userId})
         return this.debtsRepository.getPending(id)
             .then(debt => {
                 if(debt.userId !== userId) {
                     return Promise.reject('Unauthorized')
                 } else {
                     return this.debtsRepository.removePendingDebtById(id)
+                }
+            })
+    }
+
+    cancelPendingDebt (id, userId) {
+        logger.trace('canceling pending debt', {id, userId})
+        return this.debtsRepository.getPending(id)
+            .then(debt => {
+                if(debt.userId !== userId) {
+                    return Promise.reject('Unauthorized')
+                } else {
+                    return this.debtsRepository.cancelPendingDebtById(id)
+                }
+            })
+    }
+
+    cancelDebt (id, userId) {
+        logger.trace('canceling debt', {id, userId})
+        return this.debtsRepository.get(id)
+            .then(debt => {
+                if(debt.user1 !== userId || debt.user2 !== userId) {
+                    return Promise.reject('Unauthorized')
+                } else {
+                    return this.debtsRepository.cancelDebtById(id, debt.user1 === userId)
+                        .then(() => this.debtBalancesRepository.updateDebt(
+                            userId, debt.user2, -this.toRelativeAmount(debt.debtType, debt.amount)))
                 }
             })
     }
@@ -128,17 +178,22 @@ class DebtManager {
             }
         }
 
+        logger.trace('Showing debts history', {userId, contactId})
         return this.debtsRepository.getDebts(userId, contactId)
             .then(debts =>
                 debts.map(debt => ({
                     amount: debt.amount,
                     date: debt.date,
-                    debtType: calculateDebtType(debt.debtType, debt.whichUser)
+                    debtType: calculateDebtType(debt.debtType, debt.whichUser),
+                    isCanceled: debt.isCanceled,
+                    userCanceled: debt.whichUser === 1 ? debt.canceledByCreator : !debt.canceledByCreator,
+                    comment: debt.comment
                 }))
             );
     }
 
     getUserBalances (userId: string) {
+        logger.trace('showing user balances', {userId})
         return Promise.all([
             this.debtBalancesRepository.getUserBalances(userId),
             this.debtsRepository.getPendingDebtsBalancesForUser(userId)])
@@ -149,6 +204,7 @@ class DebtManager {
     }
 
     getTotalBalance(userId) {
+        logger.trace('calculating total balance', { userId })
         return this.debtBalancesRepository.getUserBalances(userId)
             .then(balances => balances
                 .map(s => s.amount)
@@ -156,6 +212,7 @@ class DebtManager {
     }
 
     getThreadContext(userId, threadInfo) {
+        logger.trace('finding thread context', {userId, threadInfo})
         return this.findThreadContact(userId, threadInfo)
             .then(contact => {
                 if (!contact) {
@@ -168,6 +225,7 @@ class DebtManager {
     }
 
     getPendingDebtsForThread(userId, threadId) {
+        logger.trace('showing pending debts for thread', {userId, threadId})
         return this.debtsRepository.getPendingDebtsByThreadId(threadId)
     }
 }; 
