@@ -202,12 +202,15 @@ export default {
 }
 
 .avatar {
-    height: 45px;
-    width: 45px;
-    object-fit: cover;
     vertical-align: middle;
     display: inline-block;
     margin: auto 25px;
+}
+
+.avatar img {
+    height: 45px;
+    width: 45px;
+    object-fit: cover;
 }
 
 .avatar-left {
