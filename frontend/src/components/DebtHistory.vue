@@ -15,19 +15,16 @@
                 </div>
             </div>
             <div class="debts-panel">
-                <div class="debt-item" v-for="item in items" v-bind:key="item.id" v-on:click="item.isOpen = !item.isOpen">
-                    <div class="debt-desc"><span class="date">{{item.date}}</span> {{getDebtTypeDescription(item.debtType)}}</div>
+                <div class="debt-item" v-for="item in items" v-bind:key="item.id">
+                    <div class="debt-desc"><span class="date">{{item.dateRelative}}</span> {{getDebtTypeDescription(item.debtType)}}</div>
                     <div class="debt-amount">
                         <span class="amount"
                             v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
                             {{item.amount}}&nbsp;zł
                         </span>
                     </div>
-                    <div class="debt-arrow" :class="{'debt-arrow-open' : item.isOpen}">
-                        <img src="../assets/right-chevron.svg" alt="pokaż szczegóły" />
-                    </div>
-                    <div class="debt-details" v-show="item.isOpen" :class="{'debt-details-open' : item.isOpen}">
-                        <span v-show="item.comment" class="debt-comment">Komentarz: {{item.comment}}</span>
+                    <div class="debt-details">
+                        <span v-show="item.comment" class="debt-comment"><blockquote>{{item.comment}}</blockquote></span>
                     </div>
                 </div>
             </div>
@@ -140,11 +137,10 @@ export default {
             .then(debts => {
                 this.items = debts.map((item, idx) => ({
                     id: idx,
-                    date: moment(item.date).fromNow(),
+                    dateRelative: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),
                     debtType: item.debtType,
                     isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF,
-                    isOpen: false,
                     comment: item.comment
                 }))
                 this.isloading = false
@@ -180,7 +176,7 @@ export default {
 .debt-item {
     border-bottom: 0.1rem solid #e1e1e1;
     display: grid;
-    grid-template-columns: 1fr fit-content(200px) 30px;
+    grid-template-columns: 1fr fit-content(200px);
     padding: 10px 0;
     margin: 0 10px;
     align-items:center;
@@ -199,28 +195,19 @@ export default {
     margin: 0 15px;
 }
 
-.debt-arrow {
-    grid-column: 3;
-    grid-row: 1;
-}
-
-.debt-arrow img {
-    height: 1em;
-    margin: auto;
-    vertical-align: middle;
-    transform: rotate(90deg);
-}
-
-.debt-arrow-open img {
-    transform: rotate(270deg);
-}
-
 .debt-details {
-    grid-column: 1 / span 3;
+    grid-column: 1 / span 2;
     grid-row: 2;
     text-align: left;
     color: #888;
-    margin: 10px;
+    font-size: small;
+}
+
+.debt-details blockquote {
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .debt-comment {
