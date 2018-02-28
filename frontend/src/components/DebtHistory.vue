@@ -16,7 +16,10 @@
             </div>
             <div class="debts-panel">
                 <div class="debt-item" v-for="item in items" v-bind:key="item.id">
-                    <div class="debt-desc"><span class="date">{{item.dateRelative}}</span> {{getDebtTypeDescription(item.debtType)}}</div>
+                    <div class="debt-desc">
+                        <span class="date">{{item.dateRelative}}</span> 
+                        <span v-html="getDebtTypeDescription(item.debtType)" />
+                    </div>
                     <div class="debt-amount">
                         <span class="amount"
                             v-bind:class="[item.isPositive ? 'text-positive' : 'text-negative' ]">
@@ -77,8 +80,8 @@ export default {
             },
             getDebtTypeDescription (debtType) {
                 switch (debtType) {
-                case debtTypes.LENT: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} od ciebie`
-                case debtTypes.BORROWED: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} ci`
+                case debtTypes.LENT: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''} od&nbsp;ciebie`
+                case debtTypes.BORROWED: return `${this.contact.name} pożyczył${this.contact.gender !== 'male' ? 'a' : ''}&nbsp;ci`
                 case debtTypes.LENT_PAYOFF: return `${this.contact.name} oddał${this.contact.gender !== 'male' ? 'a' : ''}`
                 case debtTypes.BORROWED_PAYOFF: return `oddałeś`
                 }
@@ -192,7 +195,7 @@ export default {
     grid-column: 2;
     grid-row: 1;
     text-align: right;
-    margin: 0 15px;
+    margin: 0 5px;
 }
 
 .debt-details {
