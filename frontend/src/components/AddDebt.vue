@@ -94,17 +94,13 @@ export default {
     computed: {
         lentText: function () {
             if (this.isContactAccepted || this.contactName) {
-                return `pożycza ode mnie`
+                return `${this.contactName} wisi mi`
             }
 
-            return 'Pożyczam Komuś'
+            return 'Wisi mi'
         },
         borrowedText: function () {
-            if (this.isContactAccepted || this.contactName) {
-                return `pożycza mi`
-            }
-
-            return 'Pożyczam od kogoś'
+            return 'Wiszę'
         },
         payoffText: function () {
             if (this.balance < 0) {
