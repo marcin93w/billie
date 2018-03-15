@@ -31,13 +31,13 @@ export function requestCloseBrowser () {
 }
 
 export function askPermission (permissionName) {
-    return Promise.resolve()
+    return Promise.resolve({
+        isGranted: true
+    })
 }
 
 export function getGrantedPermissions () {
     return Promise.resolve({
-        permissions: [
-            'user_profile',
-            'user_messaging']
+        permissions: []
     })
 }

@@ -27,16 +27,10 @@ export function askPermission (permissionName) {
     return new Promise((resolve, reject) => {
         window.MessengerExtensions.askPermission(
             function (permissionResponse) {
-                let isGranted = permissionResponse.isGranted
-
-                if (isGranted) {
-                    resolve()
-                } else {
-                    reject(new Error('Permission not granted'))
-                }
+                resolve(permissionResponse)
             }, function (errorCode, errorMessage) {
-            reject(new Error(errorMessage))
-        }, permissionName)
+                reject(new Error(errorMessage))
+            }, permissionName)
     })
 }
 
