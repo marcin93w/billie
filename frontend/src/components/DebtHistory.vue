@@ -1,7 +1,8 @@
 <template>
     <div class="debtHistory">
-        <Loader :isloading="isloading" />
-        <div v-if="!isloading">
+        <loader v-if="isloading" />
+        <error-page v-else-if="isError" />
+        <div v-else>
             <div class="contact-panel">
                 <div class="avatar">
                     <img :src=contact.avatarUrl :alt=contact.name />
@@ -50,17 +51,20 @@ import Loader from './Loader.vue'
 import debtBalancesService from '../services/debt-balances-service'
 import handleError from '../utils/handle-error'
 import { getGenderSuffix } from '../utils/utils'
+import ErrorPage from './ErrorPage.vue'
 
 export default {
     name: 'DebtHistory',
     components: {
-        Loader: Loader
+        'loader': Loader,
+        'error-page': ErrorPage
     },
     data () {
         return {
             items: [],
             total: 0,
             isloading: true,
+            isError: false,
             isUnaccpeted: false,
             isFromThread: false,
             contact: {
@@ -148,7 +152,11 @@ export default {
                 }))
                 this.isloading = false
             })
-            .catch(handleError)
+            .catch(err => {
+                this.isError = true
+                this.isloading = false
+                handleError(err)
+            })
     }
 }
 </script>

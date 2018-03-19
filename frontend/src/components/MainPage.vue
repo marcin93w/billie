@@ -4,25 +4,26 @@
             <h4>Obecnie Billie działa tylko dla konwersacji z pojedynczymi osobami, pracujemy nad tym ;)</h4>
         </div>
         <div class="single" v-else>
-            <Loader :isloading="isloading" />
-                <div v-if="!isloading">
-                    <view-balance
-                        v-bind:has-debt-already="hasDebtAlready"
-                        v-bind:has-unaccepted-debt="hasUnacceptedDebt"
-                        v-bind:contact-name="contact && contact.name"
-                        v-bind:contact-gender="contact && contact.gender"
-                        v-bind:balance="threadBalance" />
-                    <add-debt
-                        v-bind:user-name="user.name"
-                        v-bind:user-gender="user.gender"
-                        v-bind:user-avatar="user.avatarUrl"
-                        v-bind:show-payoff="hasDebtAlready"
-                        v-bind:is-contact-accepted="!!contact"
-                        v-bind:contact-name="contact && contact.name"
-                        v-bind:contact-gender="contact && contact.gender"
-                        v-bind:contact-avatar="contact && contact.avatarUrl"
-                        v-bind:balance="threadBalance" />
-                </div>
+            <loader v-if="isloading" />
+            <error-page v-else-if="isError" />
+            <div v-else>
+                <view-balance
+                    v-bind:has-debt-already="hasDebtAlready"
+                    v-bind:has-unaccepted-debt="hasUnacceptedDebt"
+                    v-bind:contact-name="contact && contact.name"
+                    v-bind:contact-gender="contact && contact.gender"
+                    v-bind:balance="threadBalance" />
+                <add-debt
+                    v-bind:user-name="user.name"
+                    v-bind:user-gender="user.gender"
+                    v-bind:user-avatar="user.avatarUrl"
+                    v-bind:show-payoff="hasDebtAlready"
+                    v-bind:is-contact-accepted="!!contact"
+                    v-bind:contact-name="contact && contact.name"
+                    v-bind:contact-gender="contact && contact.gender"
+                    v-bind:contact-avatar="contact && contact.avatarUrl"
+                    v-bind:balance="threadBalance" />
+            </div>
         </div>
   </div>
 </template>
@@ -36,13 +37,15 @@ import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import handleError from '../utils/handle-error'
+import ErrorPage from './ErrorPage.vue'
 
 export default {
     name: 'MainPage',
     components: {
         'add-debt': AddDebt,
         'view-balance': ViewBalance,
-        'Loader': Loader
+        'loader': Loader,
+        'error-page': ErrorPage
     },
     data () {
         return {
@@ -52,6 +55,7 @@ export default {
             hasDebtAlready: false,
             hasUnacceptedDebt: false,
             isloading: true,
+            isError: false,
             threadType: ''
         }
     },
@@ -69,7 +73,11 @@ export default {
                 this.threadBalance = this.threadBalance.toFixed(2)
                 this.isloading = false
             })
-            .catch(handleError)
+            .catch(err => {
+                this.isError = true
+                this.isloading = false
+                handleError(err)
+            })
     }
 }
 </script>

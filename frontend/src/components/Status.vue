@@ -1,7 +1,8 @@
 <template>
     <div class="status">
-        <Loader :isloading="isloading" />
-        <div v-if="!isloading">
+        <loader v-if="isloading" />
+        <error-page v-else-if="isError" />
+        <div v-else>
             <h4>Twoje długi</h4>
             <table class="statusTable">
                 <tr v-for="item in contacts" v-on:click="showDebtHistory(item)">
@@ -45,15 +46,18 @@ import avatar from '../assets/avatar.svg'
 import questionMark from '../assets/question-mark.png'
 import Loader from './Loader.vue'
 import handleError from '../utils/handle-error'
+import ErrorPage from './ErrorPage.vue'
 
 export default {
     name: 'Status',
     components: {
-        'Loader': Loader
+        'loader': Loader,
+        'error-page': ErrorPage
     },
     data () {
         return {
             isloading: true,
+            isError: false,
             contacts: [],
             unaccpeted: [],
             total: 0,
@@ -96,9 +100,10 @@ export default {
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)
             })
-            .catch(error => {
-                handleError(error)
+            .catch(err => {
+                this.isError = true
                 this.isloading = false
+                handleError(err)
             })
     }
 }
