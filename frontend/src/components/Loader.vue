@@ -1,5 +1,5 @@
 <template>
-<div v-if="isloading">
+<div>
 <svg id="triangle" width="100px" height="100px" viewBox="-3 -4 39 39">
   <polygon fill="#F8F8FF" stroke="#9b4dca" stroke-width="1" points="16,0 32,32 0,32"></polygon>
 </svg></div>
@@ -9,7 +9,7 @@
 
 export default {
     name: 'Loader',
-    props: ['isloading'],
+    props: [],
     data () {
         return {
         }
