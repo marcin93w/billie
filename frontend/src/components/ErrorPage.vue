@@ -2,7 +2,7 @@
 <div>
   <h4>Coś nie działa, sorry!</h4>
   <h1>:(</h1>
-  <h4>Spróbuj jeszcze raz, jeśli problem będzie się powtarzał, napisz do Biliego, na pewno znajdziemy jakieś rozwiązanie ;)</h4>
+  <h4>Spróbuj jeszcze raz, jeśli problem będzie się powtarzał, napisz do Billiego, na pewno znajdziemy jakieś rozwiązanie ;)</h4>
 </div>
 </template>
 
