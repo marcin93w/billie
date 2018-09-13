@@ -11,7 +11,11 @@
                     <p v-if="isUnaccpeted">Ten znajomy nie zaakceptował twoich długów</p>
                     <p v-else>
                         <span v-html="getDebtSummaryText()"></span><span v-if="total" class="amount" v-bind:class="[total > 0 ? 'text-positive' : 'text-negative' ]">{{Math.abs(total).toFixed(2)}}&nbsp;zł</span>.
-                        <a v-if="isFromThread" @click="$router.push('/')">Chcesz dodać <span v-if="total">spłatę lub </span>nowy dług?</a>
+                        <span v-if="displayBankNumber()">Pieniądze możesz oddać przelewem na numer <a v-on:click="copyBankAccountNumber()">{{contact.bankAccountNumber}} <i>({{copyLinkText}})</i></a>.</span>
+                        <span v-if="isFromThread">
+                            <a v-if="!displayBankNumber()" @click="$router.push('/')">Chcesz dodać <span v-if="total">spłatę lub </span>nowy dług?</a>
+                            <span v-if="displayBankNumber()">Możesz też <a @click="$router.push('/')">dodać spłatę lub nowy dług</a>.</span>
+                        </span>
                     </p>
                 </div>
             </div>
@@ -52,6 +56,8 @@ import debtBalancesService from '../services/debt-balances-service'
 import handleError from '../utils/handle-error'
 import { getGenderSuffix } from '../utils/utils'
 import ErrorPage from './ErrorPage.vue'
+import Vue from 'vue'
+import VueClipboard from 'vue-clipboard2'
 
 export default {
     name: 'DebtHistory',
@@ -71,8 +77,11 @@ export default {
                 name: '',
                 fullName: '',
                 gender: 'male',
-                avatarUrl: ''
+                avatarUrl: '',
+                bankAccountNumber: null
             },
+            copyLinkText: 'kliknij aby skopiować',
+            displayBankNumber: () => this.total < 0 && this.contact.bankAccountNumber,
             getDebtSummaryText: function () {
                 if (this.total === 0) {
                     return `<b>${this.contact.fullName}</b> i ty nie macie w tej chwili żadnych długów`
@@ -92,10 +101,19 @@ export default {
             },
             back: () => {
                 this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
+            },
+            copyBankAccountNumber: () => {
+                this.$copyText(this.contact.bankAccountNumber).then(e => {
+                    this.copyLinkText = 'skopiowano!'
+                }, e => {
+                    this.copyLinkText = 'nie udało się skopiować :(!'
+                })
             }
         }
     },
     created () {
+        VueClipboard.config.autoSetContainer = true
+        Vue.use(VueClipboard)
         moment.locale('pl')
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
