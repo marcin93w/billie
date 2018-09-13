@@ -15,4 +15,7 @@ ALTER TABLE public.pending_debts
 
 ALTER TABLE public.pending_debts
     ADD COLUMN comment text;
+
+ALTER TABLE public.users
+    ADD COLUMN bank_account_number text;
     

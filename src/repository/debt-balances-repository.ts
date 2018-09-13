@@ -12,7 +12,7 @@ export default class DebtBalancesRepository {
     }
 
     getUserBalances(userId: string) : Promise<UserDebtBalance[]> {
-        return db.any('SELECT users.id as user_id, name, full_name, gender, avatar_url, amount \
+        return db.any('SELECT users.id as user_id, name, full_name, gender, avatar_url, bank_account_number, amount \
             FROM \
             (SELECT \
                 CASE WHEN user1_id = $1 THEN user2_id ELSE user1_id END as id, \

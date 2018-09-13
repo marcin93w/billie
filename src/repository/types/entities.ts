@@ -29,7 +29,8 @@ export type User = {
     name: string, 
     fullName: string, 
     gender: string, 
-    avatarUrl: string
+    avatarUrl: string,
+    bankAccountNumber: string
 }
 
 export type UserDebtBalance = {
@@ -38,5 +39,6 @@ export type UserDebtBalance = {
     fullName: string,
     gender: string,
     avatarUrl: string,
-    amount: number
+    amount: number,
+    bankAccountNumber: string
 }
