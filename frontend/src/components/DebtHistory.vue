@@ -11,7 +11,7 @@
                     <p v-if="isUnaccpeted">Ten znajomy nie zaakceptował twoich długów</p>
                     <p v-else>
                         <span v-html="getDebtSummaryText()"></span><span v-if="total" class="amount" v-bind:class="[total > 0 ? 'text-positive' : 'text-negative' ]">{{Math.abs(total).toFixed(2)}}&nbsp;zł</span>.
-                        <span v-if="displayBankNumber()">Pieniądze możesz oddać przelewem na numer <a v-on:click="copyBankAccountNumber()">{{contact.bankAccountNumber}} <i>({{copyLinkText}})</i></a>.</span>
+                        <span v-if="displayBankNumber()">Pieniądze możesz oddać przelewem na numer <a v-on:click="copyBankAccountNumber()">{{contact.bankAccountNumber}}</a>.</span>
                         <span v-if="isFromThread">
                             <a v-if="!displayBankNumber()" @click="$router.push('/')">Chcesz dodać <span v-if="total">spłatę lub </span>nowy dług?</a>
                             <span v-if="displayBankNumber()">Możesz też <a @click="$router.push('/')">dodać spłatę lub nowy dług</a>.</span>
@@ -80,7 +80,6 @@ export default {
                 avatarUrl: '',
                 bankAccountNumber: null
             },
-            copyLinkText: 'kliknij aby skopiować',
             displayBankNumber: () => this.total < 0 && this.contact.bankAccountNumber,
             getDebtSummaryText: function () {
                 if (this.total === 0) {
@@ -103,11 +102,7 @@ export default {
                 this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
             },
             copyBankAccountNumber: () => {
-                this.$copyText(this.contact.bankAccountNumber).then(e => {
-                    this.copyLinkText = 'skopiowano!'
-                }, e => {
-                    this.copyLinkText = 'nie udało się skopiować :(!'
-                })
+                this.$copyText(this.contact.bankAccountNumber)
             }
         }
     },
