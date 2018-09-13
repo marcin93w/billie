@@ -94,6 +94,7 @@ export default {
                             isPositive: item.amount >= 0,
                             fullName: 'Niezaakceptowany'
                         })))
+                    .sort((a, b) => b.amount - a.amount)
                 let totalValue = balances.contacts.map(item => item.amount)
                     .concat(balances.unaccpeted.map(b => b.amount))
                     .reduce((sum, cur) => sum + cur, 0)
