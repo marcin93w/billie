@@ -1,8 +1,8 @@
 const request = require('async-request');
-const { Client } = require('pg')
+const { Client } = require('pg');
 
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
-const DB_PASSWORD = process.env.DB_PASSWORD
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 function getDbConnection() {
     const conn = `postgres://postgers:${DB_PASSWORD}@aa1798jl5zasldu.ckoqxmg442un.us-east-2.rds.amazonaws.com/postgres`;
@@ -12,39 +12,40 @@ function getDbConnection() {
 
 async function fetchPsids(dbClient) {
     var result = await dbClient.query("SELECT psid FROM public.users");
-    return result.rows.map(r => r.psid)
+    return result.rows.map(r => r.psid);
 }
 
 async function fetchUserData (senderPsid) {
-    const response = await request({
-        url: "https://graph.facebook.com/v2.6/" + senderPsid,
-        qs: {
-            access_token: PAGE_ACCESS_TOKEN,
-            fields: "profile_pic"
-        },
-        method: "GET"
-    })
-    
-    const content = JSON.parse(response);
-    console.log(`UPDATE public.users SET avatar_url = '${content.profile_pic}' WHERE psid = '${content.id }';`)
+    const url = `https://graph.facebook.com/v2.6/${senderPsid}?access_token=${PAGE_ACCESS_TOKEN}&fields=profile_pic`;
 
-    return content
+    const response = await request(url);
+    return JSON.parse(response.body);
+}
+
+async function updateAvatar(dbClient, id, avatar) {
+    await dbClient.query(`UPDATE public.users SET avatar_url = '${avatar}' WHERE psid = '${id}';`);
 }
 
 exports.handler = async function(event, context) {
-    const dbClient = getDbConnection()
-    await dbClient.connect()
-    const psids = await fetchPsids(dbClient)
-    console.log(JSON.stringify(psids))
-    await dbClient.end()
+    const dbClient = getDbConnection();
+    await dbClient.connect();
+    
+    const psids = await fetchPsids(dbClient);
+    let updated = 0, failed = 0;
+    
+    for(const psid of psids) {
+        try {
+            var userData = await fetchUserData(psid);
+            await updateAvatar(dbClient, userData.id, userData.profile_pic);
+            updated++;
+        }
+        catch(error) {
+            console.log(error);
+            failed++;
+        }
+    }
+    
+    await dbClient.end();
 
-    context.succeed(psids)
-}
-
-
-// let psids = process.argv[3].split(',')
-
-// psids.forEach(psid => {
-//     fetchUserData(psid)
-// });
-
+    context.succeed(`Updated: ${updated}, failed: ${failed}`);
+};
