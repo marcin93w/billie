@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": " — zip-file fileb://Lambda-Deployment.zip",
+    "predeploy": "zip -r Lambda-Deployment.zip * -x *.zip *.log"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "request-promise": "^4.2.2"
+    "async-request": "^1.2.0",
+    "pg": "^7.6.0"
   }
 }
