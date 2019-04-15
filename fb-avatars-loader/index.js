@@ -5,7 +5,7 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 
 function getDbConnection() {
-    const conn = `postgres://postgers:${DB_PASSWORD}@aa1798jl5zasldu.ckoqxmg442un.us-east-2.rds.amazonaws.com/postgres`;
+    const conn = `postgres://postgres:${DB_PASSWORD}@aae8xl9u7zj36e.cfmvmprrntcm.eu-central-1.rds.amazonaws.com/postgres`;
     const client = new Client(conn);
     return client;
 }
