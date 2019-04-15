@@ -4,7 +4,6 @@ module.exports = {
             id: senderPsid, 
             name: 'Grzegorz',
             fullName: 'Grzegorz Brzęczyszczykiewicz',
-            gender: 'male',
             profilePic: 'https://www.w3schools.com/howto/img_avatar.png' 
         })
     }

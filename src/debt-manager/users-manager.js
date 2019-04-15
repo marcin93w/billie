@@ -18,6 +18,7 @@ class UsersManager {
                         logger.trace('New user fetched from GraphAPI', userData)
                         userData.psid = psid
                         userData.fbId = userData.id
+                        userData.gender = userData.name.slice(-1) === "a" ? "female" : "male"
                         return this.usersRepository.add(userData)
                             .then(() => userData)
                     });
