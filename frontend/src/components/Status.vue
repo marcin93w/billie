@@ -18,7 +18,7 @@
                 </tr>
                 <tr v-if="contacts.length > 0" class="totalRow">
                     <td />
-                    <td>Razem</td>
+                    <td>{{ $t("status.total") }}</td>
                     <td
                         class="amountCell"
                         v-bind:class="[isTotalPositive ? 'text-positive' : 'text-negative' ]">
@@ -28,10 +28,10 @@
                 </tr>
             </table>
             <div v-if="contacts.length === 0">
-                <p>Nie masz jeszcze żadnych długów</p>
+                <p>{{ $t("status.noDebtsYet") }}</p>
             </div>
-            <button v-if="$route.params.allowReturn" v-on:click="back">Powrót</button>
-            <button v-if="!$route.params.allowReturn" v-on:click="close">Zamknij</button>
+            <button v-if="$route.params.allowReturn" v-on:click="back">{{ $t("status.back") }}</button>
+            <button v-if="!$route.params.allowReturn" v-on:click="close">{{ $t("status.close") }}</button>
         </div>
     </div>
 </template>
@@ -92,7 +92,7 @@ export default {
                             amount: Math.abs(item.amount).toFixed(2),
                             avatarUrl: questionMark,
                             isPositive: item.amount >= 0,
-                            fullName: 'Niezaakceptowany'
+                            fullName: this.$t('status.waitingForAcceptance')
                         })))
                     .sort((a, b) => b.amount - a.amount)
                 let totalValue = balances.contacts.map(item => item.amount)
