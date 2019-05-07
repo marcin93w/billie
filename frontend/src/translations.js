@@ -7,6 +7,16 @@ export default {
             back: 'Powrót',
             close: 'Zamknij',
             waitingForAcceptance: 'Oczekujący na akceptację'
+        },
+        addDebt: {
+            addComment: 'Dodaj komentarz',
+            gaveBack: 'Oddałem...',
+            borrowedFor: 'Pożyczyłem na...',
+            add: 'Dodaj',
+            lent: 'Pożycza ode mnie',
+            borrowed: 'Pożycza mi',
+            iGaveBack: 'Oddaję',
+            someoneGavesBack: 'Oddaje mi'
         }
     },
     en: {
@@ -17,6 +27,16 @@ export default {
             back: 'Back',
             close: 'Close',
             waitingForAcceptance: 'Waiting for approval'
+        },
+        addDebt: {
+            addComment: 'Add comment',
+            gaveBackCommentPlaceholder: 'I gave back...',
+            borrowedCommentPlaceholder: 'I borrowed/lent for...',
+            add: 'Add',
+            lent: 'I lent',
+            borrowed: 'I borrowed',
+            iGaveBack: 'I gave back',
+            someoneGavesBack: 'Gives me back'
         }
     }
 }
