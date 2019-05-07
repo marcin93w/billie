@@ -3,7 +3,7 @@
         <loader v-if="isloading" />
         <error-page v-else-if="isError" />
         <div v-else>
-            <h4>Twoje długi</h4>
+            <h4>{{ $t("status.yourDebts") }}</h4>
             <table class="statusTable">
                 <tr v-for="item in contacts" v-on:click="showDebtHistory(item)">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.fullName"></td>

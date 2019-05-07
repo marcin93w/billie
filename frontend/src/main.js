@@ -3,7 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueI18n from 'vue-i18n'
+import translations from './translations'
 
+Vue.use(VueI18n)
 Vue.config.productionTip = false
 let isStarted = false;
 
@@ -34,11 +37,18 @@ window.extAsyncInit = function () {
 }
 
 function bootStrapApp () {
+    const i18n = new VueI18n({
+        locale: navigator.language.slice(0, 2),
+        messages: translations,
+        fallbackLocale: 'pl'
+    })
+
     new Vue({
         el: '#app',
         router,
         template: '<App/>',
-        components: { App }
+        components: { App },
+        i18n
     })
 };
 
