@@ -8,13 +8,13 @@
                     <img :src=contact.avatarUrl :alt=contact.name />
                 </div>
                 <div class="contact-desc">
-                    <p v-if="isUnaccpeted">Ten znajomy nie zaakceptował twoich długów</p>
+                    <p v-if="isUnaccpeted">{{ $t('debtHistory.thisFirendDidNotAcceptedYourDebts') }}</p>
                     <p v-else>
                         <span v-html="getDebtSummaryText()"></span><span v-if="total" class="amount" v-bind:class="[total > 0 ? 'text-positive' : 'text-negative' ]">{{Math.abs(total).toFixed(2)}}&nbsp;zł</span>.
-                        <span v-if="displayBankNumber()">Pieniądze możesz oddać przelewem na numer <a v-on:click="copyBankAccountNumber()">{{contact.bankAccountNumber}}</a>.</span>
+                        <span v-if="displayBankNumber()">{{ $t('debtHistory.youCanPayOffUsingBankTransfer') }} <a v-on:click="copyBankAccountNumber()">{{contact.bankAccountNumber}}</a>.</span>
                         <span v-if="isFromThread">
-                            <a v-if="!displayBankNumber()" @click="$router.push('/')">Chcesz dodać <span v-if="total">spłatę lub </span>nowy dług?</a>
-                            <span v-if="displayBankNumber()">Możesz też <a @click="$router.push('/')">dodać spłatę lub nowy dług</a>.</span>
+                            <a v-if="!displayBankNumber()" @click="$router.push('/')">{{$t('debtHistory.doYouWantToAdd')}} <span v-if="total">{{$t('debtHistory.payOffOr')}} </span>{{$t('debtHistory.newDebt')}}</a>
+                            <span v-if="displayBankNumber()">{{$t('debtHistory.youCanAlso')}} <a @click="$router.push('/')">{{$t('debtHistory.addPayOffOrNewDebt')}}</a>.</span>
                         </span>
                     </p>
                 </div>
@@ -36,8 +36,8 @@
                     </div>
                 </div>
             </div>
-            <button v-if="this.$route.params.id" v-on:click="back">Powrót</button>
-            <button v-else v-on:click="back">Zobacz innych znajomych</button>
+            <button v-if="this.$route.params.id" v-on:click="back">{{ $t('debtHistory.back') }}</button>
+            <button v-else v-on:click="back">{{ $t('debtHistory.seeOtherFriends') }}</button>
         </div>
     </div>
 </template>
@@ -83,7 +83,7 @@ export default {
             displayBankNumber: () => this.total < 0 && this.contact.bankAccountNumber,
             getDebtSummaryText: function () {
                 if (this.total === 0) {
-                    return `<b>${this.contact.fullName}</b> i ty nie macie w tej chwili żadnych długów`
+                    return `<b>${this.contact.fullName}</b> ${this.$t('debtHistory.andYouHaveNoDebtsAtTheMoment')}`
                 } else if (this.total < 0) {
                     return `Łącznie <b>${this.contact.fullName}</b> pożyczył${getGenderSuffix(this.contact.gender)} ci `
                 } else {
@@ -114,7 +114,7 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(context => {
                 const unknownContact = {
-                    name: 'ktoś',
+                    name: this.$t('debtHistory.someone'),
                     fullName: '',
                     gender: 'male',
                     avatarUrl: questionMark

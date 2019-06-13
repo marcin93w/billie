@@ -17,6 +17,19 @@ export default {
             borrowed: 'Pożycza mi',
             iGaveBack: 'Oddaję',
             someoneGavesBack: 'Oddaje mi'
+        },
+        debtHistory: {
+            thisFirendDidNotAcceptedYourDebts: 'Ten znajomy nie zaakceptował twoich długów',
+            youCanPayOffUsingBankTransfer: 'Pieniądze możesz oddać przelewem na numer',
+            doYouWantToAdd: 'Chcesz dodać',
+            payOffOr: 'spłatę lub',
+            newDebt: 'nowy dług?',
+            youCanAlso: 'Możesz też',
+            addPayOffOrNewDebt: 'dodać spłatę lub nowy dług',
+            seeOtherFriends: 'Zobacz innych znajomych',
+            back: 'Powrót',
+            someone: 'ktoś',
+            andYouHaveNoDebtsAtTheMoment: 'i ty nie macie w tej chwili żadnych długów'
         }
     },
     en: {
@@ -37,6 +50,19 @@ export default {
             borrowed: 'I borrowed',
             iGaveBack: 'I gave back',
             someoneGavesBack: 'Gives me back'
+        },
+        debtHistory: {
+            thisFirendDidNotAcceptedYourDebts: 'This firend did not accepted your debts',
+            youCanPayOffUsingBankTransfer: 'You can pay off using bank transfer to number: ',
+            doYouWantToAdd: 'Do you want to add',
+            payOffOr: 'pay off or',
+            newDebt: 'new debt?',
+            youCanAlso: 'You can also',
+            addPayOffOrNewDebt: 'add pay off or new debt',
+            seeOtherFriends: 'See other friends',
+            back: 'Back',
+            someone: 'someone',
+            andYouHaveNoDebtsAtTheMoment: 'and you have no debts at the moment'
         }
     }
 }
