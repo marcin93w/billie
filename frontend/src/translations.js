@@ -30,6 +30,14 @@ export default {
             back: 'Powrót',
             someone: 'ktoś',
             andYouHaveNoDebtsAtTheMoment: 'i ty nie macie w tej chwili żadnych długów'
+        },
+        errorPage: {
+            somethingIsBroken: 'Coś nie działa, sorry!',
+            pleaseTryAgain: 'Spróbuj jeszcze raz, jeśli problem będzie się powtarzał, napisz do Billiego, na pewno znajdziemy jakieś rozwiązanie ;)',
+            askForHelp: 'Zapytaj o pomoc'
+        },
+        mainPage: {
+            groupConversationsNotAllowed: 'Obecnie Billie działa tylko dla konwersacji z pojedynczymi osobami, pracujemy nad tym ;)'
         }
     },
     en: {
@@ -63,6 +71,14 @@ export default {
             back: 'Back',
             someone: 'someone',
             andYouHaveNoDebtsAtTheMoment: 'and you have no debts at the moment'
+        },
+        errorPage: {
+            somethingIsBroken: 'Something is broken, sorry!',
+            pleaseTryAgain: 'Please try again, if the problem persists, write to Billie, I\'m sure we\'ll find a solution ;)',
+            askForHelp: 'Ask for help'
+        },
+        mainPage: {
+            groupConversationsNotAllowed: 'Currently Billie works only for single person conversations, we\'re working on it! ;)'
         }
     }
 }

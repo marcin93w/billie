@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="group" v-if="threadType==='GROUP'">
-            <h4>Obecnie Billie działa tylko dla konwersacji z pojedynczymi osobami, pracujemy nad tym ;)</h4>
+            <h4>{{$t('mainPage.groupConversationsNotAllowed')}}</h4>
         </div>
         <div class="single" v-else>
             <loader v-if="isloading" />
