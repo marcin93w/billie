@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DebtsController } from './debts.controller';
 import { DatabaseService } from './infrastructure/database.service';
-import { DebtsLedgerRepository } from './infrastructure/debts-ledger-repository.service';
+import { DebtsLedgerRepository } from './domain/debts-ledger.repository';
 import { AddDebtHandler } from './domain/add-debt.handler';
 import { CqrsModule } from '@nestjs/cqrs';
 

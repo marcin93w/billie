@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as assert from 'assert';
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, Collection } from 'mongodb';
 
 const url = 'mongodb://localhost:27017/';
 const dbName = 'billie';
@@ -13,5 +13,9 @@ export class DatabaseService {
       action(client.db(dbName));
       client.close();
     });
+  }
+
+  executeOnCollection(collectionName: string, action: (collection: Collection) => void) {
+    this.execute(db => action(db.collection(collectionName)));
   }
 }

@@ -6,8 +6,8 @@ import { AddDebtCommand } from './add-debt.command';
 // Ledger is identified by threadId.
 // User who initiated the ledger by sending first debt is called host.
 export class DebtsLedger extends AggregateRoot {
-  public readonly debts: Debt[];
-  public balance = 0;
+  private debts: Debt[];
+  private balance = 0;
 
   constructor(
     private readonly threadId: string,
@@ -17,6 +17,18 @@ export class DebtsLedger extends AggregateRoot {
     this.debts = new Array();
   }
 
+  public getThreadId(): string {
+    return this.threadId;
+  }
+
+  public getDebts(): Debt[] {
+    return this.debts;
+  }
+
+  public getBalance(): number {
+    return this.balance;
+  }
+
   addDebt(command: AddDebtCommand) {
     let debt = command.debt;
     if (command.userId !== this.hostUserId) {
@@ -24,17 +36,17 @@ export class DebtsLedger extends AggregateRoot {
     }
 
     this.debts.push(debt);
-    if (debt.type === DebtType.BORROWED || debt.type === DebtType.LENT_PAYOFF) {
-      this.balance -= debt.amount;
+    if (debt.getType() === DebtType.BORROWED || debt.getType() === DebtType.LENT_PAYOFF) {
+      this.balance -= debt.getAmount();
     } else {
-      this.balance += debt.amount;
+      this.balance += debt.getAmount();
     }
   }
 
   private createReversedDebt(debt: Debt) {
     let reversedDebtType: DebtType;
 
-    switch (debt.type) {
+    switch (debt.getType()) {
       case DebtType.BORROWED:
         reversedDebtType = DebtType.LENT;
         break;
@@ -49,6 +61,17 @@ export class DebtsLedger extends AggregateRoot {
         break;
     }
 
-    return new Debt(reversedDebtType, debt.amount, debt.comment, debt.date);
+    return new Debt(reversedDebtType, debt.getAmount(), debt.getComment(), debt.getDate());
+  }
+
+  static deserialize(jsonData: any): DebtsLedger {
+    const ledger = new DebtsLedger(jsonData.threadId, jsonData.hostUserId);
+
+    Object.assign(ledger, jsonData);
+    if (jsonData.debts) {
+      ledger.debts = jsonData.debts.map(d => Object.assign(Object.create(Debt.prototype), { ...d, date: new Date(d.date)}));
+    }
+
+    return ledger;
   }
 }
