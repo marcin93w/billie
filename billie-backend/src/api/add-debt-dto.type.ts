@@ -1,7 +1,7 @@
 import { DebtType } from '../debts/contracts/debt.model';
 
 export interface AddDebtDto {
-  debtType: DebtType;
+  type: DebtType;
   amount: number;
   comment: string;
 }
