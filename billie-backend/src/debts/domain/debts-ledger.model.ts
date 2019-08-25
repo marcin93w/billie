@@ -3,15 +3,15 @@ import { Debt, DebtType } from './debt.model';
 import { AddDebtCommand } from './add-debt.command';
 
 // Represents ledger that holds all debts between 2 users.
-// User who initiated the ledger by sending first debt is called host,
-// receiver of first debt is called guest.
+// Ledger is identified by threadId.
+// User who initiated the ledger by sending first debt is called host.
 export class DebtsLedger extends AggregateRoot {
-  private readonly debts: Debt[];
-  private balance = 0;
+  public readonly debts: Debt[];
+  public balance = 0;
 
   constructor(
+    private readonly threadId: string,
     private readonly hostUserId: string,
-    private readonly guestUserId: string,
   ) {
     super();
     this.debts = new Array();
@@ -19,7 +19,7 @@ export class DebtsLedger extends AggregateRoot {
 
   addDebt(command: AddDebtCommand) {
     let debt = command.debt;
-    if (command.senderUserId !== this.hostUserId) {
+    if (command.userId !== this.hostUserId) {
       debt = this.createReversedDebt(command.debt);
     }
 

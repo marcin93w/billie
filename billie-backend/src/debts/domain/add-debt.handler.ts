@@ -8,8 +8,8 @@ export class AddDebtHandler implements ICommandHandler<AddDebtCommand> {
   constructor(private readonly debtsLedgerRepository: DebtsLedgerRepository) {}
 
   async execute(command: AddDebtCommand): Promise<any> {
-    const debtsLedger = this.debtsLedgerRepository.find(command.senderUserId, command.receiverUserId) ||
-      new DebtsLedger(command.senderUserId, command.receiverUserId);
+    const debtsLedger = this.debtsLedgerRepository.find(command.threadId) ||
+      new DebtsLedger(command.threadId, command.userId);
 
     debtsLedger.addDebt(command);
 

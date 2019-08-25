@@ -12,7 +12,7 @@ export class DebtsLedgerRepository {
     this.mockStorage = ledger;
   }
 
-  find(firstUserId: string, secondUserId: string) {
+  find(threadId: string) {
     return this.mockStorage;
   }
 }
