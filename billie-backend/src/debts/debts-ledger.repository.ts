@@ -1,4 +1,4 @@
-import { DatabaseService } from '../../common/infrastructure/database.service';
+import { DatabaseService } from '../common/database.service';
 import { DebtsLedger } from './debts-ledger.model';
 import { Injectable } from '@nestjs/common';
 
@@ -33,7 +33,7 @@ export class DebtsLedgerRepository {
             if (error) {
               reject(error);
             } else {
-              resolve(DebtsLedger.deserialize(data));
+              resolve(data ? DebtsLedger.deserialize(data) : null);
             }
           });
       });

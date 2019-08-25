@@ -1,6 +1,6 @@
 import { DebtsLedger } from './debts-ledger.model';
-import { AddDebtCommand } from './add-debt.command';
-import { Debt, DebtType } from './debt.model';
+import { AddDebtCommand } from './contracts/add-debt.command';
+import { Debt, DebtType } from './contracts/debt.model';
 
 describe('DebtsLedger', () => {
   let ledger: DebtsLedger;

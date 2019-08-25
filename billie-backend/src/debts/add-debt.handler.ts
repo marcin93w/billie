@@ -1,4 +1,4 @@
-import { AddDebtCommand } from './add-debt.command';
+import { AddDebtCommand } from './contracts/add-debt.command';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DebtsLedgerRepository } from './debts-ledger.repository';
 import { DebtsLedger } from './debts-ledger.model';

@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DebtsController } from './debts.controller';
-import { DatabaseService } from '../common/infrastructure/database.service';
-import { DebtsLedgerRepository } from './domain/debts-ledger.repository';
-import { AddDebtHandler } from './domain/add-debt.handler';
+import { DatabaseService } from '../common/database.service';
+import { DebtsLedgerRepository } from './debts-ledger.repository';
+import { AddDebtHandler } from './add-debt.handler';
 import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [CqrsModule],
-  controllers: [DebtsController],
+  controllers: [],
   providers: [DatabaseService, DebtsLedgerRepository, AddDebtHandler],
 })
 export class DebtsModule {}
