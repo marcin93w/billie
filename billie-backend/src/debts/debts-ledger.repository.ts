@@ -33,7 +33,7 @@ export class DebtsLedgerRepository {
             if (error) {
               reject(error);
             } else {
-              resolve(data ? DebtsLedger.deserialize(data) : null);
+              resolve(data ? DebtsLedger.createFrom(data) : null);
             }
           });
       });

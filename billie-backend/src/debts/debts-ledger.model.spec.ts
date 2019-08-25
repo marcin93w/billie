@@ -13,7 +13,7 @@ describe('DebtsLedger', () => {
 
   function simulateLedgerReloading() {
     const serialized = JSON.stringify(ledger);
-    const deserializedLedger = DebtsLedger.deserialize(JSON.parse(serialized));
+    const deserializedLedger = DebtsLedger.createFrom(JSON.parse(serialized));
     ledger = deserializedLedger;
   }
 

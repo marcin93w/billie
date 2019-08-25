@@ -1,13 +1,16 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { Debt, DebtType } from './contracts/debt.model';
 import { AddDebtCommand } from './contracts/add-debt.command';
+import { AcceptLedgerCommand } from './contracts/accept-ledger.command';
 
 // Represents ledger that holds all debts between 2 users.
 // Ledger is identified by threadId.
-// User who initiated the ledger by sending first debt is called host.
+// User who initiated the ledger by sending first debt is called host,
+// user who was receiver of first debt is called guest.
 export class DebtsLedger extends AggregateRoot {
   private debts: Debt[];
   private balance = 0;
+  private guestUserId: string;
 
   constructor(
     private readonly threadId: string,
@@ -17,15 +20,15 @@ export class DebtsLedger extends AggregateRoot {
     this.debts = new Array();
   }
 
-  public getThreadId(): string {
+  getThreadId(): string {
     return this.threadId;
   }
 
-  public getDebts(): Debt[] {
+  getDebts(): Debt[] {
     return this.debts;
   }
 
-  public getBalance(): number {
+  getBalance(): number {
     return this.balance;
   }
 
@@ -64,7 +67,15 @@ export class DebtsLedger extends AggregateRoot {
     return new Debt(reversedDebtType, debt.getAmount(), debt.getComment(), debt.getDate());
   }
 
-  static deserialize(jsonData: any): DebtsLedger {
+  accept(command: AcceptLedgerCommand) {
+    if (command.userId === this.hostUserId) {
+      throw new Error('Host and guest of the ledger cannot be the same user.');
+    }
+
+    this.guestUserId = command.userId;
+  }
+
+  static createFrom(jsonData: any): DebtsLedger {
     const ledger = new DebtsLedger(jsonData.threadId, jsonData.hostUserId);
 
     Object.assign(ledger, jsonData);
