@@ -1,4 +1,4 @@
-import { DatabaseService } from '../infrastructure/database.service';
+import { DatabaseService } from '../../common/infrastructure/database.service';
 import { DebtsLedger } from './debts-ledger.model';
 import { Injectable } from '@nestjs/common';
 
