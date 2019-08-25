@@ -2,6 +2,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { Debt, DebtType } from './contracts/debt.model';
 import { AddDebtCommand } from './contracts/add-debt.command';
 import { AcceptLedgerCommand } from './contracts/accept-ledger.command';
+import { DebtsLedgerSchema } from '../common/database.schema';
 
 // Represents ledger that holds all debts between 2 users.
 // Ledger is identified by threadId.
@@ -75,12 +76,12 @@ export class DebtsLedger extends AggregateRoot {
     this.guestUserId = command.userId;
   }
 
-  static createFrom(jsonData: any): DebtsLedger {
-    const ledger = new DebtsLedger(jsonData.threadId, jsonData.hostUserId);
+  static createFrom(dbModel: DebtsLedgerSchema): DebtsLedger {
+    const ledger = new DebtsLedger(dbModel.threadId, dbModel.hostUserId);
 
-    Object.assign(ledger, jsonData);
-    if (jsonData.debts) {
-      ledger.debts = jsonData.debts.map(d => Object.assign(Object.create(Debt.prototype), { ...d, date: new Date(d.date)}));
+    Object.assign(ledger, dbModel);
+    if (dbModel.debts) {
+      ledger.debts = dbModel.debts.map(d => Object.assign(Object.create(Debt.prototype), { ...d, date: new Date(d.date)}));
     }
 
     return ledger;

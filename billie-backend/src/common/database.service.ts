@@ -18,4 +18,16 @@ export class DatabaseService {
   executeOnCollection(collectionName: string, action: (collection: Collection) => void) {
     this.execute(db => action(db.collection(collectionName)));
   }
+
+  connect(): Promise<MongoClient> {
+    return new Promise<MongoClient>((resolve, reject) => {
+      MongoClient.connect(url, (err, client) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(client);
+        }
+      });
+    });
+  }
 }

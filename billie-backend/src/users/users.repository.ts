@@ -1,6 +1,7 @@
 import { DatabaseService } from '../common/database.service';
 import { Injectable } from '@nestjs/common';
 import { User } from './user.type';
+import { UserSchema } from '../common/database.schema';
 
 @Injectable()
 export class UsersRepository {
@@ -26,7 +27,7 @@ export class UsersRepository {
   async find(id: string): Promise<User> {
     return new Promise((resolve, reject) => {
       this.db.executeOnCollection(this.collectionName, collection => {
-        collection.findOne({ id }, (error, data) => {
+        collection.findOne<UserSchema>({ id }, (error, data) => {
           if (error) {
             reject(error);
           } else {

@@ -6,11 +6,12 @@ import { SignInService } from '../users/sign-in.service';
 import { UsersRepository } from '../users/users.repository';
 import { GraphApiService } from '../users/graph-api.service';
 import { DatabaseService } from '../common/database.service';
+import { GetLedgerQuery } from '../queries/get-ledger.query';
 
 @Module({
   imports: [CqrsModule],
   controllers: [ApiController],
-  providers: [UsersRepository, SignInService, GraphApiService, DatabaseService, AuthMiddleware],
+  providers: [UsersRepository, SignInService, GraphApiService, DatabaseService, AuthMiddleware, GetLedgerQuery],
 })
 export class ApiModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
