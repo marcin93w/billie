@@ -1,20 +1,14 @@
 import { DatabaseService } from '../common/database.service';
-import { DebtsLedgerSchema, UserSchema } from '../common/database.schema';
 import { User } from '../users/user.type';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GetLedgerQuery {
-  constructor(private readonly dbService: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) {}
 
   async fetch(threadId: string, user: User): Promise<any> {
-    const client = await this.dbService.connect();
-    const db = client.db('billie');
-
-    const ledger = await db.collection('debt-ledgers').findOne<DebtsLedgerSchema>({threadId});
-    const contact = ledger.guestUserId ? (await db.collection('users').findOne<UserSchema>({id: ledger.guestUserId})) : null;
-
-    await client.close();
+    const ledger = await this.db.debtsLedgers.findOne({threadId});
+    const contact = ledger.guestUserId ? (await this.db.users.findOne({id: ledger.guestUserId})) : null;
 
     return {
       balance: ledger.balance,

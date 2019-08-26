@@ -1,33 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import * as assert from 'assert';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MongoClient, Db, Collection } from 'mongodb';
+import { DebtsLedgerSchema, UserSchema } from './database.schema';
 
 const url = 'mongodb://localhost:27017/';
 const dbName = 'billie';
 
 @Injectable()
-export class DatabaseService {
-  execute(action: (db: Db) => void) {
-    MongoClient.connect(url, (err, client) => {
-      assert.strictEqual(null, err);
-      action(client.db(dbName));
-      client.close();
-    });
+export class DatabaseService implements OnModuleInit, OnModuleDestroy {
+  private client: MongoClient;
+
+  get users(): Collection<UserSchema> {
+    return this.client.db(dbName).collection('users');
   }
 
-  executeOnCollection(collectionName: string, action: (collection: Collection) => void) {
-    this.execute(db => action(db.collection(collectionName)));
+  get debtsLedgers(): Collection<DebtsLedgerSchema> {
+    return this.client.db(dbName).collection('debt-ledgers');
   }
 
-  connect(): Promise<MongoClient> {
-    return new Promise<MongoClient>((resolve, reject) => {
+  connect(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       MongoClient.connect(url, (err, client) => {
         if (err) {
           reject(err);
         } else {
-          resolve(client);
+          this.client = client;
+          resolve();
         }
       });
     });
+  }
+
+  close(): Promise<void> {
+    return this.client.close();
+  }
+
+  async onModuleInit(): Promise<void> {
+    await this.connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.close();
   }
 }
