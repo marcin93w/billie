@@ -2,7 +2,7 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { Debt, DebtType } from './contracts/debt.model';
 import { AddDebtCommand } from './contracts/add-debt.command';
 import { AcceptLedgerCommand } from './contracts/accept-ledger.command';
-import { DebtsLedgerSchema } from '../common/database.schema';
+import { DebtsLedgerSchema } from '../data/debts-ledger.model';
 
 // Represents ledger that holds all debts between 2 users.
 // Ledger is identified by threadId.

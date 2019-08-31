@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MongoClient, Db, Collection } from 'mongodb';
-import { DebtsLedgerSchema, UserSchema } from './database.schema';
+import { DebtsLedgerSchema } from './debts-ledger.model';
+import { UserSchema } from './user.model';
 
 const url = 'mongodb://localhost:27017/';
 const dbName = 'billie';

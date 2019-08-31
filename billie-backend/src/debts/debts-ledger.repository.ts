@@ -1,7 +1,7 @@
-import { DatabaseService } from '../common/database.service';
+import { DatabaseService } from '../data/database.service';
 import { DebtsLedger } from './debts-ledger.model';
 import { Injectable } from '@nestjs/common';
-import { DebtsLedgerSchema } from '../common/database.schema';
+import { DebtsLedgerSchema } from '../data/debts-ledger.model';
 
 @Injectable()
 export class DebtsLedgerRepository {

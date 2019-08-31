@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.type';
 import { GraphApiService } from './graph-api.service';
-import { DatabaseService } from '../common/database.service';
+import { DatabaseService } from '../data/database.service';
 
 @Injectable()
 export class SignInService {
