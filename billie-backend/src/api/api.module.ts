@@ -1,6 +1,6 @@
 import { HttpModule, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ApiController } from './api.controller';
-import { AuthMiddleware } from './auth.middleware';
+import { AuthMiddleware } from './auth/auth.middleware';
 import { CqrsModule } from '@nestjs/cqrs';
 import { SignInService } from '../users/sign-in.service';
 import { GraphApiService } from '../users/graph-api.service';
@@ -11,6 +11,9 @@ import { GRAPH_API_SERVICE } from '../users/graph-api.service.interface';
 import { GraphApiServiceStub } from '../users/graph-api.service.stub';
 import { Environment } from '../common/environment';
 import { ConfigService } from './config.service';
+import { FB_MESSENGER_SIGNATURE_SERVICE } from './auth/fb-messenger-signature.service.interface';
+import { FbMessengerSignatureServiceStub } from './auth/fb-messenger-signature.service.stub';
+import { FbMessengerSignatureService } from './auth/fb-messenger-signature.service';
 
 @Module({
   imports: [CqrsModule, HttpModule],
@@ -24,6 +27,9 @@ import { ConfigService } from './config.service';
     GetUserLedgersQuery, {
       provide: GRAPH_API_SERVICE,
       useClass: Environment.isDevelopment ? GraphApiServiceStub : GraphApiService,
+    }, {
+      provide: FB_MESSENGER_SIGNATURE_SERVICE,
+      useClass: Environment.isDevelopment ? FbMessengerSignatureServiceStub : FbMessengerSignatureService,
     }],
 })
 export class ApiModule implements NestModule {
