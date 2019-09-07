@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { AddDebtCommand } from '../debts/contracts/add-debt.command';
 import { Debt } from '../debts/contracts/debt.model';
@@ -27,8 +27,13 @@ export class ApiController {
   }
 
   @Get('ledger')
-  async getLedger(@Req() request: ApiRequest): Promise<LedgerDto> {
+  async getCurrentLedger(@Req() request: ApiRequest): Promise<LedgerDto> {
     return await this.getLedgerQuery.fetch(request.threadId, request.user);
+  }
+
+  @Get('ledger/:threadId')
+  async getLedger(@Req() request: ApiRequest, @Param() params): Promise<LedgerDto> {
+    return await this.getLedgerQuery.fetch(params.threadId, request.user);
   }
 
   @Get('ledgers')

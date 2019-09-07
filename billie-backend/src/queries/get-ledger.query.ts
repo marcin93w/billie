@@ -17,7 +17,7 @@ export interface LedgerDto {
     avatarUrl: string;
     gender: string;
   };
-  contact: {
+  contact?: {
     id: string;
     name: string;
     fullName: string;
@@ -32,7 +32,19 @@ export class GetLedgerQuery {
 
   async fetch(threadId: string, user: User): Promise<LedgerDto> {
     const ledger = await this.db.debtsLedgers.findOne({threadId});
-    const contact = ledger.guestUserId ? (await this.db.users.findOne({id: ledger.guestUserId})) : null;
+    if (!ledger) {
+      return null;
+    }
+
+    if (ledger.hostUserId !== user.id && ledger.guestUserId !== user.id) {
+      return null;
+    }
+
+    let contact: User;
+    if (ledger.guestUserId) {
+      const contactId = ledger.hostUserId === user.id ? ledger.guestUserId : ledger.hostUserId;
+      contact = await this.db.users.findOne({ id: contactId });
+    }
 
     return {
       balance: ledger.balance,
