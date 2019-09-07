@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from './user.type';
-import { GraphApiService } from './graph-api.service';
 import { DatabaseService } from '../common/database.service';
+import { GRAPH_API_SERVICE, IGraphApiService } from './graph-api.service.interface';
 
 @Injectable()
 export class SignInService {
   constructor(
     private readonly db: DatabaseService,
-    private readonly graphApiService: GraphApiService,
+    @Inject(GRAPH_API_SERVICE) private readonly graphApiService: IGraphApiService,
   ) {}
 
   async signIn(userFbId: string): Promise<User> {
