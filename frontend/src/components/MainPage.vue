@@ -8,11 +8,11 @@
             <error-page v-else-if="isError" />
             <div v-else>
                 <view-balance
-                    v-bind:has-debt-already="hasDebtAlready"
-                    v-bind:has-unaccepted-debt="hasUnacceptedDebt"
+                    v-bind:has-debt-already="!!ledger"
+                    v-bind:has-unaccepted-debt="!contact"
                     v-bind:contact-name="contact && contact.name"
                     v-bind:contact-gender="contact && contact.gender"
-                    v-bind:balance="threadBalance" />
+                    v-bind:balance="ledger && ledger.balance" />
                 <add-debt
                     v-bind:user-name="user.name"
                     v-bind:user-gender="user.gender"
@@ -22,7 +22,7 @@
                     v-bind:contact-name="contact && contact.name"
                     v-bind:contact-gender="contact && contact.gender"
                     v-bind:contact-avatar="contact && contact.avatarUrl"
-                    v-bind:balance="threadBalance" />
+                    v-bind:balance="ledger && ledger.balance" />
             </div>
         </div>
   </div>
@@ -38,6 +38,7 @@ import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
 import handleError from '../utils/handle-error'
 import ErrorPage from './ErrorPage.vue'
+import gql from 'graphql-tag'
 
 export default {
     name: 'MainPage',
@@ -49,30 +50,58 @@ export default {
     },
     data () {
         return {
-            user: null,
+            user: {
+            },
             contact: null,
             threadBalance: 0,
             hasDebtAlready: false,
             hasUnacceptedDebt: false,
             isloading: true,
             isError: false,
-            threadType: ''
+            threadType: '',
+            ledger: {
+                balance: 0
+            }
         }
+    },
+    apollo: {
+        user: gql`query {
+            user(id: "a") {
+                name,
+                gender,
+                avatarUrl
+            }
+        }`,
+        contact: gql`query {
+            contact: user(id: "a") {
+                name,
+                gender,
+                avatarUrl
+            }
+        }`,
+        ledger: gql`query {
+            ledger: debtsLedger(threadId: "t") {
+                balance
+            }
+        }`,
     },
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(context => {
-                this.threadType = context.thread_type
-                return getThreadStatus(context)
-            })
-            .then(threadStatus => {
-                Object.assign(this, threadStatus)
-                this.hasDebtAlready = threadStatus.contact && threadStatus.threadBalance !== 0
-                this.hasUnacceptedDebt = !threadStatus.contact && threadStatus.threadBalance !== 0
-                this.threadBalance = this.threadBalance.toFixed(2)
                 this.isloading = false
             })
+            // .then(context => {
+            //     this.threadType = context.thread_type
+            //     return getThreadStatus(context)
+            // })
+            // .then(threadStatus => {
+            //     Object.assign(this, threadStatus)
+            //     this.hasDebtAlready = threadStatus.contact && threadStatus.threadBalance !== 0
+            //     this.hasUnacceptedDebt = !threadStatus.contact && threadStatus.threadBalance !== 0
+            //     this.threadBalance = this.threadBalance.toFixed(2)
+            //     this.isloading = false
+            // })
             .catch(err => {
                 this.isError = true
                 this.isloading = false
