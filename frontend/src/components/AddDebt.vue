@@ -5,7 +5,7 @@
                 v-bind:class="[debtType === debtTypes.LENT ? '' : 'button-outline' ]" 
                 v-on:click="setDebtType(false, false)"  
                 value="0" name="debtActionButton">
-                <span>{{lentText}}</span>
+                <span>{{ $t('addDebt.lent') }}</span>
             </button>
             <button class="button"  
                 v-if="isContactAccepted && balance < 0"
@@ -36,7 +36,7 @@
                 v-bind:class="[debtType === debtTypes.BORROWED ? '' : 'button-outline' ]" 
                 v-on:click="setDebtType(false, true)" 
                 value="1" name="debtActionButton">
-                <span>{{borrowedText}}</span>
+                <span>{{ $t('addDebt.borrowed' )}}</span>
             </button>
             <button class="button"  
                 v-if="isContactAccepted && balance > 0"
@@ -51,12 +51,12 @@
             <span class="currency-text">zł</span>
         </div>
         <div class="comment-panel">
-            <a v-show="!displayCommentInput" @click="showCommentInput()">Dodaj komentarz</a>
+            <a v-show="!displayCommentInput" @click="showCommentInput()">{{ $t('addDebt.addComment') }}</a>
             <input id="comment-input" v-show="displayCommentInput" type="text" v-model="comment"
-                v-bind:placeholder="isPayoff() ? 'Oddałem...' : 'Pożyczyłem na...'" />
+                v-bind:placeholder="isPayoff() ? $t('addDebt.gaveBackCommentPlaceholder') : $t('addDebt.borrowedCommentPlaceholder')" />
         </div>
         <div class="add-button-panel">
-            <button @click="add()">Dodaj</button>
+            <button @click="add()">{{ $t('addDebt.add') }}</button>
         </div>
     </div>
 </template>
@@ -92,17 +92,11 @@ export default {
     props: ['userName', 'userGender', 'userAvatar', 'showPayoff', 'isContactAccepted',
         'contactName', 'contactGender', 'contactAvatar', 'balance'],
     computed: {
-        lentText: function () {
-            return 'Pożycza ode mnie'
-        },
-        borrowedText: function () {
-            return 'Pożycza mi'
-        },
         payoffText: function () {
             if (this.balance < 0) {
-                return 'Oddaję'
+                return this.$t('addDebt.iGaveBack')
             } else {
-                return `Oddaje mi`
+                return this.$t('addDebt.someoneGavesBack')
             }
         },
         userAvatarURL: function () {

@@ -1,9 +1,9 @@
 <template>
 <div>
-  <h4>Coś nie działa, sorry!</h4>
+  <h4>{{$t('errorPage.somethingIsBroken')}}</h4>
   <h1>:(</h1>
-  <h4>Spróbuj jeszcze raz, jeśli problem będzie się powtarzał, napisz do Billiego, na pewno znajdziemy jakieś rozwiązanie ;)</h4>
-  <button onclick="javascript:window.location.href='http://m.me/billiedebts'">Zapytaj o pomoc</button>
+  <h4>{{$t('errorPage.pleaseTryAgain')}}</h4>
+  <button onclick="javascript:window.location.href='http://m.me/billiedebts'">{{$t('errorPage.askForHelp')}}</button>
 </div>
 </template>
 
