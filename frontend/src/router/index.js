@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import MainPage from '@/components/MainPage'
-import Status from '@/components/Status'
-import DebtHistory from '@/components/DebtHistory'
+import Ledgers from '@/components/Ledgers'
+import Ledger from '@/components/Ledger'
 
 Vue.use(Router)
 
@@ -14,14 +14,14 @@ export default new Router({
             component: MainPage
         },
         {
-            path: '/Status/:allowReturn?',
-            name: 'Status',
-            component: Status
+            path: '/Ledgers/:allowReturn?',
+            name: 'Ledgers',
+            component: Ledgers
         },
         {
-            path: '/DebtHistory/:id?/:isUnaccpeted?/:allowReturn?',
-            name: 'DebtHistory',
-            component: DebtHistory
+            path: '/Ledger/:id?/:allowReturn?',
+            name: 'Ledger',
+            component: Ledger
         }
     ]
 })

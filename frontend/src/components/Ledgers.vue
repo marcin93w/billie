@@ -5,7 +5,7 @@
         <div v-else>
             <h4>{{ $t("status.yourDebts") }}</h4>
             <table class="statusTable">
-                <tr v-for="item in contacts" v-on:click="showDebtHistory(item)">
+                <tr v-for="item in contacts" v-on:click="showLedger(item)" v-bind:key="item.threadId">
                     <td class="avatar"><img :src="item.avatarUrl" :alt="item.fullName"></td>
                     <td>{{item.fullName}}</td>
                     <td
@@ -37,8 +37,7 @@
 </template>
 
 <script>
-
-import debtBalancesService from '../services/debt-balances-service'
+import { getUserLedgers } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext, requestCloseBrowser } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -49,7 +48,7 @@ import handleError from '../utils/handle-error'
 import ErrorPage from './ErrorPage.vue'
 
 export default {
-    name: 'Status',
+    name: 'Ledgers',
     components: {
         'loader': Loader,
         'error-page': ErrorPage
@@ -68,35 +67,26 @@ export default {
             close: () => {
                 requestCloseBrowser()
             },
-            showDebtHistory: (item) => {
-                const isUnaccepted = !item.userId
-                const id = item.userId || item.threadId
-                this.$router.push(`/DebtHistory/${id}/${isUnaccepted}/${this.$route.params.allowReturn || ''}`)
+            showLedger: (item) => {
+                this.$router.push(`/Ledger/${item.threadId}/${this.$route.params.allowReturn || ''}`)
             }
         }
     },
     created () {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
-            .then(info => debtBalancesService.getDebtBalances(info))
-            .then(balances => {
+            .then(context => getUserLedgers(context))
+            .then(ledgers => {
                 this.isloading = false
-                this.contacts = balances.contacts
+                this.contacts = ledgers
                     .map(item => ({ ...item,
-                        amount: Math.abs(item.amount).toFixed(2),
-                        avatarUrl: item.avatarUrl || avatar,
-                        isPositive: item.amount >= 0
+                        amount: Math.abs(item.balance).toFixed(2),
+                        isPositive: item.amount >= 0,
+                        avatarUrl: item.fullName ? (item.avatarUrl || avatar) : questionMark,
+                        fullName: item.fullName || this.$t('status.waitingForAcceptance')
                     }))
-                    .concat(balances.unaccpeted
-                        .map(item => ({ ...item,
-                            amount: Math.abs(item.amount).toFixed(2),
-                            avatarUrl: questionMark,
-                            isPositive: item.amount >= 0,
-                            fullName: this.$t('status.waitingForAcceptance')
-                        })))
                     .sort((a, b) => b.amount - a.amount)
-                let totalValue = balances.contacts.map(item => item.amount)
-                    .concat(balances.unaccpeted.map(b => b.amount))
+                let totalValue = ledgers.map(item => item.balance)
                     .reduce((sum, cur) => sum + cur, 0)
                 this.isTotalPositive = totalValue >= 0
                 this.total = Math.abs(totalValue).toFixed(2)

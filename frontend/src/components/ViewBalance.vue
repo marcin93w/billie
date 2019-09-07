@@ -1,10 +1,10 @@
 <template>
     <div>
         <div v-if="hasDebtAlready" class="balance-bar">
-            <a @click="showStatus()">{{balanceText}}</a>
+            <a @click="showLedgers()">{{balanceText}}</a>
         </div>
         <div v-if="hasUnacceptedDebt" class="balance-bar">
-            <a @click="showStatus()">Dotychczasowy dług z tą osobą na kwotę {{Math.abs(balance)}} zł nie został jeszcze zaakceptowany!</a>
+            <a @click="showLedgers()">Dotychczasowy dług z tą osobą na kwotę {{Math.abs(balance)}} zł nie został jeszcze zaakceptowany!</a>
         </div>
     </div>
 </template>
@@ -26,8 +26,8 @@ export default {
     },
     data () {
         return {
-            showStatus: () => {
-                this.$router.push('Status/allowReturn')
+            showLedgers: () => {
+                this.$router.push('Ledgers/allowReturn')
             }
         }
     },

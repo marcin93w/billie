@@ -12,7 +12,7 @@
                     v-bind:has-unaccepted-debt="hasUnacceptedDebt"
                     v-bind:contact-name="contact && contact.name"
                     v-bind:contact-gender="contact && contact.gender"
-                    v-bind:balance="threadBalance" />
+                    v-bind:balance="balance" />
                 <add-debt
                     v-bind:user-name="user.name"
                     v-bind:user-gender="user.gender"
@@ -22,7 +22,7 @@
                     v-bind:contact-name="contact && contact.name"
                     v-bind:contact-gender="contact && contact.gender"
                     v-bind:contact-avatar="contact && contact.avatarUrl"
-                    v-bind:balance="threadBalance" />
+                    v-bind:balance="balance" />
             </div>
         </div>
   </div>
@@ -32,7 +32,7 @@
 import AddDebt from './AddDebt.vue'
 import ViewBalance from './ViewBalance.vue'
 import Loader from './Loader.vue'
-import { getThreadStatus } from '../services/debts-api-service'
+import { getLedgerInfo } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -51,7 +51,7 @@ export default {
         return {
             user: null,
             contact: null,
-            threadBalance: 0,
+            balance: 0,
             hasDebtAlready: false,
             hasUnacceptedDebt: false,
             isloading: true,
@@ -64,13 +64,13 @@ export default {
             .then(_ => getContext(config.fbAppId))
             .then(context => {
                 this.threadType = context.thread_type
-                return getThreadStatus(context)
+                return getLedgerInfo(context)
             })
             .then(threadStatus => {
                 Object.assign(this, threadStatus)
-                this.hasDebtAlready = threadStatus.contact && threadStatus.threadBalance !== 0
-                this.hasUnacceptedDebt = !threadStatus.contact && threadStatus.threadBalance !== 0
-                this.threadBalance = this.threadBalance.toFixed(2)
+                this.hasDebtAlready = threadStatus.contact && threadStatus.balance !== 0
+                this.hasUnacceptedDebt = !threadStatus.contact && threadStatus.balance !== 0
+                this.balance = this.balance.toFixed(2)
                 this.isloading = false
             })
             .catch(err => {

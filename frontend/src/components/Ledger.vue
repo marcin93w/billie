@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { debtHistory, getThreadStatus, getPendingDebtsHistory } from '../services/debts-api-service'
+import { getLedgerInfo, getLedgerByThreadId } from '../services/debts-api-service'
 import { ensurePermissions } from '../services/fb-permission-service'
 import { getContext } from '../messenger-extensions/messenger-extensions'
 import config from '../config'
@@ -52,7 +52,6 @@ import questionMark from '../assets/question-mark.png'
 import debtTypes from '../utils/debt-types'
 import moment from 'moment'
 import Loader from './Loader.vue'
-import debtBalancesService from '../services/debt-balances-service'
 import handleError from '../utils/handle-error'
 import { getGenderSuffix } from '../utils/utils'
 import ErrorPage from './ErrorPage.vue'
@@ -60,7 +59,7 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 
 export default {
-    name: 'DebtHistory',
+    name: 'Ledger',
     components: {
         'loader': Loader,
         'error-page': ErrorPage
@@ -99,7 +98,7 @@ export default {
                 }
             },
             back: () => {
-                this.$router.push(`/Status/${this.$route.params.allowReturn || ''}`)
+                this.$router.push(`/Ledgers/${this.$route.params.allowReturn || ''}`)
             },
             copyBankAccountNumber: () => {
                 this.$copyText(this.contact.bankAccountNumber)
@@ -113,6 +112,14 @@ export default {
         ensurePermissions()
             .then(_ => getContext(config.fbAppId))
             .then(context => {
+                if (this.$route.params.id) {
+                    return getLedgerByThreadId(context, this.$route.params.id)
+                } else {
+                    this.isFromThread = true
+                    return getLedgerInfo(context)
+                }
+            })
+            .then(ledger => {
                 const unknownContact = {
                     name: this.$t('debtHistory.someone'),
                     fullName: '',
@@ -120,42 +127,12 @@ export default {
                     avatarUrl: questionMark
                 }
 
-                if (this.$route.params.id) {
-                    if (this.$route.params.isUnaccpeted === 'true') {
-                        return debtBalancesService.getDebtBalanceForUnacceptedThread(context, this.$route.params.id)
-                            .then(contactBalance => {
-                                this.total = contactBalance.amount
-                                this.contact = unknownContact
-                                this.isUnaccpeted = true
-                                return getPendingDebtsHistory(context, this.$route.params.id)
-                            })
-                    } else {
-                        return debtBalancesService.getDebtBalanceForUser(context, this.$route.params.id).then(contactBalance => {
-                            this.total = contactBalance.amount
-                            this.contact = contactBalance
-                            this.contact.avatarUrl = this.contact.avatarUrl || avatar
+                this.total = ledger.balance
+                this.contact = ledger.contact || unknownContact
+                this.contact.avatarUrl = this.contact.avatarUrl || avatar
+                this.isUnaccpeted = !ledger.contact
 
-                            return debtHistory(context, this.$route.params.id)
-                        })
-                    }
-                } else {
-                    return getThreadStatus(context).then(thread => {
-                        this.isFromThread = true
-                        this.total = thread.threadBalance
-                        if (!thread.contact) {
-                            this.contact = unknownContact
-                            this.isUnaccpeted = true
-                            return getPendingDebtsHistory(context)
-                        }
-                        this.contact = thread.contact
-                        this.contact.avatarUrl = this.contact.avatarUrl || avatar
-
-                        return debtHistory(context, thread.contact.id)
-                    })
-                }
-            })
-            .then(debts => {
-                this.items = debts.map((item, idx) => ({
+                this.items = ledger.debts.map((item, idx) => ({
                     id: idx,
                     dateRelative: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),
@@ -163,6 +140,7 @@ export default {
                     isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF,
                     comment: item.comment
                 }))
+
                 this.isloading = false
             })
             .catch(err => {

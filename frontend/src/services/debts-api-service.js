@@ -14,7 +14,7 @@ function createHeaders (context, isPost) {
 }
 
 export function addDebt (context, debtType, amount, comment) {
-    return fetch(config.apiUrl + '/debts/add', {
+    return fetch(config.apiUrl + 'add-debt', {
         method: 'POST',
         headers: createHeaders(context, true),
         body: JSON.stringify({ debtType, amount, comment })
@@ -29,29 +29,22 @@ export function cancelDebt (context, debtId, isUnaccepted) {
     .then(handleResponse)
 }
 
-export function getThreadStatus (context) {
-    return fetch(`${config.apiUrl}/debts/threadContext`, {
+export function getLedgerInfo (context) {
+    return fetch(`${config.apiUrl}ledger`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function getDebtBalances (context) {
-    return fetch(`${config.apiUrl}/debts/status`, {
+export function getUserLedgers (context) {
+    return fetch(`${config.apiUrl}ledgers`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
 }
 
-export function debtHistory (context, userId) {
-    return fetch(`${config.apiUrl}/debts/userHistory/${userId}`, {
-        headers: createHeaders(context)
-    })
-    .then(handleResponse)
-}
-
-export function getPendingDebtsHistory (context, threadId) {
-    return fetch(`${config.apiUrl}/debts/pendingForThread/${threadId || ''}`, {
+export function getLedgerByThreadId (context, threadId) {
+    return fetch(`${config.apiUrl}ledger/${threadId}`, {
         headers: createHeaders(context)
     })
     .then(handleResponse)
