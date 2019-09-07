@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SignInService } from '../../users/sign-in.service';
-import { ApiRequest } from './api-request.type';
+import { ApiRequest } from '../api-request.type';
 import { FB_MESSENGER_SIGNATURE_SERVICE, IFbMessengerSignatureService } from './fb-messenger-signature.service.interface';
 
 @Injectable()

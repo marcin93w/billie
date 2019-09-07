@@ -3,7 +3,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AddDebtCommand } from '../debts/contracts/add-debt.command';
 import { Debt } from '../debts/contracts/debt.model';
 import { AddDebtDto } from './add-debt-dto.type';
-import { ApiRequest } from './auth/api-request.type';
+import { ApiRequest } from './api-request.type';
 import { AcceptLedgerCommand } from '../debts/contracts/accept-ledger.command';
 import { GetLedgerQuery, LedgerDto } from '../queries/get-ledger.query';
 import { GetUserLedgersQuery, UserLedgersItemDto } from '../queries/get-user-ledgers.query';

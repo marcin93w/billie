@@ -1,13 +1,17 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MongoClient, Db, Collection } from 'mongodb';
 import { DebtsLedgerSchema, UserSchema } from './database.schema';
+import { ConfigService } from '../api/config.service';
 
-const url = 'mongodb://localhost:27017/';
 const dbName = 'billie';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private client: MongoClient;
+
+  public constructor(
+    private config: ConfigService,
+  ) {}
 
   get users(): Collection<UserSchema> {
     return this.client.db(dbName).collection('users');
@@ -19,7 +23,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   connect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      MongoClient.connect(url, (err, client) => {
+      MongoClient.connect(this.config.databaseUrl, (err, client) => {
         if (err) {
           reject(err);
         } else {
