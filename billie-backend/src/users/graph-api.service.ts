@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { User } from './user.type';
-import { ConfigService } from '../api/config.service';
+import { ConfigService } from '../common/config.service';
 
 @Injectable()
 export class GraphApiService {

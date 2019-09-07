@@ -1,7 +1,7 @@
 import { FbMessengerSignatureData, IFbMessengerSignatureService } from './fb-messenger-signature.service.interface';
 import { Injectable } from '@nestjs/common';
 import { createHmac } from 'crypto';
-import { ConfigService } from '../config.service';
+import { ConfigService } from '../../common/config.service';
 
 @Injectable()
 export class FbMessengerSignatureService implements IFbMessengerSignatureService {

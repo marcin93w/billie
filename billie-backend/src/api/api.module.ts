@@ -10,7 +10,7 @@ import { GetUserLedgersQuery } from '../queries/get-user-ledgers.query';
 import { GRAPH_API_SERVICE } from '../users/graph-api.service.interface';
 import { GraphApiServiceStub } from '../users/graph-api.service.stub';
 import { Environment } from '../common/environment';
-import { ConfigService } from './config.service';
+import { ConfigService } from '../common/config.service';
 import { FB_MESSENGER_SIGNATURE_SERVICE } from './auth/fb-messenger-signature.service.interface';
 import { FbMessengerSignatureServiceStub } from './auth/fb-messenger-signature.service.stub';
 import { FbMessengerSignatureService } from './auth/fb-messenger-signature.service';

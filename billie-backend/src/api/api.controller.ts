@@ -18,7 +18,8 @@ export class ApiController {
 
   @Post('add-debt')
   async addDebt(@Req() request: ApiRequest, @Body() dto: AddDebtDto): Promise<void> {
-    await this.commandBus.execute(new AddDebtCommand(request.user.id, request.threadId, new Debt(dto.type, dto.amount, dto.comment, new Date())));
+    await this.commandBus.execute(new AddDebtCommand(request.user.id, request.threadId,
+      new Debt(dto.type, Number(dto.amount), dto.comment, new Date())));
   }
 
   @Put('accept-debt')

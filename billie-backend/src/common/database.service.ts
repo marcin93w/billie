@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { MongoClient, Db, Collection } from 'mongodb';
 import { DebtsLedgerSchema, UserSchema } from './database.schema';
-import { ConfigService } from '../api/config.service';
+import { ConfigService } from './config.service';
 
 const dbName = 'billie';
 

@@ -1,7 +1,7 @@
 {
-  "name": "messenger-debt-bot-frontend",
+  "name": "billie-frontend",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "Billie frontend",
   "author": "marcin93w <marcin93w@gmail.com>",
   "private": true,
   "scripts": {

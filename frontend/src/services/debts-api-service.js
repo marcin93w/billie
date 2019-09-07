@@ -13,11 +13,11 @@ function createHeaders (context, isPost) {
     return headers
 }
 
-export function addDebt (context, debtType, amount, comment) {
+export function addDebt (context, type, amount, comment) {
     return fetch(config.apiUrl + 'add-debt', {
         method: 'POST',
         headers: createHeaders(context, true),
-        body: JSON.stringify({ debtType, amount, comment })
+        body: JSON.stringify({ type, amount, comment })
     })
     .then(handleResponse)
 }

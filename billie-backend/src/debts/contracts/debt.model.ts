@@ -1,8 +1,8 @@
 export enum DebtType {
-  BORROWED,
   LENT,
-  BORROWED_PAYOFF,
+  BORROWED,
   LENT_PAYOFF,
+  BORROWED_PAYOFF,
 }
 
 export class Debt {
