@@ -1,13 +1,19 @@
-tsc
+cd frontend
 npm install
-$distPath = '../messenger-debt-bot-release/'
-Copy-Item "frontend/dist" -Destination $distPath"frontend" -Recurse -Force
-Copy-Item "src" -Destination $distPath -Recurse -Exclude "*.ts","*.js.map" -Force
-Copy-Item "assets" -Destination $distPath -Recurse -Force
+npm run build
+cd ..
 
-$json = Get-Content package.json | ConvertFrom-Json
-$json.scripts.postinstall = ''
-$json | ConvertTo-Json | Out-File -encoding ASCII $distPath"package.json" -Force
+cd billie-backend
+npm install
+npm run build
+cd ..
+
+$distPath = '../messenger-debt-bot-release-1/'
+Copy-Item "billie-backend/package.json" -Destination $distPath -Recurse -Force
+Copy-Item "billie-backend/node_modules" -Destination $distPath -Recurse -Force
+Copy-Item "billie-backend/dist" -Destination $distPath -Recurse -Force
+Copy-Item "frontend/dist" -Destination $distPath"frontend" -Recurse -Force
+Copy-Item "assets" -Destination $distPath -Recurse -Force
 
 $indexPath = $distPath+"frontend/dist/index.html"
 (Get-Content -Encoding "UTF8" $indexPath) | 
