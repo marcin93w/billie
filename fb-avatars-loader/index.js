@@ -1,4 +1,4 @@
-const request = require('async-request');
+const request = require('request-promise');
 const { Client } = require('pg');
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
