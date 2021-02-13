@@ -33,11 +33,7 @@ export class GetLedgerQuery {
   async fetch(threadId: string, user: User): Promise<LedgerDto> {
     const ledger = await this.db.debtsLedgers.findOne({threadId});
     if (!ledger) {
-      return {
-        balance: 0,
-        debts: [],
-        user
-      };
+      return null;
     }
 
     if (ledger.hostUserId !== user.id && ledger.guestUserId !== user.id) {

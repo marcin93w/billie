@@ -3,7 +3,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { AddDebtCommand } from '../debts/contracts/add-debt.command';
 import { AddDebtDto } from '../debts/contracts/add-debt-dto.type';
 import { ApiRequest } from './api-request.type';
-import { AcceptLedgerCommand } from '../debts/contracts/accept-ledger.command';
+import { InitializeLedgerCommand } from '../debts/contracts/initialize-ledger.command';
 import { GetLedgerQuery, LedgerDto } from '../queries/get-ledger.query';
 import { GetUserLedgersQuery, UserLedgersItemDto } from '../queries/get-user-ledgers.query';
 
@@ -20,13 +20,15 @@ export class ApiController {
     return await this.commandBus.execute(new AddDebtCommand(request.user.id, request.threadId, dto));
   }
 
-  @Put('accept-debt')
-  async acceptDebt(@Req() request: ApiRequest): Promise<void> {
-    await this.commandBus.execute(new AcceptLedgerCommand(request.user.id, request.threadId));
-  }
-
   @Get('ledger')
   async getCurrentLedger(@Req() request: ApiRequest): Promise<LedgerDto> {
+    const ledger = await this.getLedgerQuery.fetch(request.threadId, request.user);
+    if (ledger) {
+      return ledger
+    }
+
+    await this.commandBus.execute(new InitializeLedgerCommand(request.user.id, request.threadId));
+    
     return await this.getLedgerQuery.fetch(request.threadId, request.user);
   }
 

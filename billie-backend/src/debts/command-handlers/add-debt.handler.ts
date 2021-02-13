@@ -2,7 +2,6 @@ import { AddDebtCommand } from '../contracts/add-debt.command';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DebtsLedgerRepository } from '../domain/debts-ledger.repository';
 import { DebtType } from '../contracts/value-objects/debt-type';
-import { DebtsLedger } from '../domain/debts-ledger.model';
 
 @CommandHandler(AddDebtCommand)
 export class AddDebtHandler implements ICommandHandler<AddDebtCommand> {
@@ -21,8 +20,7 @@ export class AddDebtHandler implements ICommandHandler<AddDebtCommand> {
       throw new Error('Debt amount invalid');
     }
 
-    const debtsLedger = (await this.debtsLedgerRepository.find(threadId)) ||
-      new DebtsLedger(threadId, userId);
+    const debtsLedger = await this.debtsLedgerRepository.find(threadId);
 
     const debtId = debtsLedger.addDebt(userId, debt.type, Number(debt.amount), debt.comment);
 

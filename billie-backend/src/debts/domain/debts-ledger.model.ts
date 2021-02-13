@@ -1,9 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { Debt } from './debt.model';
-import { AddDebtCommand } from '../contracts/add-debt.command';
-import { AcceptLedgerCommand } from '../contracts/accept-ledger.command';
 import { DebtsLedgerSchema } from '../../common/database.schema';
-import { AddDebtDto } from '../contracts/add-debt-dto.type';
 import { DebtType } from '../contracts/value-objects/debt-type';
 
 // Represents ledger that holds all debts between 2 users.
@@ -69,6 +66,9 @@ export class DebtsLedger extends AggregateRoot {
   accept(userId: string) {
     if (userId === this.hostUserId) {
       throw new Error('Host and guest of the ledger cannot be the same user.');
+    }
+    if (this.guestUserId && this.guestUserId !== userId) {
+      throw new Error('Ledger is already accepted by another user, group ledgers are not supported');
     }
 
     this.guestUserId = userId;
