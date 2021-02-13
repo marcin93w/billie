@@ -54,7 +54,7 @@ describe('DebtsLedger', () => {
 
       expect(ledger.getThreadId()).toBe(threadId);
       expect(ledger.getDebts().length).toBe(2);
-      expect(ledger.getDebts()[1]).toBe(debt1);
+      expect(ledger.getDebts()[1]).toStrictEqual(debt1);
       expect(ledger.getBalance()).toBe(0);
     });
   });
