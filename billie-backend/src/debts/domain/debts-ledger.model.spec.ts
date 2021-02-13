@@ -1,6 +1,6 @@
+import { DebtType } from '../contracts/value-objects/debt-type';
+import { Debt } from './debt.model';
 import { DebtsLedger } from './debts-ledger.model';
-import { AddDebtCommand } from './contracts/add-debt.command';
-import { Debt, DebtType } from './contracts/debt.model';
 
 describe('DebtsLedger', () => {
   let ledger: DebtsLedger;
@@ -21,7 +21,7 @@ describe('DebtsLedger', () => {
     it('should be added and update balance', () => {
 
       const debt = new Debt(DebtType.BORROWED, 12, '', new Date());
-      ledger.addDebt(new AddDebtCommand(hostUserId, threadId, debt));
+      ledger.addDebt(hostUserId, debt.getType(), debt.getAmount(), debt.getComment());
       simulateLedgerReloading();
 
       expect(ledger.getDebts().length).toBe(1);
@@ -33,10 +33,9 @@ describe('DebtsLedger', () => {
   describe('adding debt by guest', () => {
     it('should be added and update balance', () => {
 
-      const debt = new Debt(DebtType.BORROWED, 12, '', new Date());
-      ledger.addDebt(new AddDebtCommand(hostUserId, threadId, debt));
+      ledger.addDebt(hostUserId, DebtType.BORROWED, 12, '');
       simulateLedgerReloading();
-      ledger.addDebt(new AddDebtCommand('guest', threadId, debt));
+      ledger.addDebt('guest', DebtType.BORROWED, 12, '');
 
       expect(ledger.getDebts().length).toBe(2);
       expect(ledger.getDebts()[1].getType()).toBe(DebtType.LENT);
@@ -47,12 +46,11 @@ describe('DebtsLedger', () => {
   describe('adding debt and payoff', () => {
     it('should be added and update balance', () => {
 
-      const debt = new Debt(DebtType.BORROWED, 12, '', new Date());
-      ledger.addDebt(new AddDebtCommand(hostUserId, threadId, debt));
+      ledger.addDebt(hostUserId, DebtType.BORROWED, 12, '');
 
       simulateLedgerReloading();
       const debt1 = new Debt(DebtType.BORROWED_PAYOFF, 12, '', new Date());
-      ledger.addDebt(new AddDebtCommand(hostUserId, threadId, debt1));
+      ledger.addDebt(hostUserId, debt1.getType(), debt1.getAmount(), debt1.getComment());
 
       expect(ledger.getThreadId()).toBe(threadId);
       expect(ledger.getDebts().length).toBe(2);

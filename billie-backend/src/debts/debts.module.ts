@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from '../common/database.service';
-import { DebtsLedgerRepository } from './debts-ledger.repository';
-import { AddDebtHandler } from './add-debt.handler';
+import { AddDebtHandler } from './command-handlers/add-debt.handler';
 import { CqrsModule } from '@nestjs/cqrs';
-import { AcceptLedgerHandler } from './accept-ledger.handler';
+import { AcceptLedgerHandler } from './command-handlers/accept-ledger.handler';
 import { ConfigService } from '../common/config.service';
+import { DebtsLedgerRepository } from './domain/debts-ledger.repository';
 
 @Module({
   imports: [CqrsModule],

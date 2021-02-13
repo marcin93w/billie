@@ -1,8 +1,10 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { Debt, DebtType } from './contracts/debt.model';
-import { AddDebtCommand } from './contracts/add-debt.command';
-import { AcceptLedgerCommand } from './contracts/accept-ledger.command';
-import { DebtsLedgerSchema } from '../common/database.schema';
+import { Debt } from './debt.model';
+import { AddDebtCommand } from '../contracts/add-debt.command';
+import { AcceptLedgerCommand } from '../contracts/accept-ledger.command';
+import { DebtsLedgerSchema } from '../../common/database.schema';
+import { AddDebtDto } from '../contracts/add-debt-dto.type';
+import { DebtType } from '../contracts/value-objects/debt-type';
 
 // Represents ledger that holds all debts between 2 users.
 // Ledger is identified by threadId.
@@ -33,47 +35,43 @@ export class DebtsLedger extends AggregateRoot {
     return this.balance;
   }
 
-  addDebt(command: AddDebtCommand) {
-    let debt = command.debt;
-    if (command.userId !== this.hostUserId) {
-      debt = this.createReversedDebt(command.debt);
-    }
+  addDebt(userId: string, type: DebtType, amount: number, comment: string): number {
+    const debt = this.createDebt(userId, type, amount, comment);
 
-    this.debts.push(debt);
+    const debtId = this.debts.push(debt);
     if (debt.getType() === DebtType.BORROWED || debt.getType() === DebtType.LENT_PAYOFF) {
       this.balance -= debt.getAmount();
     } else {
       this.balance += debt.getAmount();
     }
+
+    return debtId;
   }
 
-  private createReversedDebt(debt: Debt) {
-    let reversedDebtType: DebtType;
+  private createDebt(userId: string, type: DebtType, amount: number, comment: string) {
+    return new Debt(userId === this.hostUserId ? type : this.getReversedDebtType(type),
+      amount, comment, new Date())
+  }
 
-    switch (debt.getType()) {
+  private getReversedDebtType(debtType: DebtType) {
+    switch (debtType) {
       case DebtType.BORROWED:
-        reversedDebtType = DebtType.LENT;
-        break;
+        return DebtType.LENT;
       case DebtType.BORROWED_PAYOFF:
-        reversedDebtType = DebtType.LENT_PAYOFF;
-        break;
+        return DebtType.LENT_PAYOFF;
       case DebtType.LENT:
-        reversedDebtType = DebtType.BORROWED;
-        break;
+        return DebtType.BORROWED;
       case DebtType.LENT_PAYOFF:
-        reversedDebtType = DebtType.BORROWED_PAYOFF;
-        break;
+        return DebtType.BORROWED_PAYOFF;
     }
-
-    return new Debt(reversedDebtType, debt.getAmount(), debt.getComment(), debt.getDate());
   }
 
-  accept(command: AcceptLedgerCommand) {
-    if (command.userId === this.hostUserId) {
+  accept(userId: string) {
+    if (userId === this.hostUserId) {
       throw new Error('Host and guest of the ledger cannot be the same user.');
     }
 
-    this.guestUserId = command.userId;
+    this.guestUserId = userId;
   }
 
   static createFrom(dbModel: DebtsLedgerSchema): DebtsLedger {

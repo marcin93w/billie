@@ -1,9 +1,4 @@
-export enum DebtType {
-  LENT,
-  BORROWED,
-  LENT_PAYOFF,
-  BORROWED_PAYOFF,
-}
+import { DebtType } from "../contracts/value-objects/debt-type";
 
 export class Debt {
   constructor(

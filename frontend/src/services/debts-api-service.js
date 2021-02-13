@@ -52,7 +52,7 @@ export function getLedgerByThreadId (context, threadId) {
 
 function handleResponse (res) {
     return new Promise((resolve, reject) => {
-        if (res.status !== 200) {
+        if (res.status !== 200 && res.status !== 201) {
             if (res.status === 500) {
                 return res.json().then(json => {
                     let message = ''

@@ -1,4 +1,4 @@
-import { DebtType } from '../debts/contracts/debt.model';
+import { DebtType } from "./value-objects/debt-type";
 
 export interface AddDebtDto {
   type: DebtType;
