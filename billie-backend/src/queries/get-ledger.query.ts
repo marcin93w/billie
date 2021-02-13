@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common';
 
 export interface LedgerDto {
   balance: number;
-  debts: [{
+  debts: {
     type: number;
     amount: number;
     comment: string;
     date: string;
-  }];
+  }[];
   user: {
     id: string;
     name: string;
@@ -33,7 +33,11 @@ export class GetLedgerQuery {
   async fetch(threadId: string, user: User): Promise<LedgerDto> {
     const ledger = await this.db.debtsLedgers.findOne({threadId});
     if (!ledger) {
-      return null;
+      return {
+        balance: 0,
+        debts: [],
+        user
+      };
     }
 
     if (ledger.hostUserId !== user.id && ledger.guestUserId !== user.id) {
