@@ -76,12 +76,22 @@ export class DebtsLedger extends AggregateRoot {
 
   static createFrom(dbModel: DebtsLedgerSchema): DebtsLedger {
     const ledger = new DebtsLedger(dbModel.threadId, dbModel.hostUserId);
-
-    Object.assign(ledger, dbModel);
+    ledger.guestUserId = dbModel.guestUserId;
+    ledger.balance = dbModel.balance;
     if (dbModel.debts) {
-      ledger.debts = dbModel.debts.map(d => Object.assign(Object.create(Debt.prototype), { ...d, date: new Date(d.date)}));
+      ledger.debts = dbModel.debts.map(d => Debt.createFrom(d));
     }
 
     return ledger;
+  }
+
+  export(): DebtsLedgerSchema {
+    return ({
+      threadId: this.threadId,
+      balance: this.balance,
+      hostUserId: this.hostUserId,
+      guestUserId: this.guestUserId,
+      debts: this.debts.map(d => d.export())
+    })
   }
 }

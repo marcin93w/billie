@@ -9,7 +9,7 @@ export interface LedgerDto {
     type: DebtType;
     amount: number;
     comment: string;
-    date: string;
+    date: Date;
   }[];
   user: {
     id: string;

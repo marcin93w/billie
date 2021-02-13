@@ -1,3 +1,4 @@
+import { DebtSchema } from "src/common/database.schema";
 import { DebtType } from "../contracts/value-objects/debt-type";
 
 export class Debt {
@@ -21,5 +22,18 @@ export class Debt {
 
   getDate(): Date {
     return this.date;
+  }
+
+  static createFrom(dbModel: DebtSchema): Debt {
+    return new Debt(dbModel.type, dbModel.amount, dbModel.comment, dbModel.date);
+  }
+
+  export(): DebtSchema {
+    return ({
+      amount: this.amount,
+      comment: this.comment,
+      date: this.date,
+      type: this.type
+    })
   }
 }

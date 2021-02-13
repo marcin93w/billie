@@ -1,3 +1,5 @@
+import { DebtType } from "src/debts/contracts/value-objects/debt-type";
+
 export interface UserSchema {
   id: string;
   name: string;
@@ -9,12 +11,14 @@ export interface UserSchema {
 export interface DebtsLedgerSchema {
   threadId: string;
   balance: number;
-  debts: {
-    type: number;
-    amount: number;
-    comment: string;
-    date: string;
-  }[];
+  debts: DebtSchema[];
   hostUserId: string;
   guestUserId?: string;
+}
+
+export interface DebtSchema {
+  type: DebtType;
+  amount: number;
+  comment: string;
+  date: Date;
 }

@@ -9,7 +9,7 @@ export class DebtsLedgerRepository {
   async save(ledger: DebtsLedger): Promise<void> {
     await this.db.debtsLedgers.updateOne(
       { threadId: ledger.getThreadId() },
-      { $set: ledger },
+      { $set: ledger.export() },
       { upsert: true });
   }
 
