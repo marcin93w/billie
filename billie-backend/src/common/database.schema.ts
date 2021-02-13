@@ -9,12 +9,12 @@ export interface UserSchema {
 export interface DebtsLedgerSchema {
   threadId: string;
   balance: number;
-  debts: [{
+  debts: {
     type: number;
     amount: number;
     comment: string;
     date: string;
-  }];
+  }[];
   hostUserId: string;
   guestUserId?: string;
 }

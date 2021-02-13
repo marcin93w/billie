@@ -60,7 +60,7 @@ export default {
             someoneGavesBack: 'Gives me back'
         },
         debtHistory: {
-            thisFirendDidNotAcceptedYourDebts: 'This firend did not accepted your debts',
+            thisFirendDidNotAcceptedYourDebts: 'This firend did not accept your debts',
             youCanPayOffUsingBankTransfer: 'You can pay off using bank transfer to number: ',
             doYouWantToAdd: 'Do you want to add',
             payOffOr: 'pay off or',

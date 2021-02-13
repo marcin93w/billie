@@ -81,7 +81,7 @@ export default {
                 this.contacts = ledgers
                     .map(item => ({ ...item,
                         amount: Math.abs(item.balance).toFixed(2),
-                        isPositive: item.amount >= 0,
+                        isPositive: item.balance >= 0,
                         avatarUrl: item.fullName ? (item.avatarUrl || avatar) : questionMark,
                         fullName: item.fullName || this.$t('status.waitingForAcceptance')
                     }))

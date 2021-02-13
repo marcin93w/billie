@@ -136,8 +136,8 @@ export default {
                     id: idx,
                     dateRelative: moment(item.date).fromNow(),
                     amount: item.amount.toFixed(2),
-                    debtType: item.debtType,
-                    isPositive: item.debtType === debtTypes.LENT || item.debtType === debtTypes.BORROWED_PAYOFF,
+                    debtType: item.type,
+                    isPositive: item.type === debtTypes.LENT || item.type === debtTypes.BORROWED_PAYOFF,
                     comment: item.comment
                 }))
 
