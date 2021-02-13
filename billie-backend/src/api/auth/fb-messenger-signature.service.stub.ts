@@ -4,9 +4,10 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class FbMessengerSignatureServiceStub implements IFbMessengerSignatureService {
   parseSignature(hash: string): FbMessengerSignatureData {
+    const hashParts = hash.split(':')
     return {
-      userId: 'a',
-      threadId: 't',
+      userId: hashParts[0],
+      threadId: hashParts[1],
       threadType: 'SINGLE',
     };
   }
