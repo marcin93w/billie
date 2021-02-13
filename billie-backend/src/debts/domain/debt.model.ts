@@ -25,7 +25,7 @@ export class Debt {
   }
 
   static createFrom(dbModel: DebtSchema): Debt {
-    return new Debt(dbModel.type, dbModel.amount, dbModel.comment, dbModel.date);
+    return new Debt(dbModel.type, dbModel.amount, dbModel.comment, new Date(dbModel.date));
   }
 
   export(): DebtSchema {
