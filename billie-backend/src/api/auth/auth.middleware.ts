@@ -2,7 +2,7 @@ import { HttpStatus, Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SignInService } from '../../users/sign-in.service';
 import { ApiRequest } from '../api-request.type';
-import { FB_MESSENGER_SIGNATURE_SERVICE, IFbMessengerSignatureService } from './fb-messenger-signature.service.interface';
+import { FbMessengerSignatureData, FB_MESSENGER_SIGNATURE_SERVICE, IFbMessengerSignatureService } from './fb-messenger-signature.service.interface';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -14,14 +14,11 @@ export class AuthMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: () => void) {
     const requestSignature = req.header('x-signed-request');
 
-    if (!requestSignature) {
-      res.sendStatus(HttpStatus.BAD_REQUEST);
-      return;
+    let signatureData: FbMessengerSignatureData
+    try {
+      signatureData = this.fbMessengerSignatureService.parseSignature(requestSignature);
     }
-
-    const signatureData = this.fbMessengerSignatureService.parseSignature(requestSignature);
-
-    if (!signatureData) {
+    catch {
       res.sendStatus(HttpStatus.BAD_REQUEST);
       return;
     }

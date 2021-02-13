@@ -8,6 +8,10 @@ export class FbMessengerSignatureService implements IFbMessengerSignatureService
   constructor(private readonly config: ConfigService) {}
 
   parseSignature(hash: string): FbMessengerSignatureData {
+    if (!hash) {
+      throw new Error('Signature hash is empty')
+    }
+
     const signedRequest = hash.split('.');
     const signature = Buffer.from(
         signedRequest[0]
@@ -22,7 +26,7 @@ export class FbMessengerSignatureService implements IFbMessengerSignatureService
       .digest('hex');
 
     if (signature !== expectedSignature) {
-      return null;
+      throw new Error('Invalid signature hash')
     }
 
     const data = JSON.parse(payload);
