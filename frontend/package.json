@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "milligram": "^1.4.1",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "vue": "^2.6.12",
     "vue-clipboard2": "^0.2.1",
     "vue-i18n": "^8.22.4",
